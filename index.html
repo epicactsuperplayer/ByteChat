@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ByteChat | Secured</title>
+    <title>ByteChat | Master Command</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -14,7 +14,7 @@
             --admin-neon: #00d4ff;
             --danger: #ff3b3b;
             --text-main: #f0f0f0;
-            --sidebar-width: 280px;
+            --sidebar-width: 300px;
             --nav-height: 80px;
         }
 
@@ -31,52 +31,56 @@
             font-weight: 900;
             letter-spacing: 4px;
             text-transform: uppercase;
-            font-size: 28px;
-            text-align: center;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background: var(--bg-deep); color: var(--text-main); font-family: 'Inter', sans-serif; }
 
-        /* --- AUTH SCREEN (LOGIN PAGE) --- */
+        /* --- AUTH SCREEN --- */
         #auth-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-deep);
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
         }
 
-        .login-card {
+        .auth-card {
             text-align: center;
-            padding: 40px;
-            background: var(--bg-surface);
-            border: 1px solid #1a1a1a;
-            border-radius: 20px;
-            max-width: 400px;
+            padding: 50px;
+            background: rgba(10, 10, 10, 0.8);
+            border: 1px solid #222;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            max-width: 450px;
             width: 90%;
         }
 
-        .btn-login {
+        .auth-btn {
             background: #fff;
             color: #000;
             border: none;
-            padding: 15px 30px;
-            border-radius: 30px;
+            padding: 18px;
+            border-radius: 15px;
             font-weight: 900;
             cursor: pointer;
-            margin-top: 30px;
+            margin-top: 25px;
             width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             transition: 0.3s;
         }
 
-        /* --- APP SHELL --- */
+        .auth-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,255,255,0.1); }
+
+        /* --- APP STRUCTURE --- */
         #app-shell { display: none; width: 100vw; height: 100vh; }
         body.logged-in #app-shell { display: flex; }
-        body.logged-in #auth-screen { display: none; }
+        body.logged-in #auth-screen { display: none !important; }
 
         #sidebar {
             width: var(--sidebar-width);
@@ -84,18 +88,29 @@
             border-right: 1px solid #1a1a1a;
             display: flex;
             flex-direction: column;
-            padding: 25px;
+            padding: 30px;
             flex-shrink: 0;
+            position: relative;
         }
 
         #viewport { flex-grow: 1; display: flex; flex-direction: column; position: relative; min-width: 0; }
 
-        /* --- MOBILE STYLES --- */
+        /* --- COPYRIGHT IN SIDEBAR --- */
+        .sidebar-credits {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #1a1a1a;
+            font-size: 10px;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        /* --- MOBILE ADAPTATION --- */
         @media (max-width: 850px) {
             #sidebar { display: none !important; }
             .mobile-nav { display: flex !important; }
-            #messages-container { padding: 15px 15px 180px 15px !important; }
-            .footer-credits { font-size: 8px !important; bottom: 95px !important; opacity: 0.5; }
+            #messages-container { padding: 20px 20px 180px 20px !important; }
+            .mobile-credits { display: block !important; }
         }
 
         .admin-only { display: none !important; }
@@ -104,35 +119,21 @@
         #messages-container {
             flex: 1;
             overflow-y: auto;
-            padding: 25px;
+            padding: 30px;
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
 
-        .msg-row { display: flex; gap: 12px; max-width: 90%; align-items: flex-start; margin-bottom: 5px; }
+        .msg-row { display: flex; gap: 12px; max-width: 85%; align-items: flex-start; }
         .msg-row.me { align-self: flex-end; flex-direction: row-reverse; }
-        .chat-pfp { width: 38px; height: 38px; border-radius: 50%; border: 1px solid #222; object-fit: cover; }
-        .bubble { background: #111; padding: 12px 16px; border-radius: 18px; border: 1px solid #222; }
-        .admin-glow { border-color: var(--admin-neon); box-shadow: 0 0 10px rgba(0, 212, 255, 0.2); }
-        .sender-tag { font-size: 10px; font-weight: 800; color: var(--admin-neon); margin-bottom: 3px; }
+        .chat-pfp { width: 42px; height: 42px; border-radius: 50%; border: 1px solid #333; object-fit: cover; }
+        .bubble { background: #111; padding: 14px 18px; border-radius: 20px; border: 1px solid #222; }
+        .admin-glow { border-color: var(--admin-neon); box-shadow: 0 0 10px rgba(0, 212, 255, 0.1); }
+        .sender-tag { font-size: 10px; font-weight: 800; color: var(--admin-neon); margin-bottom: 4px; }
 
-        .footer-credits {
-            position: absolute;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            text-align: center;
-            color: #444;
-            font-size: 10px;
-            line-height: 1.4;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .input-bar { padding: 15px 20px; background: #000; border-top: 1px solid #1a1a1a; display: flex; gap: 10px; }
-        .main-input { flex: 1; background: #121212; border: 1px solid #222; color: #fff; padding: 12px 20px; border-radius: 25px; }
+        .input-bar { padding: 20px; background: #000; border-top: 1px solid #1a1a1a; display: flex; gap: 12px; }
+        .main-input { flex: 1; background: #0f0f0f; border: 1px solid #222; color: #fff; padding: 15px 25px; border-radius: 30px; font-size: 15px; }
 
         .mobile-nav {
             display: none;
@@ -147,9 +148,9 @@
             z-index: 1000;
         }
 
-        .nav-item { color: #555; text-align: center; font-size: 10px; cursor: pointer; }
+        .nav-item { color: #444; text-align: center; font-size: 10px; cursor: pointer; }
         .nav-item.active { color: #fff; }
-        .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
+        .nav-item i { font-size: 24px; display: block; margin-bottom: 5px; }
 
         .screen { display: none; height: 100%; flex-direction: column; }
         .active-screen { display: flex; }
@@ -158,68 +159,90 @@
 <body>
 
     <div id="auth-screen">
-        <div class="login-card">
-            <div class="rgb-logo">BYTECHAT</div>
-            <p style="color:#555; margin-top:10px; font-size:12px;">SECURE COMMUNICATION TERMINAL</p>
-            <button class="btn-login" onclick="handleLogin()">ACCESS MAINFRAME</button>
-            <div style="margin-top:30px; font-size:9px; color:#333;">
-                © 2025 Bytechat. Powered by Rodss Architecture.
+        <div class="auth-card">
+            <h1 class="rgb-logo" style="font-size: 40px; margin: 0;">BYTECHAT</h1>
+            <p style="color: #666; font-size: 13px; margin-top: 10px; letter-spacing: 1px;">ENCRYPTED ARCHITECTURE V2</p>
+            
+            <button class="auth-btn" onclick="gateway('login')">
+                <i class="fab fa-google"></i> SIGN IN WITH GOOGLE
+            </button>
+            <button class="auth-btn" style="background: transparent; border: 1px solid #333; color: #888;" onclick="gateway('signup')">
+                CREATE NEW ACCOUNT
+            </button>
+
+            <div style="margin-top: 40px; font-size: 10px; color: #333; line-height: 1.5;">
+                © 2025 Bytechat. Powered by Rodss Architecture.<br>
+                Secure Handshake Protocols Active.
             </div>
         </div>
     </div>
 
     <div id="app-shell">
         <aside id="sidebar">
-            <div class="rgb-logo" style="font-size:22px; margin-bottom:30px;">BYTECHAT</div>
-            <div style="background:#0a0a0a; padding:20px; border-radius:15px; text-align:center; border:1px solid #1a1a1a; margin-bottom:20px;">
-                <img id="side-pfp" src="" style="width:60px; height:60px; border-radius:50%; border:1px solid var(--admin-neon);">
-                <div id="side-name" style="margin-top:10px; font-weight:bold;">Operator</div>
+            <h2 class="rgb-logo" style="font-size: 22px; text-align: left;">BYTECHAT</h2>
+            
+            <div style="background:#0e0e0e; padding:20px; border-radius:20px; text-align:center; border:1px solid #1a1a1a; margin: 30px 0;">
+                <img id="side-pfp" src="" style="width:70px; height:70px; border-radius:50%; border:2px solid var(--admin-neon);">
+                <div id="side-name" style="margin-top:12px; font-weight:bold; font-size: 18px;">Operator</div>
+                <div id="side-status" style="font-size: 9px; color: #0f0; margin-top: 5px;"><i class="fa fa-circle"></i> ONLINE</div>
             </div>
+
             <nav style="flex:1">
-                <div onclick="switchTab('chat')" style="padding:15px; cursor:pointer;"><i class="fa fa-terminal"></i> Mainframe</div>
-                <div onclick="switchTab('profile')" style="padding:15px; cursor:pointer;"><i class="fa fa-user"></i> Identity</div>
-                <div onclick="switchTab('admin')" class="admin-only" style="padding:15px; cursor:pointer; color:var(--admin-neon);"><i class="fa fa-shield"></i> Admin</div>
+                <div onclick="show('chat')" style="padding:15px 0; cursor:pointer; font-size: 14px;"><i class="fa fa-th-large"></i> &nbsp; Mainframe</div>
+                <div onclick="show('profile')" style="padding:15px 0; cursor:pointer; font-size: 14px;"><i class="fa fa-user-shield"></i> &nbsp; Identity</div>
+                <div onclick="show('admin')" class="admin-only" style="padding:15px 0; cursor:pointer; color:var(--admin-neon); font-size: 14px;"><i class="fa fa-unlock-alt"></i> &nbsp; Root Terminal</div>
+                <div onclick="exit()" style="padding:15px 0; cursor:pointer; color: var(--danger); font-size: 14px; margin-top: 20px;"><i class="fa fa-power-off"></i> &nbsp; Disconnect</div>
             </nav>
-            <button onclick="handleLogout()" style="padding:15px; background:none; border:1px solid #222; color:var(--danger); border-radius:10px; cursor:pointer;">DISCONNECT</button>
+
+            <div class="sidebar-credits">
+                <b>© 2025 Bytechat.</b><br>
+                Powered by Rodss Architecture.<br>
+                Made by Bytestorm.<br>
+                Optimized for Command Efficiency.
+            </div>
         </aside>
 
         <main id="viewport">
-            <section id="view-chat" class="screen active-screen">
+            <section id="scr-chat" class="screen active-screen">
                 <div id="messages-container"></div>
-                <div class="footer-credits">
-                    © 2025 Bytechat. Powered by Rodss Architecture.<br>
-                    Made by Bytestorm<br>
-                    Design optimized for mobile and command efficiency.
-                </div>
                 <div class="input-bar">
-                    <input type="text" id="chat-msg" class="main-input" placeholder="Secure transmission...">
-                    <button onclick="sendMessage()" style="background:var(--admin-neon); border:none; width:45px; height:45px; border-radius:50%; cursor:pointer;"><i class="fa fa-paper-plane"></i></button>
+                    <input type="text" id="msg-input" class="main-input" placeholder="Enter secure packet...">
+                    <button onclick="transmit()" style="background:white; color:black; border:none; width:50px; height:50px; border-radius:50%; cursor:pointer;"><i class="fa fa-paper-plane"></i></button>
                 </div>
             </section>
 
-            <section id="view-profile" class="screen">
-                <div style="padding:40px; max-width:400px; margin:0 auto; width:90%;">
-                    <h2 class="rgb-logo" style="font-size:20px;">Identity</h2>
-                    <input type="text" id="upd-name" class="main-input" style="width:100%; margin-bottom:10px;" placeholder="Name">
-                    <input type="text" id="upd-pfp" class="main-input" style="width:100%; margin-bottom:20px;" placeholder="PFP URL">
-                    <button onclick="updateProfile()" style="width:100%; padding:15px; background:white; color:black; border:none; border-radius:10px; font-weight:bold;">SAVE CHANGES</button>
+            <section id="scr-profile" class="screen">
+                <div style="padding:50px; max-width:500px; margin:0 auto; width:90%;">
+                    <h2 class="rgb-logo">Identity Settings</h2>
+                    <br>
+                    <label style="font-size:11px; color:#555;">ALIAS</label>
+                    <input type="text" id="in-name" class="main-input" style="width:100%; margin:10px 0 20px 0;">
+                    <label style="font-size:11px; color:#555;">PFP URL</label>
+                    <input type="text" id="in-pfp" class="main-input" style="width:100%; margin:10px 0 30px 0;">
+                    <button onclick="updateUser()" style="width:100%; padding:18px; background:var(--admin-neon); color:black; border:none; border-radius:15px; font-weight:bold; cursor:pointer;">COMMIT CHANGES</button>
+                    
+                    <div class="mobile-credits" style="display:none; margin-top:50px; text-align:center; font-size:10px; color:#333;">
+                        © 2025 Bytechat. Powered by Rodss Architecture.<br>
+                        Made by Bytestorm.
+                    </div>
                 </div>
             </section>
 
-            <section id="view-admin" class="screen admin-only">
-                <div style="padding:40px; text-align:center;">
-                    <h2 style="color:var(--admin-neon)">ADMIN TERMINAL</h2>
-                    <button onclick="wipeMessages()" style="background:var(--danger); color:white; border:none; padding:20px; border-radius:10px; width:100%; font-weight:bold;">PURGE DATABASE</button>
+            <section id="scr-admin" class="screen admin-only">
+                <div style="padding:50px; text-align:center;">
+                    <h1 style="color:var(--danger)">DESTRUCTION PROTOCOL</h1>
+                    <p style="color:#555">This action will erase all messages from the Firebase cloud.</p>
+                    <button onclick="purge()" style="background:var(--danger); color:white; border:none; padding:20px; border-radius:15px; width:100%; font-weight:bold; cursor:pointer; margin-top:30px;">EXECUTE GLOBAL WIPE</button>
                 </div>
             </section>
         </main>
     </div>
 
     <div class="mobile-nav">
-        <div class="nav-item active" id="m-chat" onclick="switchTab('chat')"><i class="fa fa-comment"></i>Chat</div>
-        <div class="nav-item" id="m-profile" onclick="switchTab('profile')"><i class="fa fa-user-circle"></i>User</div>
-        <div class="nav-item admin-only" id="m-admin" onclick="switchTab('admin')"><i class="fa fa-lock"></i>Admin</div>
-        <div class="nav-item" onclick="handleLogout()" style="color:var(--danger);"><i class="fa fa-power-off"></i>Exit</div>
+        <div class="nav-item active" id="m-chat" onclick="show('chat')"><i class="fa fa-comment-dots"></i>Chat</div>
+        <div class="nav-item" id="m-profile" onclick="show('profile')"><i class="fa fa-user-circle"></i>User</div>
+        <div class="nav-item admin-only" id="m-admin" onclick="show('admin')"><i class="fa fa-skull-crossbones"></i>Root</div>
+        <div class="nav-item" onclick="exit()" style="color:var(--danger);"><i class="fa fa-sign-out-alt"></i>Exit</div>
     </div>
 
     <script type="module">
@@ -239,27 +262,20 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const MASTER_EMAIL = "bytestorm.corp@gmail.com";
-        let localUser = {};
+        const MASTER = "bytestorm.corp@gmail.com";
+        let local = {};
 
-        // TAB NAVIGATION
-        window.switchTab = (target) => {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-            document.getElementById('view-' + target).classList.add('active-screen');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if(document.getElementById('m-' + target)) document.getElementById('m-' + target).classList.add('active');
+        // AUTH GATEWAY
+        window.gateway = (mode) => {
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider).catch(e => console.error(e));
         };
 
-        // LOGIN/LOGOUT LOGIC
-        window.handleLogin = () => {
-            signInWithPopup(auth, new GoogleAuthProvider()).catch(err => console.error(err));
-        };
-
-        window.handleLogout = () => {
-            if(confirm("Disconnect from ByteChat?")) {
+        window.exit = () => {
+            if(confirm("Logout from Secure Session?")) {
                 signOut(auth).then(() => {
                     document.body.classList.remove('logged-in');
-                    window.location.reload(); 
+                    window.location.reload();
                 });
             }
         };
@@ -267,37 +283,45 @@
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.body.classList.add('logged-in');
-                const isMaster = user.email.toLowerCase() === MASTER_EMAIL.toLowerCase();
-                if(isMaster) document.body.classList.add('is-master');
+                const isM = user.email.toLowerCase() === MASTER.toLowerCase();
+                if(isM) document.body.classList.add('is-master');
 
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                localUser = userDoc.exists() ? userDoc.data() : { name: user.displayName, pfp: user.photoURL };
-                if(!userDoc.exists()) await setDoc(doc(db, "users", user.uid), localUser);
+                const snap = await getDoc(doc(db, "users", user.uid));
+                local = snap.exists() ? snap.data() : { name: user.displayName, pfp: user.photoURL };
+                if(!snap.exists()) await setDoc(doc(db, "users", user.uid), local);
 
-                document.getElementById('side-pfp').src = localUser.pfp;
-                document.getElementById('side-name').innerText = localUser.name;
-                document.getElementById('upd-name').value = localUser.name;
-                document.getElementById('upd-pfp').value = localUser.pfp;
-                loadMessages();
+                document.getElementById('side-pfp').src = local.pfp;
+                document.getElementById('side-name').innerText = local.name;
+                document.getElementById('in-name').value = local.name;
+                document.getElementById('in-pfp').value = local.pfp;
+                initMainframe();
             } else {
                 document.body.classList.remove('logged-in');
             }
         });
 
-        // CHAT LOGIC
-        window.sendMessage = async () => {
-            const el = document.getElementById('chat-msg');
-            const val = el.value.trim();
-            if(!val) return;
-            await addDoc(collection(db, "messages"), {
-                text: val, user: localUser.name, pfp: localUser.pfp,
-                uid: auth.currentUser.uid, isA: auth.currentUser.email.toLowerCase() === MASTER_EMAIL,
-                time: serverTimestamp()
-            });
-            el.value = "";
+        // UI CORE
+        window.show = (t) => {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
+            document.getElementById('scr-' + t).classList.add('active-screen');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if(document.getElementById('m-' + t)) document.getElementById('m-' + t).classList.add('active');
         };
 
-        function loadMessages() {
+        // MESSAGING
+        window.transmit = async () => {
+            const input = document.getElementById('msg-input');
+            const val = input.value.trim();
+            if(!val) return;
+            await addDoc(collection(db, "messages"), {
+                text: val, user: local.name, pfp: local.pfp,
+                uid: auth.currentUser.uid, isA: auth.currentUser.email.toLowerCase() === MASTER,
+                time: serverTimestamp()
+            });
+            input.value = "";
+        };
+
+        function initMainframe() {
             onSnapshot(query(collection(db, "messages"), orderBy("time", "asc")), (snap) => {
                 const box = document.getElementById('messages-container');
                 box.innerHTML = "";
@@ -309,7 +333,8 @@
                             <img src="${m.pfp}" class="chat-pfp">
                             <div class="bubble ${m.isA ? 'admin-glow' : ''}">
                                 <div class="sender-tag">${m.isA ? '[ADMIN] ' : ''}${m.user}</div>
-                                <div>${m.text}</div>
+                                <div style="font-size:15px; line-height:1.4;">${m.text}</div>
+                                ${auth.currentUser.email.toLowerCase() === MASTER ? `<div style="color:red; font-size:9px; cursor:pointer; margin-top:8px;" onclick="wipeMsg('${d.id}')">ERASE</div>` : ''}
                             </div>
                         </div>
                     `;
@@ -318,19 +343,21 @@
             });
         }
 
-        window.updateProfile = async () => {
-            const name = document.getElementById('upd-name').value;
-            const pfp = document.getElementById('upd-pfp').value;
-            await setDoc(doc(db, "users", auth.currentUser.uid), { name, pfp }, { merge: true });
-            alert("Updated.");
-            location.reload();
-        };
+        window.wipeMsg = async (id) => { if(confirm("Erase Packet?")) await deleteDoc(doc(db, "messages", id)); };
 
-        window.wipeMessages = async () => {
-            if(confirm("PURGE ALL?")) {
+        window.purge = async () => {
+            if(confirm("GLOBAL WIPE?")) {
                 const q = await getDocs(collection(db, "messages"));
                 q.forEach(async (d) => await deleteDoc(doc(db, "messages", d.id)));
             }
+        };
+
+        window.updateUser = async () => {
+            const name = document.getElementById('in-name').value;
+            const pfp = document.getElementById('in-pfp').value;
+            await setDoc(doc(db, "users", auth.currentUser.uid), { name, pfp }, { merge: true });
+            alert("Mainframe records updated.");
+            location.reload();
         };
     </script>
 </body>
