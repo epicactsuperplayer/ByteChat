@@ -12,36 +12,32 @@
 
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
         
-        /* Auth Screen */
         #auth-screen { width: 90%; max-width: 350px; text-align: center; border: 2px solid var(--rgb); padding: 30px; border-radius: 15px; background: var(--card); box-shadow: 0 0 20px var(--rgb); }
-        
-        /* Main Layout */
         #main-shell { width: 100vw; height: 100vh; display: none; flex-direction: column; }
         @media (min-width: 768px) { #main-shell { width: 95vw; height: 85vh; border: 2px solid var(--rgb); border-radius: 20px; flex-direction: row; } }
 
-        /* Sidebar */
         #sidebar { width: 100%; background: #000; padding: 15px; border-bottom: 1px solid #333; display: flex; align-items: center; gap: 10px; box-sizing: border-box; }
         @media (min-width: 768px) { #sidebar { width: 260px; height: 100%; border-bottom: none; border-right: 1px solid #333; flex-direction: column; padding: 25px; } }
 
-        #my-pfp { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--rgb); cursor: pointer; object-fit: cover; }
+        #my-pfp { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--rgb); cursor: pointer; object-fit: cover; transition: 0.3s; }
+        #my-pfp:hover { opacity: 0.7; transform: scale(1.05); }
 
-        /* Chat Area */
-        #chat-main { flex: 1; display: flex; flex-direction: column; background: #0a0a0a; }
+        #chat-main { flex: 1; display: flex; flex-direction: column; background: #0a0a0a; position: relative; }
         #messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
         
-        .msg { display: flex; gap: 12px; align-items: flex-start; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .msg { display: flex; gap: 12px; align-items: flex-start; }
+        .msg-pfp { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--rgb); }
+        .msg-bubble { background: #1a1a1a; padding: 12px; border-radius: 12px; max-width: 80%; border-left: 3px solid var(--rgb); }
+        .user-name { font-size: 13px; color: var(--rgb); font-weight: bold; }
+        .admin-tag { font-size: 9px; background: var(--rgb); color: #000; padding: 1px 5px; border-radius: 4px; margin-left: 5px; }
 
-        .msg-pfp { width: 42px; height: 42px; border-radius: 50%; cursor: pointer; border: 1px solid var(--rgb); flex-shrink: 0; }
-        .msg-bubble { background: #1a1a1a; padding: 12px; border-radius: 12px; max-width: 80%; border-left: 3px solid var(--rgb); position: relative; }
-        .user-name { font-size: 13px; color: var(--rgb); font-weight: bold; display: block; margin-bottom: 4px; }
-        .admin-tag { font-size: 9px; background: var(--rgb); color: #000; padding: 1px 5px; border-radius: 4px; margin-left: 5px; vertical-align: middle; }
+        /* Admin Dashboard Overlay */
+        #admin-dash { display: none; position: absolute; inset: 0; background: #000; z-index: 50; padding: 30px; overflow-y: auto; border-radius: 15px; }
+        .dash-card { background: #111; border: 1px solid var(--rgb); padding: 15px; border-radius: 10px; margin-bottom: 10px; }
 
-        /* Inputs */
         input, select { background: #000; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; width: 100%; margin-bottom: 12px; box-sizing: border-box; }
-        button { background: var(--rgb); color: #000; border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 8px; width: 100%; transition: 0.2s; }
-        button:hover { filter: brightness(1.2); transform: scale(0.98); }
-        .del-btn { background: #ff4444; color: #fff; width: auto; font-size: 10px; padding: 3px 8px; margin-top: 8px; }
+        button { background: var(--rgb); color: #000; border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 8px; width: 100%; }
+        .btn-outline { background: transparent; color: var(--rgb); border: 1px solid var(--rgb); margin-top: 5px; }
 
         footer { position: fixed; bottom: 8px; font-size: 10px; opacity: 0.5; color: #fff; text-align: center; width: 100%; z-index: -1; }
     </style>
@@ -49,49 +45,66 @@
 <body class="theme-default">
 
     <div id="auth-screen">
-        <h2 id="auth-title" style="color: var(--rgb); letter-spacing: 3px;">BYTECHAT</h2>
+        <h2 style="color: var(--rgb)">BYTECHAT</h2>
         <input type="email" id="email" placeholder="Email">
         <input type="password" id="password" placeholder="Password">
-        <button id="auth-btn">LOGIN</button>
+        <button id="auth-btn">PROCEED</button>
         <button id="google-btn" style="background:#fff; margin-top: 10px; color:#000;">GOOGLE LOGIN</button>
-        <p id="toggle-auth" style="font-size: 11px; margin-top: 15px; cursor: pointer;">New to ByteChat? <u>Register</u></p>
+        <p id="toggle-auth" style="font-size: 11px; margin-top: 15px; cursor: pointer;">Register / Login Toggle</p>
     </div>
 
     <div id="main-shell">
         <div id="sidebar">
-            <img id="my-pfp" src="https://via.placeholder.com/100" onclick="document.getElementById('pfp-input').click()">
+            <div style="position: relative;">
+                <img id="my-pfp" src="https://via.placeholder.com/100" onclick="document.getElementById('pfp-input').click()">
+                <div style="position:absolute; bottom:0; right:0; background:var(--rgb); color:#000; font-size:10px; padding:2px 5px; border-radius:5px;">EDIT</div>
+            </div>
             <input type="file" id="pfp-input" style="display:none" accept="image/*">
             
-            <label style="font-size: 10px; align-self: flex-start; margin-bottom: 4px;">DISPLAY NAME</label>
-            <input type="text" id="display-name-input" placeholder="Your Name">
-            
-            <label style="font-size: 10px; align-self: flex-start; margin-bottom: 4px;">COLOR THEME</label>
+            <input type="text" id="display-name-input" placeholder="Display Name">
             <select id="theme-sel">
-                <option value="theme-default">Byte Red</option>
-                <option value="theme-emerald">Emerald</option>
+                <option value="theme-default">Standard Red</option>
+                <option value="theme-emerald">Emerald Green</option>
                 <option value="theme-cyber">Cyber Blue</option>
-                <option value="theme-gold">Gold</option>
+                <option value="theme-gold">Gold Edition</option>
             </select>
             
             <button id="save-profile">SAVE PROFILE</button>
+            
+            <button id="admin-dash-btn" class="btn-outline" style="display:none; border-color: #ff00ff; color: #ff00ff;">SERVER CONTROL</button>
             <button id="logout-btn" style="background:#222; color:white; margin-top: auto;">LOGOUT</button>
         </div>
 
         <div id="chat-main">
+            <div id="admin-dash">
+                <div style="display:flex; justify-content: space-between; align-items: center;">
+                    <h2 style="color:var(--rgb)">ADMIN DASHBOARD</h2>
+                    <button onclick="document.getElementById('admin-dash').style.display='none'" style="width:auto; padding:5px 15px;">CLOSE</button>
+                </div>
+                <div id="admin-stats" class="dash-card">
+                    <h3>Server Stats</h3>
+                    <p id="user-count">Loading user info...</p>
+                </div>
+                <div id="admin-logs" class="dash-card">
+                    <h3>Recent Global Activity</h3>
+                    <div id="log-content" style="font-family: monospace; font-size: 11px;"></div>
+                </div>
+            </div>
+
             <div id="messages"></div>
             <div style="padding: 20px; display: flex; gap: 10px; background: #050505; border-top: 1px solid #222;">
-                <input type="text" id="msg-input" placeholder="Enter message..." style="margin:0">
+                <input type="text" id="msg-input" placeholder="Type here..." style="margin:0">
                 <button id="send-btn" style="width: 80px; margin:0">SEND</button>
             </div>
         </div>
     </div>
 
-    <footer>&copy; 2025 Bytestorm Corp. All Rights Reserved.</footer>
+    <footer>&copy; 2025 Bytestorm Corp.</footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
         const firebaseConfig = {
@@ -111,11 +124,19 @@
         let isSignup = false;
         let currentUserData = { name: "", pfp: "", role: "user" };
 
-        // --- AUTH ---
+        // Handle File Selection Preview Immediately
+        document.getElementById('pfp-input').onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => document.getElementById('my-pfp').src = event.target.result;
+                reader.readAsDataURL(file);
+            }
+        };
+
         document.getElementById('toggle-auth').onclick = () => {
             isSignup = !isSignup;
-            document.getElementById('auth-title').innerText = isSignup ? "REGISTER" : "BYTECHAT";
-            document.getElementById('auth-btn').innerText = isSignup ? "CREATE ACCOUNT" : "LOGIN";
+            document.getElementById('auth-btn').innerText = isSignup ? "SIGN UP" : "LOGIN";
         };
 
         document.getElementById('auth-btn').onclick = async () => {
@@ -139,20 +160,17 @@
                 if (snap.exists()) {
                     currentUserData = snap.data();
                 } else {
-                    // Pre-fill for Google Users
                     currentUserData = { name: user.displayName || user.email.split('@')[0], pfp: user.photoURL || "", role: "user" };
                 }
 
-                // Global Admin Check
                 if (user.email.toLowerCase().includes("bytestorm.corp")) {
                     currentUserData.role = "admin";
+                    document.getElementById('admin-dash-btn').style.display = 'block';
                 }
 
-                // Update UI
                 document.getElementById('display-name-input').value = currentUserData.name;
                 document.getElementById('my-pfp').src = currentUserData.pfp || "https://via.placeholder.com/100";
                 document.body.className = currentUserData.theme || "theme-default";
-                
                 loadMessages();
             } else {
                 document.getElementById('auth-screen').style.display = 'block';
@@ -160,8 +178,9 @@
             }
         });
 
-        // --- PROFILE SAVE ---
         document.getElementById('save-profile').onclick = async () => {
+            const btn = document.getElementById('save-profile');
+            btn.innerText = "UPLOADING...";
             const user = auth.currentUser;
             const file = document.getElementById('pfp-input').files[0];
             let url = currentUserData.pfp || "";
@@ -173,25 +192,35 @@
             }
 
             const profile = {
-                name: document.getElementById('display-name-input').value || user.email.split('@')[0],
+                name: document.getElementById('display-name-input').value,
                 pfp: url,
                 theme: document.getElementById('theme-sel').value,
                 role: user.email.toLowerCase().includes("bytestorm.corp") ? "admin" : "user"
             };
 
             await setDoc(doc(db, "users", user.uid), profile, { merge: true });
-            alert("Profile Synced!");
-            location.reload(); 
+            btn.innerText = "SAVED!";
+            setTimeout(() => location.reload(), 1000);
         };
 
-        // --- CHAT ---
-        document.getElementById('send-btn').onclick = async () => {
-            const text = document.getElementById('msg-input').value;
-            if(!text) return;
+        // ADMIN PANEL LOGIC
+        document.getElementById('admin-dash-btn').onclick = () => {
+            document.getElementById('admin-dash').style.display = 'block';
+            const logBox = document.getElementById('log-content');
+            logBox.innerHTML = "Tracing active streams...";
+            onSnapshot(query(collection(db, "messages"), orderBy("timestamp", "desc"), limit(10)), (s) => {
+                logBox.innerHTML = "";
+                s.forEach(d => {
+                    logBox.innerHTML += `<div>[${d.data().userName}]: ${d.data().text.substring(0, 20)}...</div>`;
+                });
+            });
+        };
 
+        document.getElementById('send-btn').onclick = async () => {
+            const val = document.getElementById('msg-input').value;
+            if(!val) return;
             await addDoc(collection(db, "messages"), {
-                text: text,
-                uid: auth.currentUser.uid,
+                text: val,
                 userName: currentUserData.name || auth.currentUser.email.split('@')[0],
                 userPfp: currentUserData.pfp || "",
                 isAdmin: currentUserData.role === "admin",
@@ -207,16 +236,13 @@
                 snap.forEach(dSnap => {
                     const m = dSnap.data();
                     const isMeAdmin = currentUserData.role === "admin";
-                    
                     area.innerHTML += `
                         <div class="msg">
                             <img class="msg-pfp" src="${m.userPfp || 'https://via.placeholder.com/40'}">
                             <div class="msg-bubble">
-                                <span class="user-name">
-                                    ${m.userName} ${m.isAdmin ? '<span class="admin-tag">ADMIN</span>' : ''}
-                                </span>
+                                <span class="user-name">${m.userName} ${m.isAdmin ? '<span class="admin-tag">ADMIN</span>' : ''}</span>
                                 <div>${m.text}</div>
-                                ${isMeAdmin ? `<button class="del-btn" onclick="deleteMessage('${dSnap.id}')">Remove</button>` : ''}
+                                ${isMeAdmin ? `<button style="background:red; color:white; font-size:9px; width:auto; padding:2px 5px; margin-top:5px;" onclick="window.deleteMsg('${dSnap.id}')">DELETE</button>` : ''}
                             </div>
                         </div>`;
                 });
@@ -224,9 +250,10 @@
             });
         }
 
-        window.deleteMessage = (id) => deleteDoc(doc(db, "messages", id));
+        window.deleteMsg = (id) => deleteDoc(doc(db, "messages", id));
         document.getElementById('theme-sel').onchange = (e) => document.body.className = e.target.value;
     </script>
 </body>
 </html>
+
 
