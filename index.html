@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByteChat Pro | Bytestorm Corp</title>
+    <style>
+        :root {
+            --rgb-speed: 3s;
+            --primary-glow: #ff0000;
+            --bg-color: #0a0a0a;
+            --card-bg: #121212;
+            --text-main: #ffffff;
+        }
+
+        body.theme-emerald { --primary-glow: #00ff88; }
+        body.theme-cyber { --primary-glow: #00d4ff; }
+        body.theme-gold { --primary-glow: #ffcc00; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh;
+        }
+
+        @keyframes rgb-glow {
+            0% { border-color: var(--primary-glow); box-shadow: 0 0 15px var(--primary-glow); }
+            50% { border-color: #ffffff; box-shadow: 0 0 5px #fff; }
+            100% { border-color: var(--primary-glow); box-shadow: 0 0 15px var(--primary-glow); }
+        }
+
+        #main-shell {
+            width: 95%; max-width: 1000px; height: 85vh;
+            background: var(--card-bg);
+            border: 3px solid var(--primary-glow);
+            border-radius: 20px;
+            display: none; flex-direction: row;
+            animation: rgb-glow var(--rgb-speed) infinite;
+            overflow: hidden;
+        }
+
+        #sidebar {
+            width: 260px; background: #000; padding: 20px;
+            border-right: 1px solid #333; display: flex; flex-direction: column; gap: 12px;
+        }
+
+        .pfp-container { position: relative; width: 80px; height: 80px; align-self: center; cursor: pointer; }
+        .pfp-preview { width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--primary-glow); object-fit: cover; }
+        .pfp-hint { position: absolute; bottom: 0; font-size: 9px; background: rgba(0,0,0,0.7); width: 100%; text-align: center; }
+
+        #chat-main { flex: 1; display: flex; flex-direction: column; }
+        #messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        
+        .msg-bubble { display: flex; gap: 10px; align-items: flex-start; }
+        .msg-content { background: #1e1e1e; padding: 10px; border-radius: 12px; position: relative; max-width: 70%; }
+        .admin-tag { color: var(--primary-glow); font-size: 9px; font-weight: bold; border: 1px solid; padding: 1px 4px; border-radius: 4px; margin-left: 5px; }
+
+        #auth-screen { width: 350px; text-align: center; border: 2px solid var(--primary-glow); padding: 40px; border-radius: 20px; animation: rgb-glow 3s infinite; }
+        
+        input, select { background: #000; color: white; border: 1px solid #444; padding: 10px; border-radius: 8px; width: 100%; box-sizing: border-box; }
+        button { background: var(--primary-glow); color: black; border: none; padding: 12px; cursor: pointer; font-weight: bold; border-radius: 8px; width: 100%; transition: 0.2s; }
+        button:hover { opacity: 0.8; transform: scale(0.98); }
+        .del-btn { background: #ff4444; color: white; padding: 2px 6px; font-size: 10px; border-radius: 4px; border: none; cursor: pointer; margin-top: 5px; width: auto; }
+
+        footer { position: fixed; bottom: 10px; font-size: 10px; opacity: 0.6; color: white; text-align: center; width: 100%; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="theme-default">
+
+    <div id="auth-screen">
+        <h1 style="color: var(--primary-glow); letter-spacing: 3px;">BYTECHAT</h1>
+        <input type="email" id="email" placeholder="Email Address">
+        <input type="password" id="password" placeholder="Password">
+        <button type="button" id="login-btn">LOGIN</button>
+        <button type="button" id="google-btn" style="background: #fff; margin-top: 8px;">SIGN IN WITH GOOGLE</button>
+        <p id="signup-toggle" style="cursor:pointer; font-size: 11px; margin-top: 15px; text-decoration: underline;">No account? Register here</p>
+    </div>
+
+    <div id="main-shell">
+        <div id="sidebar">
+            <div class="pfp-container" onclick="document.getElementById('pfp-input').click()">
+                <img id="my-pfp" class="pfp-preview" src="https://via.placeholder.com/80">
+                <div class="pfp-hint">EDIT</div>
+            </div>
+            <input type="file" id="pfp-input" accept="image/*" class="hidden">
+            
+            <label style="font-size: 10px;">DISPLAY NAME</label>
+            <input type="text" id="display-name" placeholder="Username">
+            
+            <label style="font-size: 10px;">INTERFACE THEME</label>
+            <select id="theme-selector">
+                <option value="theme-default">Standard Red</option>
+                <option value="theme-emerald">Emerald Green</option>
+                <option value="theme-cyber">Cyber Blue</option>
+                <option value="theme-gold">Luxury Gold</option>
+            </select>
+            
+            <button id="save-profile-btn">SAVE CHANGES</button>
+            <hr style="width:100%; border:0; border-top:1px solid #333; margin: 10px 0;">
+            <button id="admin-panel-btn" style="background:red; color:white; display:none;">ADMIN CONTROLS</button>
+            <button id="logout-btn" style="background:#222; color:white;">LOGOUT</button>
+        </div>
+
+        <div id="chat-main">
+            <div id="messages-area"></div>
+            <div style="padding: 20px; display: flex; gap: 10px; border-top: 1px solid #333;">
+                <input type="text" id="msg-input" placeholder="Enter message...">
+                <button id="send-btn" style="width: 100px;">SEND</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>&copy; 2025 Bytestorm Corp. All Rights Reserved. ByteChat Secure Messaging.</footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBCZlueIRciUi4hHxT00y0ez1jKT70ATWw",
+            authDomain: "ekosecuruty.firebaseapp.com",
+            projectId: "ekosecuruty",
+            storageBucket: "ekosecuruty.firebasestorage.app",
+            messagingSenderId: "655599032933",
+            appId: "1:655599032933:web:c3c429704561672895c48c"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        let userProfile = {};
+
+        // --- AUTH HANDLERS ---
+        document.getElementById('login-btn').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value).catch(alert);
+        document.getElementById('google-btn').onclick = () => signInWithPopup(auth, new GoogleAuthProvider()).catch(alert);
+        document.getElementById('signup-toggle').onclick = () => createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value).catch(alert);
+        document.getElementById('logout-btn').onclick = () => signOut(auth);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-shell').style.display = 'flex';
+                
+                // Fetch Profile Settings
+                const docRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    userProfile = docSnap.data();
+                    document.getElementById('display-name').value = userProfile.name || "";
+                    document.getElementById('my-pfp').src = userProfile.pfp || "https://via.placeholder.com/80";
+                    document.body.className = userProfile.theme || "theme-default";
+                    if (userProfile.role === "admin" || user.email === "Bytestorm.corp@gmail.com") {
+                        document.getElementById('admin-panel-btn').style.display = 'block';
+                    }
+                }
+                loadMessages();
+            } else {
+                document.getElementById('auth-screen').style.display = 'block';
+                document.getElementById('main-shell').style.display = 'none';
+            }
+        });
+
+        // --- PROFILE LOGIC ---
+        document.getElementById('save-profile-btn').onclick = async () => {
+            const file = document.getElementById('pfp-input').files[0];
+            let pfpUrl = userProfile.pfp || "";
+
+            if (file) {
+                const imgRef = ref(storage, `pfps/${auth.currentUser.uid}`);
+                await uploadBytes(imgRef, file);
+                pfpUrl = await getDownloadURL(imgRef);
+            }
+
+            await setDoc(doc(db, "users", auth.currentUser.uid), {
+                name: document.getElementById('display-name').value,
+                pfp: pfpUrl,
+                theme: document.getElementById('theme-selector').value,
+                role: userProfile.role || "user"
+            }, { merge: true });
+            
+            alert("Profile Synced!");
+            location.reload(); 
+        };
+
+        // --- CHAT LOGIC ---
+        document.getElementById('send-btn').onclick = async () => {
+            const val = document.getElementById('msg-input').value;
+            if(!val) return;
+            await addDoc(collection(db, "messages"), {
+                text: val,
+                uid: auth.currentUser.uid,
+                user: userProfile.name || auth.currentUser.email.split('@')[0],
+                pfp: userProfile.pfp || "",
+                isAdmin: userProfile.role === "admin" || auth.currentUser.email === "Bytestorm.corp@gmail.com",
+                timestamp: serverTimestamp()
+            });
+            document.getElementById('msg-input').value = "";
+        };
+
+        function loadMessages() {
+            const q = query(collection(db, "messages"), orderBy("timestamp", "asc"));
+            onSnapshot(q, (snap) => {
+                const area = document.getElementById('messages-area');
+                area.innerHTML = "";
+                snap.forEach(mDoc => {
+                    const m = mDoc.data();
+                    const isAdminUser = userProfile.role === "admin" || auth.currentUser.email === "Bytestorm.corp@gmail.com";
+                    const del = isAdminUser ? `<button class="del-btn" onclick="deleteMessage('${mDoc.id}')">Delete</button>` : "";
+                    
+                    area.innerHTML += `
+                        <div class="msg-bubble">
+                            <img src="${m.pfp || 'https://via.placeholder.com/35'}" style="width:35px;height:35px;border-radius:50%;border:1px solid var(--primary-glow)">
+                            <div class="msg-content">
+                                <span style="font-size:11px; color:var(--primary-glow)">${m.user}</span>
+                                ${m.isAdmin ? '<span class="admin-tag">ADMIN</span>' : ''}
+                                <div style="margin-top:4px;">${m.text}</div>
+                                ${del}
+                            </div>
+                        </div>`;
+                });
+                area.scrollTop = area.scrollHeight;
+            });
+        }
+
+        window.deleteMessage = (id) => deleteDoc(doc(db, "messages", id));
+        document.getElementById('theme-selector').onchange = (e) => document.body.className = e.target.value;
+    </script>
+</body>
+</html>
