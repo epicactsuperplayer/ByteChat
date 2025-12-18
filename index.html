@@ -35,14 +35,19 @@
 
         <!-- FAVICON: A stable, secure, inline SVG favicon showing the letter 'B'. -->
     <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='sans-serif'>B</text></svg>">
 
             <!-- Reinstating the user's required cookie management script. -->
     <script type="text/javascript" data-cmp-ab="1" src="https://cdn.consentmanager.net/delivery/autoblocking/509cf33812608.js" data-cmp-host="d.delivery.consentmanager.net" data-cmp-cdn="cdn.consentmanager.net" data-cmp-codesrc="16"></script>
 
-        <script defer src="/_vercel/insights/script.js"></script>
+        <script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 
-        <script defer src="/_vercel/speed-insights/script.js"></script>
+<script>
+  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
 
         /* Desktop Sidebar */
         #sidebar {
@@ -455,5 +460,6 @@
     </script>
 </body>
 </html>
+
 
 
