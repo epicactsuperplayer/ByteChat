@@ -10,86 +10,81 @@
         body.theme-cyber { --rgb: #00d4ff; }
         body.theme-gold { --rgb: #ffcc00; }
 
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
         
-        /* Layout */
-        #auth-screen { width: 90%; max-width: 350px; text-align: center; border: 2px solid var(--rgb); padding: 30px; border-radius: 15px; box-shadow: 0 0 15px var(--rgb); }
+        /* Auth Screen */
+        #auth-screen { width: 90%; max-width: 350px; text-align: center; border: 2px solid var(--rgb); padding: 30px; border-radius: 15px; background: var(--card); box-shadow: 0 0 20px var(--rgb); }
+        
+        /* Main Layout */
         #main-shell { width: 100vw; height: 100vh; display: none; flex-direction: column; }
+        @media (min-width: 768px) { #main-shell { width: 95vw; height: 85vh; border: 2px solid var(--rgb); border-radius: 20px; flex-direction: row; } }
+
+        /* Sidebar */
+        #sidebar { width: 100%; background: #000; padding: 15px; border-bottom: 1px solid #333; display: flex; align-items: center; gap: 10px; }
+        @media (min-width: 768px) { #sidebar { width: 260px; height: 100%; border-bottom: none; border-right: 1px solid #333; flex-direction: column; } }
+
+        #my-pfp { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--rgb); cursor: pointer; object-fit: cover; }
+
+        /* Chat Area */
+        #chat-main { flex: 1; display: flex; flex-direction: column; }
+        #messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .msg { display: flex; gap: 10px; align-items: flex-start; }
+        .msg-pfp { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 1px solid var(--rgb); }
+        .msg-bubble { background: #1a1a1a; padding: 10px; border-radius: 10px; max-width: 75%; border-left: 3px solid var(--rgb); }
+        .user-name { font-size: 12px; color: var(--rgb); font-weight: bold; display: block; margin-bottom: 4px; }
+        .admin-tag { font-size: 9px; border: 1px solid var(--rgb); padding: 1px 4px; border-radius: 4px; margin-left: 5px; }
+
+        /* Profile Modal */
+        #profile-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #000; border: 2px solid var(--rgb); padding: 20px; border-radius: 15px; text-align: center; z-index: 100; min-width: 200px; box-shadow: 0 0 30px #000; }
         
-        @media (min-width: 768px) {
-            #main-shell { width: 95vw; height: 85vh; border: 2px solid var(--rgb); border-radius: 20px; flex-direction: row; }
-        }
-
-        /* Sidebar & Mobile Menu */
-        #sidebar { width: 100%; height: auto; background: #000; padding: 15px; border-bottom: 1px solid #333; display: flex; flex-direction: row; align-items: center; gap: 10px; overflow-x: auto; }
-        @media (min-width: 768px) {
-            #sidebar { width: 260px; height: 100%; border-bottom: none; border-right: 1px solid #333; flex-direction: column; overflow-x: hidden; }
-        }
-
-        .pfp-wrap { position: relative; width: 50px; height: 50px; flex-shrink: 0; cursor: pointer; }
-        @media (min-width: 768px) { .pfp-wrap { width: 100px; height: 100px; } }
-        #my-pfp { width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--rgb); object-fit: cover; }
-
-        /* Chat */
-        #chat-main { flex: 1; display: flex; flex-direction: column; background: #0e0e0e; }
-        #messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .msg { display: flex; gap: 10px; }
-        .msg-body { background: #1a1a1a; padding: 10px; border-radius: 10px; max-width: 80%; border-left: 3px solid var(--rgb); }
-        .admin-tag { color: var(--rgb); font-weight: bold; font-size: 10px; border: 1px solid; padding: 2px 4px; border-radius: 4px; margin-left: 5px; }
-
-        /* Inputs */
-        input, select { background: #000; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px; width: 100%; box-sizing: border-box; }
-        button { background: var(--rgb); color: #000; border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%; margin-top: 5px; }
-        .del-btn { background: #ff4444; color: white; padding: 2px 5px; font-size: 10px; width: auto; }
-        
-        footer { position: fixed; bottom: 5px; width: 100%; text-align: center; font-size: 9px; opacity: 0.5; pointer-events: none; }
+        input, select { background: #000; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px; width: 100%; margin-bottom: 10px; }
+        button { background: var(--rgb); color: #000; border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%; }
+        .del-btn { background: #ff4444; color: #fff; width: auto; font-size: 10px; padding: 2px 6px; margin-top: 5px; }
     </style>
 </head>
 <body class="theme-default">
 
     <div id="auth-screen">
-        <h2 id="auth-title" style="color: var(--rgb)">BYTECHAT LOGIN</h2>
+        <h2 id="auth-title" style="color: var(--rgb); letter-spacing: 2px;">BYTECHAT</h2>
         <input type="email" id="email" placeholder="Email">
         <input type="password" id="password" placeholder="Password">
         <button id="auth-btn">LOGIN</button>
-        <button id="google-btn" style="background:#fff">GOOGLE SIGN-IN</button>
-        <p id="toggle-auth" style="font-size: 12px; margin-top: 15px; cursor: pointer;">New user? <u>Register</u></p>
+        <button id="google-btn" style="background:#fff; margin-top: 8px;">SIGN IN WITH GOOGLE</button>
+        <p id="toggle-auth" style="font-size: 11px; margin-top: 15px; cursor: pointer;">New? <u>Create Account</u></p>
     </div>
 
     <div id="main-shell">
         <div id="sidebar">
-            <div class="pfp-wrap" onclick="document.getElementById('pfp-input').click()">
-                <img id="my-pfp" src="https://via.placeholder.com/100">
-                <input type="file" id="pfp-input" style="display:none" accept="image/*">
-            </div>
-            <div style="flex:1; display:flex; flex-direction:column; gap:5px;">
-                <input type="text" id="display-name" placeholder="Name">
-                <select id="theme-sel">
-                    <option value="theme-default">Red RGB</option>
-                    <option value="theme-emerald">Emerald</option>
-                    <option value="theme-cyber">Cyber</option>
-                    <option value="theme-gold">Gold</option>
-                </select>
-            </div>
-            <button id="save-btn" style="width:auto">SAVE</button>
-            <button id="admin-panel-btn" style="background:red; color:white; display:none;">ADMIN</button>
-            <button id="logout-btn" style="background:#333; color:white; width:auto">X</button>
+            <img id="my-pfp" src="https://via.placeholder.com/60" onclick="document.getElementById('pfp-input').click()">
+            <input type="file" id="pfp-input" style="display:none" accept="image/*">
+            <input type="text" id="display-name-input" placeholder="Set Display Name">
+            <select id="theme-sel">
+                <option value="theme-default">Red Mode</option>
+                <option value="theme-emerald">Emerald</option>
+                <option value="theme-cyber">Cyber</option>
+            </select>
+            <button id="save-profile">SAVE PROFILE</button>
+            <button id="logout-btn" style="background:#333; color:white; margin-top: auto;">LOGOUT</button>
         </div>
-
         <div id="chat-main">
             <div id="messages"></div>
-            <div style="padding: 15px; display: flex; gap: 10px; background: #000;">
-                <input type="text" id="msg-input" placeholder="Message...">
-                <button id="send-btn" style="width: 70px;">></button>
+            <div style="padding: 15px; display: flex; gap: 10px; background: #050505;">
+                <input type="text" id="msg-input" placeholder="Type a message..." style="margin:0">
+                <button id="send-btn" style="width: 80px; margin:0">SEND</button>
             </div>
         </div>
     </div>
 
-    <footer>&copy; 2025 Bytestorm Corp. All Rights Reserved.</footer>
+    <div id="profile-modal">
+        <img id="modal-pfp" src="" style="width:80px; height:80px; border-radius:50%; border:2px solid var(--rgb)">
+        <h3 id="modal-name">User</h3>
+        <p id="modal-role" style="font-size:12px; opacity:0.7"></p>
+        <button onclick="document.getElementById('profile-modal').style.display='none'">CLOSE</button>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
@@ -107,24 +102,21 @@
         const db = getFirestore(app);
         const storage = getStorage(app);
 
-        let isSignup = false;
-        let userData = {};
+        let isSignupMode = false;
+        let currentUserData = { name: "Guest", pfp: "", role: "user" };
 
-        // Toggle Auth
+        // --- AUTH LOGIC ---
         document.getElementById('toggle-auth').onclick = () => {
-            isSignup = !isSignup;
-            document.getElementById('auth-title').innerText = isSignup ? "BYTECHAT REGISTER" : "BYTECHAT LOGIN";
-            document.getElementById('auth-btn').innerText = isSignup ? "CREATE ACCOUNT" : "LOGIN";
-            document.getElementById('toggle-auth').innerHTML = isSignup ? "Back to <u>Login</u>" : "New user? <u>Register</u>";
+            isSignupMode = !isSignupMode;
+            document.getElementById('auth-title').innerText = isSignupMode ? "REGISTER" : "BYTECHAT";
+            document.getElementById('auth-btn').innerText = isSignupMode ? "SIGN UP" : "LOGIN";
         };
 
-        // Login / Signup Logic
         document.getElementById('auth-btn').onclick = async () => {
             const e = document.getElementById('email').value.trim();
-            const p = document.getElementById('password').value.trim();
-            if(!e || !p) return alert("Fill fields!");
+            const p = document.getElementById('password').value;
             try {
-                if(isSignup) await createUserWithEmailAndPassword(auth, e, p);
+                if(isSignupMode) await createUserWithEmailAndPassword(auth, e, p);
                 else await signInWithEmailAndPassword(auth, e, p);
             } catch(err) { alert(err.message); }
         };
@@ -132,84 +124,99 @@
         document.getElementById('google-btn').onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
         document.getElementById('logout-btn').onclick = () => signOut(auth);
 
-        // Auth Listener
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.getElementById('auth-screen').style.display = 'none';
                 document.getElementById('main-shell').style.display = 'flex';
                 
+                // Fetch Profile
                 const snap = await getDoc(doc(db, "users", user.uid));
                 if (snap.exists()) {
-                    userData = snap.data();
-                    document.getElementById('display-name').value = userData.name || "";
-                    document.getElementById('my-pfp').src = userData.pfp || "https://via.placeholder.com/100";
-                    document.body.className = userData.theme || "theme-default";
-                    if(userData.role === 'admin' || user.email === 'Bytestorm.corp@gmail.com') {
-                        document.getElementById('admin-panel-btn').style.display = 'block';
-                    }
+                    currentUserData = snap.data();
+                    document.getElementById('display-name-input').value = currentUserData.name || "";
+                    document.getElementById('my-pfp').src = currentUserData.pfp || "https://via.placeholder.com/60";
+                    document.body.className = currentUserData.theme || "theme-default";
                 }
-                loadMsgs();
+                loadMessages();
             } else {
                 document.getElementById('auth-screen').style.display = 'block';
                 document.getElementById('main-shell').style.display = 'none';
             }
         });
 
-        // Profile Logic
-        document.getElementById('save-btn').onclick = async () => {
+        // --- PROFILE SAVE ---
+        document.getElementById('save-profile').onclick = async () => {
+            const user = auth.currentUser;
+            const newName = document.getElementById('display-name-input').value;
             const file = document.getElementById('pfp-input').files[0];
-            let url = userData.pfp || "";
-            if(file) {
-                const sRef = ref(storage, 'pfps/' + auth.currentUser.uid);
-                await uploadBytes(sRef, file);
-                url = await getDownloadURL(sRef);
+            let photoUrl = currentUserData.pfp || "";
+
+            if (file) {
+                const imgRef = ref(storage, `pfps/${user.uid}`);
+                await uploadBytes(imgRef, file);
+                photoUrl = await getDownloadURL(imgRef);
             }
-            await setDoc(doc(db, "users", auth.currentUser.uid), {
-                name: document.getElementById('display-name').value,
-                pfp: url,
+
+            const updatedData = {
+                name: newName || user.email.split('@')[0],
+                pfp: photoUrl,
                 theme: document.getElementById('theme-sel').value,
-                role: userData.role || 'user'
-            }, {merge:true});
-            alert("Saved!");
-            location.reload();
+                role: user.email === 'Bytestorm.corp@gmail.com' ? 'admin' : (currentUserData.role || 'user')
+            };
+
+            await setDoc(doc(db, "users", user.uid), updatedData, { merge: true });
+            alert("Profile Updated!");
+            location.reload(); // Refresh to apply changes
         };
 
-        // Chat Logic
-        window.delMsg = (id) => deleteDoc(doc(db, "messages", id));
-
-        function loadMsgs() {
-            onSnapshot(query(collection(db, "messages"), orderBy("timestamp", "asc")), (snap) => {
-                const box = document.getElementById('messages');
-                box.innerHTML = "";
-                snap.forEach(d => {
-                    const m = d.data();
-                    const amAdmin = userData.role === 'admin' || auth.currentUser.email === 'Bytestorm.corp@gmail.com';
-                    box.innerHTML += `
-                        <div class="msg">
-                            <img src="${m.pfp || 'https://via.placeholder.com/30'}" style="width:30px;height:30px;border-radius:50%">
-                            <div class="msg-body">
-                                <small style="color:var(--rgb)">${m.user}</small> ${m.isAdmin ? '<span class="admin-tag">ADMIN</span>' : ''}<br>
-                                ${m.text}
-                                ${amAdmin ? `<br><button class="del-btn" onclick="delMsg('${d.id}')">X</button>` : ''}
-                            </div>
-                        </div>`;
-                });
-                box.scrollTop = box.scrollHeight;
-            });
-        }
-
+        // --- CHAT LOGIC ---
         document.getElementById('send-btn').onclick = async () => {
-            const val = document.getElementById('msg-input').value;
-            if(!val) return;
+            const text = document.getElementById('msg-input').value;
+            if(!text) return;
+
             await addDoc(collection(db, "messages"), {
-                text: val,
-                user: userData.name || auth.currentUser.email.split('@')[0],
-                pfp: userData.pfp || "",
-                isAdmin: userData.role === 'admin' || auth.currentUser.email === 'Bytestorm.corp@gmail.com',
+                text: text,
+                uid: auth.currentUser.uid,
+                userName: currentUserData.name || auth.currentUser.email.split('@')[0],
+                userPfp: currentUserData.pfp || "",
+                role: (auth.currentUser.email === 'Bytestorm.corp@gmail.com') ? 'admin' : (currentUserData.role || 'user'),
                 timestamp: serverTimestamp()
             });
             document.getElementById('msg-input').value = "";
         };
+
+        function loadMessages() {
+            onSnapshot(query(collection(db, "messages"), orderBy("timestamp", "asc")), (snap) => {
+                const area = document.getElementById('messages');
+                area.innerHTML = "";
+                snap.forEach(docSnap => {
+                    const m = docSnap.data();
+                    const isAdmin = m.role === 'admin';
+                    const canDelete = (auth.currentUser.email === 'Bytestorm.corp@gmail.com');
+                    
+                    area.innerHTML += `
+                        <div class="msg">
+                            <img class="msg-pfp" src="${m.userPfp || 'https://via.placeholder.com/40'}" 
+                                 onclick="showUserCard('${m.userName}', '${m.userPfp}', '${m.role}')">
+                            <div class="msg-bubble">
+                                <span class="user-name">${m.userName} ${isAdmin ? '<span class="admin-tag">ADMIN</span>' : ''}</span>
+                                <div>${m.text}</div>
+                                ${canDelete ? `<button class="del-btn" onclick="deleteMessage('${docSnap.id}')">Delete</button>` : ''}
+                            </div>
+                        </div>`;
+                });
+                area.scrollTop = area.scrollHeight;
+            });
+        }
+
+        window.showUserCard = (name, pfp, role) => {
+            document.getElementById('modal-name').innerText = name;
+            document.getElementById('modal-pfp').src = pfp || 'https://via.placeholder.com/80';
+            document.getElementById('modal-role').innerText = "Rank: " + role.toUpperCase();
+            document.getElementById('profile-modal').style.display = 'block';
+        };
+
+        window.deleteMessage = (id) => deleteDoc(doc(db, "messages", id));
     </script>
 </body>
 </html>
