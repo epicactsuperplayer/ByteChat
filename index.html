@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ByteChat | Master Command</title>
+    <title>ByteChat | Secured</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -33,15 +33,51 @@
             text-transform: uppercase;
             font-size: 28px;
             text-align: center;
-            margin-bottom: 30px;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background: var(--bg-deep); color: var(--text-main); font-family: 'Inter', sans-serif; }
 
-        #app-shell { display: flex; width: 100vw; height: 100vh; }
+        /* --- AUTH SCREEN (LOGIN PAGE) --- */
+        #auth-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-deep);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
 
-        /* --- SIDEBAR (PC) --- */
+        .login-card {
+            text-align: center;
+            padding: 40px;
+            background: var(--bg-surface);
+            border: 1px solid #1a1a1a;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .btn-login {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: 900;
+            cursor: pointer;
+            margin-top: 30px;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        /* --- APP SHELL --- */
+        #app-shell { display: none; width: 100vw; height: 100vh; }
+        body.logged-in #app-shell { display: flex; }
+        body.logged-in #auth-screen { display: none; }
+
         #sidebar {
             width: var(--sidebar-width);
             background: var(--bg-surface);
@@ -52,22 +88,19 @@
             flex-shrink: 0;
         }
 
-        /* --- VIEWPORT --- */
         #viewport { flex-grow: 1; display: flex; flex-direction: column; position: relative; min-width: 0; }
 
-        /* --- MOBILE RECOVERY (STRICT) --- */
+        /* --- MOBILE STYLES --- */
         @media (max-width: 850px) {
             #sidebar { display: none !important; }
             .mobile-nav { display: flex !important; }
             #messages-container { padding: 15px 15px 180px 15px !important; }
-            .footer-credits { font-size: 8px !important; bottom: 95px !important; opacity: 0.4; }
+            .footer-credits { font-size: 8px !important; bottom: 95px !important; opacity: 0.5; }
         }
 
-        /* --- ADMIN GATING --- */
         .admin-only { display: none !important; }
         .is-master .admin-only { display: flex !important; }
 
-        /* --- CHAT UI --- */
         #messages-container {
             flex: 1;
             overflow-y: auto;
@@ -75,26 +108,15 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            z-index: 2;
         }
 
-        .msg-row { display: flex; gap: 12px; max-width: 90%; align-items: flex-start; }
+        .msg-row { display: flex; gap: 12px; max-width: 90%; align-items: flex-start; margin-bottom: 5px; }
         .msg-row.me { align-self: flex-end; flex-direction: row-reverse; }
-
         .chat-pfp { width: 38px; height: 38px; border-radius: 50%; border: 1px solid #222; object-fit: cover; }
-
-        .bubble {
-            background: #111;
-            padding: 12px 16px;
-            border-radius: 18px;
-            border: 1px solid #222;
-            word-wrap: break-word;
-        }
-
+        .bubble { background: #111; padding: 12px 16px; border-radius: 18px; border: 1px solid #222; }
         .admin-glow { border-color: var(--admin-neon); box-shadow: 0 0 10px rgba(0, 212, 255, 0.2); }
         .sender-tag { font-size: 10px; font-weight: 800; color: var(--admin-neon); margin-bottom: 3px; }
 
-        /* --- BRANDING FOOTER --- */
         .footer-credits {
             position: absolute;
             bottom: 25px;
@@ -109,27 +131,9 @@
             z-index: 1;
         }
 
-        /* --- INPUT --- */
-        .input-bar {
-            padding: 15px 20px;
-            background: #000;
-            border-top: 1px solid #1a1a1a;
-            display: flex;
-            gap: 10px;
-            z-index: 5;
-        }
+        .input-bar { padding: 15px 20px; background: #000; border-top: 1px solid #1a1a1a; display: flex; gap: 10px; }
+        .main-input { flex: 1; background: #121212; border: 1px solid #222; color: #fff; padding: 12px 20px; border-radius: 25px; }
 
-        .main-input {
-            flex: 1;
-            background: #121212;
-            border: 1px solid #222;
-            color: #fff;
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-size: 15px;
-        }
-
-        /* --- NAV --- */
         .mobile-nav {
             display: none;
             position: fixed;
@@ -153,34 +157,40 @@
 </head>
 <body>
 
+    <div id="auth-screen">
+        <div class="login-card">
+            <div class="rgb-logo">BYTECHAT</div>
+            <p style="color:#555; margin-top:10px; font-size:12px;">SECURE COMMUNICATION TERMINAL</p>
+            <button class="btn-login" onclick="handleLogin()">ACCESS MAINFRAME</button>
+            <div style="margin-top:30px; font-size:9px; color:#333;">
+                © 2025 Bytechat. Powered by Rodss Architecture.
+            </div>
+        </div>
+    </div>
+
     <div id="app-shell">
         <aside id="sidebar">
-            <div class="rgb-logo">BYTECHAT</div>
-            
+            <div class="rgb-logo" style="font-size:22px; margin-bottom:30px;">BYTECHAT</div>
             <div style="background:#0a0a0a; padding:20px; border-radius:15px; text-align:center; border:1px solid #1a1a1a; margin-bottom:20px;">
                 <img id="side-pfp" src="" style="width:60px; height:60px; border-radius:50%; border:1px solid var(--admin-neon);">
                 <div id="side-name" style="margin-top:10px; font-weight:bold;">Operator</div>
             </div>
-
             <nav style="flex:1">
                 <div onclick="switchTab('chat')" style="padding:15px; cursor:pointer;"><i class="fa fa-terminal"></i> Mainframe</div>
                 <div onclick="switchTab('profile')" style="padding:15px; cursor:pointer;"><i class="fa fa-user"></i> Identity</div>
                 <div onclick="switchTab('admin')" class="admin-only" style="padding:15px; cursor:pointer; color:var(--admin-neon);"><i class="fa fa-shield"></i> Admin</div>
             </nav>
-
             <button onclick="handleLogout()" style="padding:15px; background:none; border:1px solid #222; color:var(--danger); border-radius:10px; cursor:pointer;">DISCONNECT</button>
         </aside>
 
         <main id="viewport">
             <section id="view-chat" class="screen active-screen">
                 <div id="messages-container"></div>
-                
                 <div class="footer-credits">
                     © 2025 Bytechat. Powered by Rodss Architecture.<br>
                     Made by Bytestorm<br>
                     Design optimized for mobile and command efficiency.
                 </div>
-
                 <div class="input-bar">
                     <input type="text" id="chat-msg" class="main-input" placeholder="Secure transmission...">
                     <button onclick="sendMessage()" style="background:var(--admin-neon); border:none; width:45px; height:45px; border-radius:50%; cursor:pointer;"><i class="fa fa-paper-plane"></i></button>
@@ -193,7 +203,6 @@
                     <input type="text" id="upd-name" class="main-input" style="width:100%; margin-bottom:10px;" placeholder="Name">
                     <input type="text" id="upd-pfp" class="main-input" style="width:100%; margin-bottom:20px;" placeholder="PFP URL">
                     <button onclick="updateProfile()" style="width:100%; padding:15px; background:white; color:black; border:none; border-radius:10px; font-weight:bold;">SAVE CHANGES</button>
-                    <button onclick="handleLogout()" class="mobile-only" style="width:100%; margin-top:20px; padding:10px; color:var(--danger); background:none; border:1px solid var(--danger); border-radius:10px;">LOGOUT</button>
                 </div>
             </section>
 
@@ -241,51 +250,48 @@
             if(document.getElementById('m-' + target)) document.getElementById('m-' + target).classList.add('active');
         };
 
-        // AUTH LOGIC
+        // LOGIN/LOGOUT LOGIC
+        window.handleLogin = () => {
+            signInWithPopup(auth, new GoogleAuthProvider()).catch(err => console.error(err));
+        };
+
+        window.handleLogout = () => {
+            if(confirm("Disconnect from ByteChat?")) {
+                signOut(auth).then(() => {
+                    document.body.classList.remove('logged-in');
+                    window.location.reload(); 
+                });
+            }
+        };
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                document.body.classList.add('logged-in');
                 const isMaster = user.email.toLowerCase() === MASTER_EMAIL.toLowerCase();
                 if(isMaster) document.body.classList.add('is-master');
 
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 localUser = userDoc.exists() ? userDoc.data() : { name: user.displayName, pfp: user.photoURL };
-                
                 if(!userDoc.exists()) await setDoc(doc(db, "users", user.uid), localUser);
 
                 document.getElementById('side-pfp').src = localUser.pfp;
                 document.getElementById('side-name').innerText = localUser.name;
                 document.getElementById('upd-name').value = localUser.name;
                 document.getElementById('upd-pfp').value = localUser.pfp;
-
                 loadMessages();
             } else {
-                signInWithPopup(auth, new GoogleAuthProvider());
+                document.body.classList.remove('logged-in');
             }
         });
-
-        // LOGOUT FUNCTION (FIXED)
-        window.handleLogout = () => {
-            if(confirm("Disconnect from ByteChat?")) {
-                signOut(auth).then(() => {
-                    location.reload();
-                }).catch((error) => {
-                    console.error("Logout Error:", error);
-                });
-            }
-        };
 
         // CHAT LOGIC
         window.sendMessage = async () => {
             const el = document.getElementById('chat-msg');
             const val = el.value.trim();
             if(!val) return;
-
             await addDoc(collection(db, "messages"), {
-                text: val,
-                user: localUser.name,
-                pfp: localUser.pfp,
-                uid: auth.currentUser.uid,
-                isA: auth.currentUser.email.toLowerCase() === MASTER_EMAIL,
+                text: val, user: localUser.name, pfp: localUser.pfp,
+                uid: auth.currentUser.uid, isA: auth.currentUser.email.toLowerCase() === MASTER_EMAIL,
                 time: serverTimestamp()
             });
             el.value = "";
@@ -298,15 +304,12 @@
                 snap.forEach(d => {
                     const m = d.data();
                     const isMe = m.uid === auth.currentUser.uid;
-                    const amMaster = auth.currentUser.email.toLowerCase() === MASTER_EMAIL;
-
                     box.innerHTML += `
                         <div class="msg-row ${isMe ? 'me' : ''}">
                             <img src="${m.pfp}" class="chat-pfp">
                             <div class="bubble ${m.isA ? 'admin-glow' : ''}">
                                 <div class="sender-tag">${m.isA ? '[ADMIN] ' : ''}${m.user}</div>
                                 <div>${m.text}</div>
-                                ${amMaster ? `<div style="color:red; font-size:9px; cursor:pointer; margin-top:5px;" onclick="deleteMsg('${d.id}')">DELETE</div>` : ''}
                             </div>
                         </div>
                     `;
@@ -315,21 +318,19 @@
             });
         }
 
-        window.deleteMsg = async (id) => { if(confirm("Delete?")) await deleteDoc(doc(db, "messages", id)); };
-        
-        window.wipeMessages = async () => {
-            if(confirm("WIPE ALL DATA?")) {
-                const q = await getDocs(collection(db, "messages"));
-                q.forEach(async (d) => await deleteDoc(doc(db, "messages", d.id)));
-            }
-        };
-
         window.updateProfile = async () => {
             const name = document.getElementById('upd-name').value;
             const pfp = document.getElementById('upd-pfp').value;
             await setDoc(doc(db, "users", auth.currentUser.uid), { name, pfp }, { merge: true });
-            alert("Identity Updated.");
+            alert("Updated.");
             location.reload();
+        };
+
+        window.wipeMessages = async () => {
+            if(confirm("PURGE ALL?")) {
+                const q = await getDocs(collection(db, "messages"));
+                q.forEach(async (d) => await deleteDoc(doc(db, "messages", d.id)));
+            }
         };
     </script>
 </body>
