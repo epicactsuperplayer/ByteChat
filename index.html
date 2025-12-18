@@ -5,61 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ByteChat Pro | Bytestorm Corp</title>
     <style>
-        :root { --rgb-speed: 3s; --primary-glow: #ff0000; --bg-color: #0a0a0a; --card-bg: #121212; --text-main: #ffffff; }
-        body.theme-emerald { --primary-glow: #00ff88; }
-        body.theme-cyber { --primary-glow: #00d4ff; }
-        body.theme-gold { --primary-glow: #ffcc00; }
-        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        @keyframes rgb-glow { 0% { border-color: var(--primary-glow); box-shadow: 0 0 15px var(--primary-glow); } 50% { border-color: #ffffff; box-shadow: 0 0 5px #fff; } 100% { border-color: var(--primary-glow); box-shadow: 0 0 15px var(--primary-glow); } }
-        #auth-screen { width: 350px; text-align: center; border: 2px solid var(--primary-glow); padding: 40px; border-radius: 20px; animation: rgb-glow 3s infinite; background: var(--card-bg); }
-        #main-shell { width: 95%; max-width: 1000px; height: 85vh; background: var(--card-bg); border: 3px solid var(--primary-glow); border-radius: 20px; display: none; flex-direction: row; animation: rgb-glow var(--rgb-speed) infinite; overflow: hidden; }
-        #sidebar { width: 260px; background: #000; padding: 20px; border-right: 1px solid #333; display: flex; flex-direction: column; gap: 12px; }
-        .pfp-preview { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--primary-glow); object-fit: cover; align-self: center; cursor: pointer; }
-        #chat-main { flex: 1; display: flex; flex-direction: column; }
-        #messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .msg-bubble { display: flex; gap: 10px; align-items: flex-start; }
-        .msg-content { background: #1e1e1e; padding: 10px; border-radius: 12px; max-width: 70%; border-left: 3px solid var(--primary-glow); }
-        input, select { background: #000; color: white; border: 1px solid #444; padding: 10px; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 10px; }
-        button { background: var(--primary-glow); color: black; border: none; padding: 12px; cursor: pointer; font-weight: bold; border-radius: 8px; width: 100%; margin-bottom: 5px; }
-        footer { position: fixed; bottom: 10px; font-size: 10px; opacity: 0.6; text-align: center; width: 100%; pointer-events: none; }
-        .admin-tag { color: var(--primary-glow); font-size: 9px; font-weight: bold; border: 1px solid; padding: 1px 4px; border-radius: 4px; margin-left: 5px; }
+        :root { --rgb: #ff0000; --bg: #0a0a0a; --card: #121212; --text: #fff; }
+        body.theme-emerald { --rgb: #00ff88; }
+        body.theme-cyber { --rgb: #00d4ff; }
+        body.theme-gold { --rgb: #ffcc00; }
+
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        
+        /* Layout */
+        #auth-screen { width: 90%; max-width: 350px; text-align: center; border: 2px solid var(--rgb); padding: 30px; border-radius: 15px; box-shadow: 0 0 15px var(--rgb); }
+        #main-shell { width: 100vw; height: 100vh; display: none; flex-direction: column; }
+        
+        @media (min-width: 768px) {
+            #main-shell { width: 95vw; height: 85vh; border: 2px solid var(--rgb); border-radius: 20px; flex-direction: row; }
+        }
+
+        /* Sidebar & Mobile Menu */
+        #sidebar { width: 100%; height: auto; background: #000; padding: 15px; border-bottom: 1px solid #333; display: flex; flex-direction: row; align-items: center; gap: 10px; overflow-x: auto; }
+        @media (min-width: 768px) {
+            #sidebar { width: 260px; height: 100%; border-bottom: none; border-right: 1px solid #333; flex-direction: column; overflow-x: hidden; }
+        }
+
+        .pfp-wrap { position: relative; width: 50px; height: 50px; flex-shrink: 0; cursor: pointer; }
+        @media (min-width: 768px) { .pfp-wrap { width: 100px; height: 100px; } }
+        #my-pfp { width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--rgb); object-fit: cover; }
+
+        /* Chat */
+        #chat-main { flex: 1; display: flex; flex-direction: column; background: #0e0e0e; }
+        #messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .msg { display: flex; gap: 10px; }
+        .msg-body { background: #1a1a1a; padding: 10px; border-radius: 10px; max-width: 80%; border-left: 3px solid var(--rgb); }
+        .admin-tag { color: var(--rgb); font-weight: bold; font-size: 10px; border: 1px solid; padding: 2px 4px; border-radius: 4px; margin-left: 5px; }
+
+        /* Inputs */
+        input, select { background: #000; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px; width: 100%; box-sizing: border-box; }
+        button { background: var(--rgb); color: #000; border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%; margin-top: 5px; }
+        .del-btn { background: #ff4444; color: white; padding: 2px 5px; font-size: 10px; width: auto; }
+        
+        footer { position: fixed; bottom: 5px; width: 100%; text-align: center; font-size: 9px; opacity: 0.5; pointer-events: none; }
     </style>
 </head>
 <body class="theme-default">
 
     <div id="auth-screen">
-        <h1 id="form-title" style="color: var(--primary-glow)">BYTECHAT LOGIN</h1>
-        <input type="email" id="email" placeholder="Email Address">
+        <h2 id="auth-title" style="color: var(--rgb)">BYTECHAT LOGIN</h2>
+        <input type="email" id="email" placeholder="Email">
         <input type="password" id="password" placeholder="Password">
-        
-        <button type="button" id="main-auth-btn">LOGIN</button>
-        <button type="button" id="google-btn" style="background: #fff;">GOOGLE SIGN-IN</button>
-        
-        <p id="toggle-text" style="cursor:pointer; font-size: 11px; margin-top: 15px;">
-            Need an account? <span style="text-decoration: underline; color: var(--primary-glow)">Register here</span>
-        </p>
+        <button id="auth-btn">LOGIN</button>
+        <button id="google-btn" style="background:#fff">GOOGLE SIGN-IN</button>
+        <p id="toggle-auth" style="font-size: 12px; margin-top: 15px; cursor: pointer;">New user? <u>Register</u></p>
     </div>
 
     <div id="main-shell">
         <div id="sidebar">
-            <img id="my-pfp" class="pfp-preview" src="https://via.placeholder.com/80" onclick="document.getElementById('pfp-input').click()">
-            <input type="file" id="pfp-input" style="display:none" accept="image/*">
-            <input type="text" id="display-name" placeholder="Display Name">
-            <select id="theme-selector">
-                <option value="theme-default">Red RGB</option>
-                <option value="theme-emerald">Emerald</option>
-                <option value="theme-cyber">Cyber</option>
-                <option value="theme-gold">Gold</option>
-            </select>
-            <button id="save-profile">SAVE PROFILE</button>
-            <button id="admin-btn" style="background:red; display:none;">ADMIN PANEL</button>
-            <button id="logout-btn" style="background:#333; color:white;">LOGOUT</button>
+            <div class="pfp-wrap" onclick="document.getElementById('pfp-input').click()">
+                <img id="my-pfp" src="https://via.placeholder.com/100">
+                <input type="file" id="pfp-input" style="display:none" accept="image/*">
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column; gap:5px;">
+                <input type="text" id="display-name" placeholder="Name">
+                <select id="theme-sel">
+                    <option value="theme-default">Red RGB</option>
+                    <option value="theme-emerald">Emerald</option>
+                    <option value="theme-cyber">Cyber</option>
+                    <option value="theme-gold">Gold</option>
+                </select>
+            </div>
+            <button id="save-btn" style="width:auto">SAVE</button>
+            <button id="admin-panel-btn" style="background:red; color:white; display:none;">ADMIN</button>
+            <button id="logout-btn" style="background:#333; color:white; width:auto">X</button>
         </div>
+
         <div id="chat-main">
-            <div id="messages-area"></div>
-            <div style="padding: 20px; display: flex; gap: 10px;">
-                <input type="text" id="msg-input" placeholder="Message..." style="margin:0">
-                <button id="send-btn" style="width: 80px; margin:0">SEND</button>
+            <div id="messages"></div>
+            <div style="padding: 15px; display: flex; gap: 10px; background: #000;">
+                <input type="text" id="msg-input" placeholder="Message...">
+                <button id="send-btn" style="width: 70px;">></button>
             </div>
         </div>
     </div>
@@ -86,37 +107,32 @@
         const db = getFirestore(app);
         const storage = getStorage(app);
 
-        let isRegisterMode = false;
+        let isSignup = false;
         let userData = {};
 
-        // TOGGLE LOGIN/SIGNUP
-        document.getElementById('toggle-text').onclick = () => {
-            isRegisterMode = !isRegisterMode;
-            document.getElementById('form-title').innerText = isRegisterMode ? "BYTECHAT REGISTER" : "BYTECHAT LOGIN";
-            document.getElementById('main-auth-btn').innerText = isRegisterMode ? "CREATE ACCOUNT" : "LOGIN";
-            document.getElementById('toggle-text').innerHTML = isRegisterMode ? "Already have an account? <u>Login</u>" : "Need an account? <u>Register here</u>";
+        // Toggle Auth
+        document.getElementById('toggle-auth').onclick = () => {
+            isSignup = !isSignup;
+            document.getElementById('auth-title').innerText = isSignup ? "BYTECHAT REGISTER" : "BYTECHAT LOGIN";
+            document.getElementById('auth-btn').innerText = isSignup ? "CREATE ACCOUNT" : "LOGIN";
+            document.getElementById('toggle-auth').innerHTML = isSignup ? "Back to <u>Login</u>" : "New user? <u>Register</u>";
         };
 
-        // AUTH ACTIONS
-        document.getElementById('main-auth-btn').onclick = async () => {
-            const email = document.getElementById('email').value.trim();
-            const pass = document.getElementById('password').value.trim();
-            if(!email || !pass) return alert("Fill in all fields!");
-
+        // Login / Signup Logic
+        document.getElementById('auth-btn').onclick = async () => {
+            const e = document.getElementById('email').value.trim();
+            const p = document.getElementById('password').value.trim();
+            if(!e || !p) return alert("Fill fields!");
             try {
-                if(isRegisterMode) {
-                    await createUserWithEmailAndPassword(auth, email, pass);
-                    alert("Account created!");
-                } else {
-                    await signInWithEmailAndPassword(auth, email, pass);
-                }
-            } catch(e) { alert(e.message); }
+                if(isSignup) await createUserWithEmailAndPassword(auth, e, p);
+                else await signInWithEmailAndPassword(auth, e, p);
+            } catch(err) { alert(err.message); }
         };
 
         document.getElementById('google-btn').onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
         document.getElementById('logout-btn').onclick = () => signOut(auth);
 
-        // APP STATE
+        // Auth Listener
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.getElementById('auth-screen').style.display = 'none';
@@ -126,72 +142,73 @@
                 if (snap.exists()) {
                     userData = snap.data();
                     document.getElementById('display-name').value = userData.name || "";
-                    document.getElementById('my-pfp').src = userData.pfp || "https://via.placeholder.com/80";
+                    document.getElementById('my-pfp').src = userData.pfp || "https://via.placeholder.com/100";
                     document.body.className = userData.theme || "theme-default";
-                    if (userData.role === "admin" || user.email === "Bytestorm.corp@gmail.com") {
-                        document.getElementById('admin-btn').style.display = 'block';
+                    if(userData.role === 'admin' || user.email === 'Bytestorm.corp@gmail.com') {
+                        document.getElementById('admin-panel-btn').style.display = 'block';
                     }
                 }
-                loadMessages();
+                loadMsgs();
             } else {
                 document.getElementById('auth-screen').style.display = 'block';
                 document.getElementById('main-shell').style.display = 'none';
             }
         });
 
-        // PROFILE SAVE
-        document.getElementById('save-profile').onclick = async () => {
+        // Profile Logic
+        document.getElementById('save-btn').onclick = async () => {
             const file = document.getElementById('pfp-input').files[0];
             let url = userData.pfp || "";
             if(file) {
-                const r = ref(storage, 'pfps/'+auth.currentUser.uid);
-                await uploadBytes(r, file);
-                url = await getDownloadURL(r);
+                const sRef = ref(storage, 'pfps/' + auth.currentUser.uid);
+                await uploadBytes(sRef, file);
+                url = await getDownloadURL(sRef);
             }
             await setDoc(doc(db, "users", auth.currentUser.uid), {
                 name: document.getElementById('display-name').value,
                 pfp: url,
-                theme: document.getElementById('theme-selector').value,
-                role: userData.role || "user"
+                theme: document.getElementById('theme-sel').value,
+                role: userData.role || 'user'
             }, {merge:true});
-            alert("Updated!");
+            alert("Saved!");
+            location.reload();
         };
 
-        // CHAT
-        window.deleteMsg = (id) => deleteDoc(doc(db, "messages", id));
+        // Chat Logic
+        window.delMsg = (id) => deleteDoc(doc(db, "messages", id));
 
-        function loadMessages() {
+        function loadMsgs() {
             onSnapshot(query(collection(db, "messages"), orderBy("timestamp", "asc")), (snap) => {
-                const area = document.getElementById('messages-area');
-                area.innerHTML = "";
+                const box = document.getElementById('messages');
+                box.innerHTML = "";
                 snap.forEach(d => {
                     const m = d.data();
-                    const isMeAdmin = userData.role === 'admin' || auth.currentUser.email === 'Bytestorm.corp@gmail.com';
-                    area.innerHTML += `
-                        <div class="msg-bubble">
+                    const amAdmin = userData.role === 'admin' || auth.currentUser.email === 'Bytestorm.corp@gmail.com';
+                    box.innerHTML += `
+                        <div class="msg">
                             <img src="${m.pfp || 'https://via.placeholder.com/30'}" style="width:30px;height:30px;border-radius:50%">
-                            <div class="msg-content">
-                                <b>${m.user}</b> ${m.isAdmin ? '<span class="admin-tag">ADMIN</span>' : ''}<br>${m.text}
-                                ${isMeAdmin ? `<br><button onclick="deleteMsg('${d.id}')" style="font-size:8px; width:auto; padding:2px; background:red; color:white;">DELETE</button>` : ''}
+                            <div class="msg-body">
+                                <small style="color:var(--rgb)">${m.user}</small> ${m.isAdmin ? '<span class="admin-tag">ADMIN</span>' : ''}<br>
+                                ${m.text}
+                                ${amAdmin ? `<br><button class="del-btn" onclick="delMsg('${d.id}')">X</button>` : ''}
                             </div>
                         </div>`;
                 });
-                area.scrollTop = area.scrollHeight;
+                box.scrollTop = box.scrollHeight;
             });
         }
 
         document.getElementById('send-btn').onclick = async () => {
-            const inp = document.getElementById('msg-input');
-            if(!inp.value) return;
+            const val = document.getElementById('msg-input').value;
+            if(!val) return;
             await addDoc(collection(db, "messages"), {
-                text: inp.value,
+                text: val,
                 user: userData.name || auth.currentUser.email.split('@')[0],
                 pfp: userData.pfp || "",
-                uid: auth.currentUser.uid,
                 isAdmin: userData.role === 'admin' || auth.currentUser.email === 'Bytestorm.corp@gmail.com',
                 timestamp: serverTimestamp()
             });
-            inp.value = "";
+            document.getElementById('msg-input').value = "";
         };
     </script>
 </body>
