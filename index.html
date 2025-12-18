@@ -3,108 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ByteChat</title>
+    <title>ByteChat | Bytestorm Corp</title>
     <style>
-        :root { --rgb: #ffffff; --bg: #050505; --card: #111; --accent: #ff0000; }
+        :root { --rgb: #ffffff; --bg: #050505; --accent: #ff0000; --admin-glow: #00d4ff; }
         body.theme-emerald { --accent: #00ff88; }
         body.theme-cyber { --accent: #00d4ff; }
 
-        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; height: 100vh; display: flex; overflow: hidden; }
+        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; height: 100vh; display: flex; overflow: hidden; flex-direction: column; }
 
         /* --- GLOWING LOGO --- */
-        .logo-container { padding: 20px; text-align: center; }
         .byte-logo { 
-            font-size: 28px; font-weight: 900; letter-spacing: 5px; color: #fff;
-            text-shadow: 0 0 10px #fff, 0 0 20px #fff;
+            font-size: 24px; font-weight: 900; letter-spacing: 4px; color: #fff;
+            text-shadow: 0 0 10px #fff;
             animation: pulse-glow 2s infinite alternate;
         }
-        @keyframes pulse-glow { 
-            from { opacity: 0.8; text-shadow: 0 0 5px #fff; } 
-            to { opacity: 1; text-shadow: 0 0 20px #fff, 0 0 30px var(--accent); } 
-        }
+        @keyframes pulse-glow { from { opacity: 0.7; } to { opacity: 1; text-shadow: 0 0 20px #fff, 0 0 30px var(--accent); } }
 
-        /* --- RESPONSIVE LAYOUT --- */
-        #sidebar { 
-            width: 280px; height: 100vh; background: #000; border-right: 1px solid #222; 
-            display: flex; flex-direction: column; transition: 0.3s; z-index: 1000;
-        }
+        /* --- MOBILE FRIENDLY LAYOUT --- */
+        #main-container { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; }
         
-        /* Mobile Sidebar Toggle */
+        #sidebar { 
+            width: 280px; background: #000; border-right: 1px solid #222; 
+            display: flex; flex-direction: column; transition: 0.3s;
+        }
+
         @media (max-width: 768px) {
-            #sidebar { position: fixed; left: -280px; }
+            #sidebar { position: fixed; left: -280px; height: 100%; z-index: 1000; }
             #sidebar.active { left: 0; }
-            .mobile-nav { display: block !important; }
         }
 
-        .mobile-nav { 
-            display: none; background: #000; padding: 15px; border-bottom: 1px solid #222; 
-            position: fixed; top: 0; width: 100%; z-index: 999; 
-        }
+        .top-bar { height: 60px; background: #000; border-bottom: 1px solid #222; display: flex; align-items: center; padding: 0 20px; justify-content: space-between; }
 
-        #chat-main { flex: 1; display: flex; flex-direction: column; height: 100vh; position: relative; }
-        #messages { flex: 1; padding: 20px; overflow-y: auto; margin-top: 60px; } /* Margin for mobile top bar */
-        @media (min-width: 769px) { #messages { margin-top: 0; } }
+        /* --- CHAT AREA --- */
+        #chat-main { flex: 1; display: flex; flex-direction: column; background: var(--bg); }
+        #messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        
+        .msg { display: flex; gap: 10px; margin-bottom: 5px; }
+        .msg-pfp { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #444; object-fit: cover; }
+        .msg-bubble { background: #111; padding: 10px 15px; border-radius: 15px; border-left: 3px solid var(--accent); max-width: 80%; }
+        .admin-msg { border-left: 3px solid var(--admin-glow); box-shadow: 0 0 10px rgba(0, 212, 255, 0.2); }
+        .user-tag { font-size: 11px; color: var(--accent); font-weight: bold; margin-bottom: 3px; display: block; }
 
-        /* --- UI ELEMENTS --- */
-        .pfp-preview { width: 80px; height: 80px; border-radius: 50%; border: 2px solid #fff; margin: 10px auto; object-fit: cover; box-shadow: 0 0 15px var(--accent); }
-        input, select { background: #151515; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 8px; width: 90%; margin: 5px auto; display: block; }
-        button { background: #fff; color: #000; border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 8px; width: 90%; margin: 10px auto; display: block; transition: 0.3s; }
-        button:hover { transform: scale(0.98); box-shadow: 0 0 15px #fff; }
+        /* --- INPUTS & BUTTONS --- */
+        .pfp-preview { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #fff; margin: 10px auto; object-fit: cover; }
+        input { background: #151515; color: #fff; border: 1px solid #333; padding: 10px; border-radius: 5px; width: 90%; margin: 5px auto; display: block; }
+        button { background: #fff; color: #000; border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 5px; width: 90%; margin: 5px auto; display: block; }
+        .btn-admin { background: var(--admin-glow); color: #000; }
 
-        /* --- MESSAGES --- */
-        .msg { display: flex; gap: 12px; margin-bottom: 15px; align-items: flex-start; }
-        .msg-pfp { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #fff; flex-shrink: 0; }
-        .msg-bubble { background: #151515; padding: 10px 15px; border-radius: 12px; border-left: 3px solid var(--accent); max-width: 80%; }
-        .user-tag { font-size: 11px; color: var(--accent); font-weight: bold; }
-
-        /* --- FOOTER --- */
-        .credits { font-size: 9px; color: #444; text-align: center; padding: 10px; line-height: 1.5; }
+        .footer-credits { font-size: 9px; color: #444; text-align: center; padding: 10px; line-height: 1.4; margin-top: auto; }
     </style>
 </head>
-<body class="theme-default">
+<body>
 
-    <div class="mobile-nav">
-        <button onclick="toggleSidebar()" style="width: auto; margin: 0; display: inline-block; padding: 5px 15px;">MENU</button>
-        <span class="byte-logo" style="font-size: 18px; margin-left: 20px;">Bytechat</span>
+    <div class="top-bar">
+        <div class="byte-logo">BYTESTORM</div>
+        <button onclick="document.getElementById('sidebar').classList.toggle('active')" style="width:auto; margin:0; padding:5px 10px;">MENU</button>
     </div>
 
-    <div id="sidebar">
-        <div class="logo-container">
-            <div class="byte-logo">Bytechat</div>
+    <div id="main-container">
+        <div id="sidebar">
+            <img id="my-pfp-preview" src="https://via.placeholder.com/100" class="pfp-preview">
+            
+            <input type="text" id="pfp-url" placeholder="Paste PFP Image URL here...">
+            <input type="text" id="display-name" placeholder="Username">
+            
+            <button id="save-btn">UPDATE PROFILE</button>
+            
+            <button id="admin-panel-btn" class="btn-admin" style="display:none;">ADMIN TERMINAL</button>
+            
+            <div class="footer-credits">
+                © 2025 ByteChat Bytestorm Corporation.<br>
+                Powered by Rodss Architecture. Made by Bytestorm<br>
+                Design optimized for mobile and command efficiency.
+            </div>
+            
+            <button id="logout-btn" style="background:#222; color:#fff;">LOGOUT</button>
         </div>
 
-        <img id="my-pfp-preview" src="https://via.placeholder.com/100" class="pfp-preview">
-        
-        <label style="font-size:10px; margin-left:15px; color:#666;">PFP IMAGE URL</label>
-        <input type="text" id="pfp-url-input" placeholder="https://image-link.com/photo.jpg">
-        
-        <label style="font-size:10px; margin-left:15px; color:#666;">DISPLAY NAME</label>
-        <input type="text" id="display-name" placeholder="Name">
-        
-        <select id="theme-sel">
-            <option value="theme-default">White/Red</option>
-            <option value="theme-emerald">Emerald</option>
-            <option value="theme-cyber">Cyber Blue</option>
-        </select>
-
-        <button id="save-btn">SYNC PROFILE</button>
-        <button id="admin-btn" style="display:none; background:var(--accent); color:#fff;">TERMINAL</button>
-        
-        <div class="credits">
-            © 2025 ByteChat Bytestorm Corporation.<br>
-            Powered by Rodss Architecture. Made by Bytestorm<br>
-            Design optimized for mobile and command efficiency.
-        </div>
-        
-        <button id="logout-btn" style="background:#222; color:#fff; margin-top: auto;">LOGOUT</button>
-    </div>
-
-    <div id="chat-main">
-        <div id="messages"></div>
-        
-        <div style="padding: 15px; background: #000; border-top: 1px solid #222; display: flex; gap: 10px;">
-            <input type="text" id="chat-input" placeholder="Command..." style="margin: 0; flex: 1;">
-            <button id="send-btn" style="width: 80px; margin: 0;">SEND</button>
+        <div id="chat-main">
+            <div id="messages"></div>
+            <div style="padding: 15px; display: flex; gap: 10px; background: #000;">
+                <input type="text" id="msg-input" placeholder="Type a message..." style="margin: 0; flex: 1;">
+                <button id="send-btn" style="width: 80px; margin: 0;">SEND</button>
+            </div>
         </div>
     </div>
 
@@ -126,71 +107,81 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let myData = { name: "", pfp: "", role: "user" };
-
-        // Sidebar Toggle for Mobile
-        window.toggleSidebar = () => document.getElementById('sidebar').classList.toggle('active');
+        let userProfile = { name: "Guest", pfp: "", role: "user" };
+        const ADMIN_EMAIL = "bytestorm.corp@gmail.com";
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const snap = await getDoc(doc(db, "users", user.uid));
+                // FORCE ADMIN CHECK (Fixes your issue)
+                const isSuperAdmin = user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+                
+                const userRef = doc(db, "users", user.uid);
+                const snap = await getDoc(userRef);
+                
                 if (snap.exists()) {
-                    myData = snap.data();
+                    userProfile = snap.data();
                 } else {
-                    myData = { name: user.displayName || "User", pfp: user.photoURL || "", role: "user" };
-                    await setDoc(doc(db, "users", user.uid), myData);
+                    userProfile = { name: user.displayName || "User", pfp: user.photoURL || "", role: isSuperAdmin ? "admin" : "user" };
+                    await setDoc(userRef, userProfile);
                 }
 
-                if (user.email.toLowerCase().includes("bytestorm.corp")) {
-                    myData.role = "admin";
-                    document.getElementById('admin-btn').style.display = 'block';
+                // If you are Bytestorm, always show admin button even if DB is slow
+                if (isSuperAdmin) {
+                    userProfile.role = "admin";
+                    document.getElementById('admin-panel-btn').style.display = 'block';
                 }
 
-                document.getElementById('display-name').value = myData.name;
-                document.getElementById('pfp-url-input').value = myData.pfp;
-                document.getElementById('my-pfp-preview').src = myData.pfp || "https://via.placeholder.com/100";
+                document.getElementById('display-name').value = userProfile.name;
+                document.getElementById('pfp-url').value = userProfile.pfp;
+                document.getElementById('my-pfp-preview').src = userProfile.pfp || "https://via.placeholder.com/100";
+                
                 loadMessages();
             } else {
-                // If not logged in, trigger Google Login instantly
                 signInWithPopup(auth, new GoogleAuthProvider());
             }
         });
 
         document.getElementById('save-btn').onclick = async () => {
-            const updated = {
-                name: document.getElementById('display-name').value,
-                pfp: document.getElementById('pfp-url-input').value,
-                theme: document.getElementById('theme-sel').value,
-                role: myData.role
-            };
-            await setDoc(doc(db, "users", auth.currentUser.uid), updated, { merge: true });
+            const url = document.getElementById('pfp-url').value;
+            const name = document.getElementById('display-name').value;
+            
+            await setDoc(doc(db, "users", auth.currentUser.uid), {
+                name: name,
+                pfp: url,
+                role: userProfile.role
+            }, { merge: true });
+            
+            alert("Profile Synced to Cloud.");
             location.reload();
         };
 
         document.getElementById('send-btn').onclick = async () => {
-            const txt = document.getElementById('chat-input').value;
-            if(!txt) return;
+            const val = document.getElementById('msg-input').value;
+            if(!val) return;
             await addDoc(collection(db, "messages"), {
-                text: txt,
-                userName: myData.name,
-                userPfp: myData.pfp,
-                isAdmin: myData.role === "admin",
+                text: val,
+                userName: userProfile.name,
+                userPfp: userProfile.pfp,
+                isAdmin: userProfile.role === "admin",
                 timestamp: serverTimestamp()
             });
-            document.getElementById('chat-input').value = "";
+            document.getElementById('msg-input').value = "";
         };
 
         function loadMessages() {
             onSnapshot(query(collection(db, "messages"), orderBy("timestamp", "asc")), (snap) => {
                 const area = document.getElementById('messages');
                 area.innerHTML = "";
-                snap.forEach(d => {
-                    const m = d.data();
+                snap.forEach(doc => {
+                    const m = doc.data();
+                    const adminClass = m.isAdmin ? 'admin-msg' : '';
                     area.innerHTML += `
                         <div class="msg">
                             <img class="msg-pfp" src="${m.userPfp || 'https://via.placeholder.com/40'}">
-                            <div class="msg-bubble">
-                                <span class="user-tag">${m.userName} ${m.isAdmin ? '[ADMIN]' : ''}</span>
+                            <div class="msg-bubble ${adminClass}">
+                                <span class="user-tag" style="color:${m.isAdmin ? '#00d4ff' : 'var(--accent)'}">
+                                    ${m.userName} ${m.isAdmin ? '◆ ADMIN' : ''}
+                                </span>
                                 <div>${m.text}</div>
                             </div>
                         </div>`;
@@ -203,4 +194,3 @@
     </script>
 </body>
 </html>
-
