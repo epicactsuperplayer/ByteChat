@@ -5,107 +5,118 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ByteChat Pro | Bytestorm Corp</title>
     <style>
-        :root { --rgb: #ff0000; --bg: #0a0a0a; --card: #121212; --text: #fff; }
+        :root { --rgb: #ff0000; --bg: #0a0a0a; --card: #121212; --text: #fff; --admin: #ff00ff; }
         body.theme-emerald { --rgb: #00ff88; }
         body.theme-cyber { --rgb: #00d4ff; }
         body.theme-gold { --rgb: #ffcc00; }
 
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden; }
         
-        #auth-screen { width: 90%; max-width: 350px; text-align: center; border: 2px solid var(--rgb); padding: 30px; border-radius: 15px; background: var(--card); box-shadow: 0 0 20px var(--rgb); }
+        /* Layouts */
+        #auth-screen { width: 90%; max-width: 350px; text-align: center; border: 2px solid var(--rgb); padding: 30px; border-radius: 15px; background: var(--card); margin-top: 10vh; height: fit-content; }
         #main-shell { width: 100vw; height: 100vh; display: none; flex-direction: column; }
-        @media (min-width: 768px) { #main-shell { width: 95vw; height: 85vh; border: 2px solid var(--rgb); border-radius: 20px; flex-direction: row; } }
+        @media (min-width: 768px) { #main-shell { width: 98vw; height: 90vh; border: 1px solid #333; flex-direction: row; margin-top: 2vh; } }
 
-        #sidebar { width: 100%; background: #000; padding: 15px; border-bottom: 1px solid #333; display: flex; align-items: center; gap: 10px; box-sizing: border-box; }
-        @media (min-width: 768px) { #sidebar { width: 260px; height: 100%; border-bottom: none; border-right: 1px solid #333; flex-direction: column; padding: 25px; } }
-
-        #my-pfp { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--rgb); cursor: pointer; object-fit: cover; transition: 0.3s; }
-        #my-pfp:hover { opacity: 0.7; transform: scale(1.05); }
-
-        #chat-main { flex: 1; display: flex; flex-direction: column; background: #0a0a0a; position: relative; }
-        #messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        /* Sidebar & Profile */
+        #sidebar { width: 100%; background: #000; padding: 15px; border-bottom: 1px solid #333; display: flex; flex-direction: column; align-items: center; gap: 10px; box-sizing: border-box; }
+        @media (min-width: 768px) { #sidebar { width: 280px; height: 100%; border-bottom: none; border-right: 1px solid #333; padding: 20px; } }
         
-        .msg { display: flex; gap: 12px; align-items: flex-start; }
-        .msg-pfp { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--rgb); }
-        .msg-bubble { background: #1a1a1a; padding: 12px; border-radius: 12px; max-width: 80%; border-left: 3px solid var(--rgb); }
-        .user-name { font-size: 13px; color: var(--rgb); font-weight: bold; }
-        .admin-tag { font-size: 9px; background: var(--rgb); color: #000; padding: 1px 5px; border-radius: 4px; margin-left: 5px; }
+        #my-pfp { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--rgb); cursor: pointer; object-fit: cover; }
+        .upload-prog { width: 100%; height: 4px; background: #222; margin-top: 5px; display: none; }
+        #prog-bar { height: 100%; background: var(--rgb); width: 0%; transition: 0.3s; }
 
-        /* Admin Dashboard Overlay */
-        #admin-dash { display: none; position: absolute; inset: 0; background: #000; z-index: 50; padding: 30px; overflow-y: auto; border-radius: 15px; }
-        .dash-card { background: #111; border: 1px solid var(--rgb); padding: 15px; border-radius: 10px; margin-bottom: 10px; }
+        /* Chat */
+        #chat-main { flex: 1; display: flex; flex-direction: column; position: relative; }
+        #messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .msg { display: flex; gap: 12px; }
+        .msg-pfp { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--rgb); cursor: pointer; }
+        .msg-bubble { background: #151515; padding: 10px 15px; border-radius: 15px; max-width: 75%; border-left: 3px solid var(--rgb); }
+        .user-name { font-size: 12px; color: var(--rgb); font-weight: bold; margin-bottom: 3px; display: block; }
+        .admin-tag { font-size: 9px; background: var(--admin); color: #fff; padding: 1px 4px; border-radius: 3px; margin-left: 5px; }
 
-        input, select { background: #000; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; width: 100%; margin-bottom: 12px; box-sizing: border-box; }
+        /* Admin Dashboard */
+        #admin-dash { display: none; position: absolute; inset: 0; background: #000; z-index: 100; padding: 25px; overflow-y: auto; }
+        .admin-section { border: 1px solid #333; padding: 15px; border-radius: 10px; margin-bottom: 15px; background: #050505; }
+        .user-row { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #222; font-size: 13px; }
+
+        /* Forms/Buttons */
+        input, select { background: #111; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 8px; width: 100%; margin-bottom: 10px; box-sizing: border-box; }
         button { background: var(--rgb); color: #000; border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 8px; width: 100%; }
-        .btn-outline { background: transparent; color: var(--rgb); border: 1px solid var(--rgb); margin-top: 5px; }
+        .btn-admin { background: var(--admin); color: #fff; margin-top: 5px; }
+        .btn-danger { background: #ff4444; color: #fff; width: auto; font-size: 10px; padding: 4px 8px; }
 
-        footer { position: fixed; bottom: 8px; font-size: 10px; opacity: 0.5; color: #fff; text-align: center; width: 100%; z-index: -1; }
+        /* Footer */
+        .bottom-credits { position: fixed; bottom: 10px; width: 100%; text-align: center; font-size: 10px; color: #555; line-height: 1.4; pointer-events: none; }
     </style>
 </head>
 <body class="theme-default">
 
     <div id="auth-screen">
-        <h2 style="color: var(--rgb)">BYTECHAT</h2>
-        <input type="email" id="email" placeholder="Email">
+        <h2 style="color: var(--rgb); letter-spacing: 2px;">BYTECHAT</h2>
+        <input type="email" id="email" placeholder="Admin/User Email">
         <input type="password" id="password" placeholder="Password">
-        <button id="auth-btn">PROCEED</button>
-        <button id="google-btn" style="background:#fff; margin-top: 10px; color:#000;">GOOGLE LOGIN</button>
-        <p id="toggle-auth" style="font-size: 11px; margin-top: 15px; cursor: pointer;">Register / Login Toggle</p>
+        <button id="auth-btn">ENTER SYSTEM</button>
+        <button id="google-btn" style="background:#fff; color:#000; margin-top:10px;">GOOGLE AUTH</button>
+        <p onclick="isSignup=!isSignup" style="font-size:10px; margin-top:10px; cursor:pointer; opacity:0.6;">Toggle Sign-up Mode</p>
     </div>
 
     <div id="main-shell">
         <div id="sidebar">
-            <div style="position: relative;">
-                <img id="my-pfp" src="https://via.placeholder.com/100" onclick="document.getElementById('pfp-input').click()">
-                <div style="position:absolute; bottom:0; right:0; background:var(--rgb); color:#000; font-size:10px; padding:2px 5px; border-radius:5px;">EDIT</div>
-            </div>
+            <img id="my-pfp" src="https://via.placeholder.com/100" onclick="document.getElementById('pfp-input').click()">
+            <div class="upload-prog" id="upload-wrapper"><div id="prog-bar"></div></div>
             <input type="file" id="pfp-input" style="display:none" accept="image/*">
             
             <input type="text" id="display-name-input" placeholder="Display Name">
             <select id="theme-sel">
-                <option value="theme-default">Standard Red</option>
-                <option value="theme-emerald">Emerald Green</option>
+                <option value="theme-default">Red Mode</option>
+                <option value="theme-emerald">Emerald</option>
                 <option value="theme-cyber">Cyber Blue</option>
-                <option value="theme-gold">Gold Edition</option>
             </select>
             
             <button id="save-profile">SAVE PROFILE</button>
+            <button id="admin-panel-btn" class="btn-admin" style="display:none;">TERMINAL CONTROL</button>
             
-            <button id="admin-dash-btn" class="btn-outline" style="display:none; border-color: #ff00ff; color: #ff00ff;">SERVER CONTROL</button>
-            <button id="logout-btn" style="background:#222; color:white; margin-top: auto;">LOGOUT</button>
+            <button id="logout-btn" style="background:#222; color:#fff; margin-top:auto;">LOGOUT</button>
         </div>
 
         <div id="chat-main">
             <div id="admin-dash">
-                <div style="display:flex; justify-content: space-between; align-items: center;">
-                    <h2 style="color:var(--rgb)">ADMIN DASHBOARD</h2>
-                    <button onclick="document.getElementById('admin-dash').style.display='none'" style="width:auto; padding:5px 15px;">CLOSE</button>
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                    <h2 style="color:var(--admin)">SYSTEM TERMINAL</h2>
+                    <button onclick="document.getElementById('admin-dash').style.display='none'" style="width:auto; background:#333; color:#fff;">EXIT</button>
                 </div>
-                <div id="admin-stats" class="dash-card">
-                    <h3>Server Stats</h3>
-                    <p id="user-count">Loading user info...</p>
+                
+                <div class="admin-section">
+                    <h3>User Database</h3>
+                    <div id="user-list">Loading users...</div>
                 </div>
-                <div id="admin-logs" class="dash-card">
-                    <h3>Recent Global Activity</h3>
-                    <div id="log-content" style="font-family: monospace; font-size: 11px;"></div>
+
+                <div class="admin-section">
+                    <h3>Global Announcements</h3>
+                    <input type="text" id="announcement-text" placeholder="Broadcast message...">
+                    <button onclick="sendAnnouncement()" class="btn-admin">SEND TO ALL</button>
                 </div>
             </div>
 
             <div id="messages"></div>
-            <div style="padding: 20px; display: flex; gap: 10px; background: #050505; border-top: 1px solid #222;">
-                <input type="text" id="msg-input" placeholder="Type here..." style="margin:0">
-                <button id="send-btn" style="width: 80px; margin:0">SEND</button>
+            
+            <div style="padding:20px; display:flex; gap:10px; background:#000; border-top:1px solid #222;">
+                <input type="text" id="msg-input" placeholder="Send a message..." style="margin:0">
+                <button id="send-btn" style="width:100px; margin:0">SEND</button>
             </div>
         </div>
     </div>
 
-    <footer>&copy; 2025 Bytestorm Corp.</footer>
+    <div class="bottom-credits">
+        © 2025 ByteChat Bytestorm Corporation. Powered by Rodss Architecture.<br>
+        Made by Bytestorm | Design optimized for mobile and command efficiency.
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBCZlueIRciUi4hHxT00y0ez1jKT70ATWw",
@@ -122,108 +133,96 @@
         const storage = getStorage(app);
 
         let isSignup = false;
-        let currentUserData = { name: "", pfp: "", role: "user" };
+        let myData = { name: "User", pfp: "", role: "user", status: "active" };
 
-        // Handle File Selection Preview Immediately
-        document.getElementById('pfp-input').onchange = (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => document.getElementById('my-pfp').src = event.target.result;
-                reader.readAsDataURL(file);
-            }
-        };
-
-        document.getElementById('toggle-auth').onclick = () => {
-            isSignup = !isSignup;
-            document.getElementById('auth-btn').innerText = isSignup ? "SIGN UP" : "LOGIN";
-        };
-
+        // --- AUTH ---
         document.getElementById('auth-btn').onclick = async () => {
-            const e = document.getElementById('email').value.trim();
+            const e = document.getElementById('email').value;
             const p = document.getElementById('password').value;
             try {
                 if(isSignup) await createUserWithEmailAndPassword(auth, e, p);
                 else await signInWithEmailAndPassword(auth, e, p);
             } catch(err) { alert(err.message); }
         };
-
         document.getElementById('google-btn').onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
         document.getElementById('logout-btn').onclick = () => signOut(auth);
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                const uRef = doc(db, "users", user.uid);
+                const snap = await getDoc(uRef);
+                
+                if (snap.exists()) {
+                    myData = snap.data();
+                    if(myData.status === 'banned') { alert("YOUR ACCOUNT IS BANNED"); signOut(auth); return; }
+                } else {
+                    myData = { name: user.displayName || user.email.split('@')[0], pfp: user.photoURL || "", role: "user", status: "active" };
+                    await setDoc(uRef, myData);
+                }
+
+                // Force Admin Power for Bytestorm
+                if (user.email.toLowerCase().includes("bytestorm.corp")) {
+                    myData.role = "admin";
+                    document.getElementById('admin-panel-btn').style.display = 'block';
+                }
+
+                document.getElementById('display-name-input').value = myData.name;
+                document.getElementById('my-pfp').src = myData.pfp || "https://via.placeholder.com/100";
                 document.getElementById('auth-screen').style.display = 'none';
                 document.getElementById('main-shell').style.display = 'flex';
-                
-                const snap = await getDoc(doc(db, "users", user.uid));
-                if (snap.exists()) {
-                    currentUserData = snap.data();
-                } else {
-                    currentUserData = { name: user.displayName || user.email.split('@')[0], pfp: user.photoURL || "", role: "user" };
-                }
-
-                if (user.email.toLowerCase().includes("bytestorm.corp")) {
-                    currentUserData.role = "admin";
-                    document.getElementById('admin-dash-btn').style.display = 'block';
-                }
-
-                document.getElementById('display-name-input').value = currentUserData.name;
-                document.getElementById('my-pfp').src = currentUserData.pfp || "https://via.placeholder.com/100";
-                document.body.className = currentUserData.theme || "theme-default";
                 loadMessages();
+                if(myData.role === 'admin') loadUserList();
             } else {
                 document.getElementById('auth-screen').style.display = 'block';
                 document.getElementById('main-shell').style.display = 'none';
             }
         });
 
+        // --- PROFILE & PFP (FIXED UPLOAD) ---
         document.getElementById('save-profile').onclick = async () => {
-            const btn = document.getElementById('save-profile');
-            btn.innerText = "UPLOADING...";
-            const user = auth.currentUser;
             const file = document.getElementById('pfp-input').files[0];
-            let url = currentUserData.pfp || "";
+            let url = myData.pfp;
 
             if (file) {
-                const imgRef = ref(storage, `pfps/${user.uid}`);
-                await uploadBytes(imgRef, file);
-                url = await getDownloadURL(imgRef);
+                const wrap = document.getElementById('upload-wrapper');
+                const bar = document.getElementById('prog-bar');
+                wrap.style.display = 'block';
+                
+                const sRef = ref(storage, `pfps/${auth.currentUser.uid}`);
+                const task = uploadBytesResumable(sRef, file);
+
+                await new Promise((resolve, reject) => {
+                    task.on('state_changed', 
+                        (s) => bar.style.width = (s.bytesTransferred / s.totalBytes) * 100 + "%",
+                        (e) => reject(e),
+                        async () => { url = await getDownloadURL(task.snapshot.ref); resolve(); }
+                    );
+                });
             }
 
-            const profile = {
+            const updated = {
                 name: document.getElementById('display-name-input').value,
                 pfp: url,
                 theme: document.getElementById('theme-sel').value,
-                role: user.email.toLowerCase().includes("bytestorm.corp") ? "admin" : "user"
+                role: myData.role
             };
-
-            await setDoc(doc(db, "users", user.uid), profile, { merge: true });
-            btn.innerText = "SAVED!";
-            setTimeout(() => location.reload(), 1000);
+            await setDoc(doc(db, "users", auth.currentUser.uid), updated, { merge: true });
+            alert("System Synced.");
+            location.reload();
         };
 
-        // ADMIN PANEL LOGIC
-        document.getElementById('admin-dash-btn').onclick = () => {
-            document.getElementById('admin-dash').style.display = 'block';
-            const logBox = document.getElementById('log-content');
-            logBox.innerHTML = "Tracing active streams...";
-            onSnapshot(query(collection(db, "messages"), orderBy("timestamp", "desc"), limit(10)), (s) => {
-                logBox.innerHTML = "";
-                s.forEach(d => {
-                    logBox.innerHTML += `<div>[${d.data().userName}]: ${d.data().text.substring(0, 20)}...</div>`;
-                });
-            });
-        };
-
+        // --- CHAT ---
         document.getElementById('send-btn').onclick = async () => {
-            const val = document.getElementById('msg-input').value;
-            if(!val) return;
+            if(myData.status === 'muted') { alert("You are muted."); return; }
+            const txt = document.getElementById('msg-input').value;
+            if(!txt) return;
+
             await addDoc(collection(db, "messages"), {
-                text: val,
-                userName: currentUserData.name || auth.currentUser.email.split('@')[0],
-                userPfp: currentUserData.pfp || "",
-                isAdmin: currentUserData.role === "admin",
+                text: txt,
+                uid: auth.currentUser.uid,
+                userName: myData.name,
+                userPfp: myData.pfp,
+                role: myData.role,
                 timestamp: serverTimestamp()
             });
             document.getElementById('msg-input').value = "";
@@ -233,16 +232,16 @@
             onSnapshot(query(collection(db, "messages"), orderBy("timestamp", "asc")), (snap) => {
                 const area = document.getElementById('messages');
                 area.innerHTML = "";
-                snap.forEach(dSnap => {
-                    const m = dSnap.data();
-                    const isMeAdmin = currentUserData.role === "admin";
+                snap.forEach(d => {
+                    const m = d.data();
+                    const isAdmin = m.role === 'admin';
                     area.innerHTML += `
                         <div class="msg">
                             <img class="msg-pfp" src="${m.userPfp || 'https://via.placeholder.com/40'}">
                             <div class="msg-bubble">
-                                <span class="user-name">${m.userName} ${m.isAdmin ? '<span class="admin-tag">ADMIN</span>' : ''}</span>
+                                <span class="user-name">${m.userName} ${isAdmin ? '<span class="admin-tag">ADMIN</span>' : ''}</span>
                                 <div>${m.text}</div>
-                                ${isMeAdmin ? `<button style="background:red; color:white; font-size:9px; width:auto; padding:2px 5px; margin-top:5px;" onclick="window.deleteMsg('${dSnap.id}')">DELETE</button>` : ''}
+                                ${myData.role === 'admin' ? `<button class="btn-danger" onclick="deleteMsg('${d.id}')">DEL</button>` : ''}
                             </div>
                         </div>`;
                 });
@@ -250,10 +249,41 @@
             });
         }
 
+        // --- ADMIN POWERS ---
+        document.getElementById('admin-panel-btn').onclick = () => document.getElementById('admin-dash').style.display = 'block';
+
+        async function loadUserList() {
+            // In a real app, you'd query the 'users' collection.
+            const list = document.getElementById('user-list');
+            list.innerHTML = "Querying Database...";
+            // This is a simplified fetch of all users who have sent a message lately
+            onSnapshot(collection(db, "users"), (snap) => {
+                list.innerHTML = "";
+                snap.forEach(uDoc => {
+                    const u = uDoc.data();
+                    list.innerHTML += `
+                        <div class="user-row">
+                            <span>${u.name} (${u.role})</span>
+                            <div style="display:flex; gap:5px;">
+                                <button class="btn-danger" onclick="updateUser('${uDoc.id}', 'banned')">BAN</button>
+                                <button style="background:orange; font-size:9px;" onclick="updateUser('${uDoc.id}', 'muted')">MUTE</button>
+                                <button style="background:#fff; font-size:9px;" onclick="resetUserPass('${u.email}')">RESET PASS</button>
+                            </div>
+                        </div>`;
+                });
+            });
+        }
+
+        window.updateUser = (uid, status) => updateDoc(doc(db, "users", uid), { status: status });
+        window.resetUserPass = (email) => {
+            sendPasswordResetEmail(auth, email).then(() => alert("Reset Link Sent to " + email));
+        };
         window.deleteMsg = (id) => deleteDoc(doc(db, "messages", id));
-        document.getElementById('theme-sel').onchange = (e) => document.body.className = e.target.value;
+        document.getElementById('pfp-input').onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => document.getElementById('my-pfp').src = ev.target.result;
+            reader.readAsDataURL(e.target.files[0]);
+        };
     </script>
 </body>
 </html>
-
-
