@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ByteChat</title>
+    <title>ByteChat | Professional Hybrid</title>
+
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+        window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         /* --- DESIGN SYSTEM --- */
         :root {
@@ -20,36 +29,20 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body {
             background-color: var(--bg-deep);
             color: var(--text-main);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', sans-serif;
             margin: 0;
             height: 100vh;
             display: flex;
             overflow: hidden;
         }
 
-        /* --- LAYOUT COMPONENTS --- */
+        /* --- LAYOUT --- */
         #app-wrapper { display: flex; width: 100%; height: 100%; position: relative; }
 
-        <!-- FAVICON: A stable, secure, inline SVG favicon showing the letter 'B'. -->
-    <link rel="manifest" href="/manifest.json">
-
-            <!-- Reinstating the user's required cookie management script. -->
-    <script type="text/javascript" data-cmp-ab="1" src="https://cdn.consentmanager.net/delivery/autoblocking/509cf33812608.js" data-cmp-host="d.delivery.consentmanager.net" data-cmp-cdn="cdn.consentmanager.net" data-cmp-codesrc="16"></script>
-
-        <script>
-  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/insights/script.js"></script>
-
-<script>
-  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/speed-insights/script.js"></script>
-
-        /* Desktop Sidebar */
         #sidebar {
             width: var(--sidebar-width);
             background: var(--bg-surface);
@@ -57,10 +50,8 @@
             display: flex;
             flex-direction: column;
             padding: 24px;
-            transition: all 0.3s ease;
         }
 
-        /* Content Area */
         #main-view {
             flex: 1;
             display: flex;
@@ -69,19 +60,18 @@
             position: relative;
         }
 
-        /* Screens */
         .screen { display: none; flex: 1; height: 100%; flex-direction: column; overflow-y: auto; }
         .active-screen { display: flex; }
 
-        /* --- UI COMPONENTS --- */
+        /* --- UI ELEMENTS --- */
         .logo-box {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 900;
-            letter-spacing: 4px;
-            margin-bottom: 40px;
+            letter-spacing: 5px;
+            margin-bottom: 30px;
             text-align: center;
-            color: var(--accent);
-            text-shadow: 0 0 15px rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            text-shadow: 0 0 15px var(--admin-neon);
         }
 
         .profile-card {
@@ -94,12 +84,12 @@
         }
 
         .pfp-main {
-            width: 90px;
-            height: 90px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid var(--admin-neon);
-            margin-bottom: 12px;
+            border: 2px solid var(--admin-neon);
+            margin-bottom: 10px;
         }
 
         /* --- CHAT SYSTEM --- */
@@ -109,48 +99,35 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            scrollbar-width: thin;
+            gap: 12px;
         }
 
-        .message-row { display: flex; gap: 12px; max-width: 85%; align-items: flex-start; position: relative; }
+        .message-row { display: flex; gap: 10px; max-width: 85%; align-items: flex-start; }
         .message-row.self { align-self: flex-end; flex-direction: row-reverse; }
 
-        .msg-pfp { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; border: 1px solid #444; }
-        
         .msg-content {
             background: var(--bg-surface);
-            padding: 12px 16px;
-            border-radius: 18px;
+            padding: 10px 15px;
+            border-radius: 15px;
             border: 1px solid #222;
-            position: relative;
         }
 
-        .admin-glow {
-            border-color: var(--admin-neon);
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.15);
-        }
+        .admin-glow { border-color: var(--admin-neon); box-shadow: 0 0 15px rgba(0, 212, 255, 0.1); }
 
         .msg-header {
             font-size: 11px;
-            font-weight: 800;
+            font-weight: bold;
             color: var(--admin-neon);
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            margin-bottom: 3px;
         }
 
-        .msg-text { font-size: 14.5px; line-height: 1.5; color: #fff; word-break: break-word; }
-
-        /* --- INPUT AREA --- */
+        /* --- CONTROLS --- */
         .input-bar {
-            padding: 15px 25px;
+            padding: 15px;
             background: var(--bg-surface);
             border-top: 1px solid #222;
             display: flex;
-            gap: 12px;
-            align-items: center;
+            gap: 10px;
         }
 
         .input-field {
@@ -158,43 +135,22 @@
             background: #1a1a1a;
             border: 1px solid #333;
             color: #fff;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 12px;
+            border-radius: 20px;
             outline: none;
-            transition: border 0.3s;
         }
 
-        .input-field:focus { border-color: var(--admin-neon); }
-
-        .btn-circle {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            border: none;
-            background: var(--accent);
-            color: #000;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        /* --- ADMIN CONTROLS --- */
         .admin-only { display: none !important; }
         body.is-admin .admin-only { display: flex !important; }
 
         .delete-trigger {
             color: var(--danger);
-            font-size: 14px;
             cursor: pointer;
-            opacity: 0;
-            transition: 0.2s;
             padding: 5px;
+            font-size: 12px;
         }
-        .message-row:hover .delete-trigger { opacity: 1; }
 
-        /* --- MOBILE NAVIGATION --- */
+        /* --- MOBILE NAV --- */
         .mobile-nav {
             display: none;
             position: fixed;
@@ -205,125 +161,70 @@
             border-top: 1px solid #222;
             justify-content: space-around;
             align-items: center;
-            z-index: 1000;
         }
 
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 10px;
-            color: var(--text-dim);
-            gap: 4px;
-        }
-
-        .nav-item.active { color: var(--admin-neon); }
-        .nav-item i { font-size: 20px; }
-
-        /* --- FORMS & BUTTONS --- */
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-label { font-size: 12px; color: var(--text-dim); margin-bottom: 5px; display: block; }
-        
-        .admin-btn {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 12px;
-            width: 100%;
-            font-weight: bold;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-
-        /* --- RESPONSIVE QUERIES --- */
         @media (max-width: 850px) {
             #sidebar { display: none; }
             .mobile-nav { display: flex; }
             .screen { padding-bottom: var(--nav-height); }
-            #messages-container { padding: 10px; }
-            .message-row { max-width: 92%; }
         }
     </style>
 </head>
-<body class="">
+<body>
 
     <div id="app-wrapper">
         <aside id="sidebar">
-            <div class="logo-box">Bytechat</div>
+            <div class="logo-box">BYTECHAT</div>
             
             <div class="profile-card">
                 <img id="pc-pfp" src="https://via.placeholder.com/100" class="pfp-main">
-                <h4 id="pc-name" style="margin:0; color:var(--admin-neon);">Guest User</h4>
-                <p style="font-size:10px; color:var(--text-dim);">RODSS ARCH Beta 0.5</p>
+                <h4 id="pc-name" style="margin:0;">Guest User</h4>
+                <p style="font-size:10px; color:var(--text-dim);">SYSTEM V0.5 BETA</p>
             </div>
 
             <nav style="flex:1">
-                <button onclick="switchTab('chat')" style="width:100%; text-align:left; background:none; border:none; color:white; padding:12px; cursor:pointer;"><i class="fa fa-comment"></i>&nbsp; Terminal Chat</button>
-                <button onclick="switchTab('profile')" style="width:100%; text-align:left; background:none; border:none; color:white; padding:12px; cursor:pointer;"><i class="fa fa-user"></i>&nbsp; User Settings</button>
+                <button onclick="switchTab('chat')" style="width:100%; text-align:left; background:none; border:none; color:white; padding:12px; cursor:pointer;"><i class="fa fa-comment"></i>&nbsp; Terminal</button>
+                <button onclick="switchTab('profile')" style="width:100%; text-align:left; background:none; border:none; color:white; padding:12px; cursor:pointer;"><i class="fa fa-user"></i>&nbsp; Profile</button>
                 
-                <div class="admin-only" style="flex-direction:column; margin-top:20px;">
-                    <p style="font-size:11px; color:var(--admin-neon); margin-left:12px;">ADMIN TOOLS</p>
-                    <button onclick="switchTab('admin')" style="width:100%; text-align:left; background:none; border:none; color:var(--admin-neon); padding:12px; cursor:pointer;"><i class="fa fa-shield"></i>&nbsp; Global Console</button>
+                <div class="admin-only" style="flex-direction:column;">
+                    <button onclick="switchTab('admin')" style="width:100%; text-align:left; background:none; border:none; color:var(--admin-neon); padding:12px; cursor:pointer;"><i class="fa fa-shield"></i>&nbsp; Admin Console</button>
                 </div>
             </nav>
 
-            <button onclick="logOut()" style="margin-top:auto; background:none; border:none; color:var(--danger); text-align:left; cursor:pointer;"><i class="fa fa-sign-out"></i> Logout Account</button>
+            <button onclick="logOut()" style="background:none; border:none; color:var(--danger); cursor:pointer;">Logout</button>
         </aside>
 
         <main id="main-view">
-            
             <section id="tab-chat" class="screen active-screen">
                 <div id="messages-container"></div>
                 <div class="input-bar">
-                    <input type="text" id="chat-input" class="input-field" placeholder="Type a message...">
-                    <button class="btn-circle" id="send-trigger"><i class="fa fa-paper-plane"></i></button>
+                    <input type="text" id="chat-input" class="input-field" placeholder="Message...">
+                    <button onclick="sendMessage()" style="background:var(--accent); border:none; width:40px; height:40px; border-radius:50%;"><i class="fa fa-arrow-up"></i></button>
                 </div>
             </section>
 
             <section id="tab-profile" class="screen">
-                <div style="max-width:500px; margin:40px auto; width:90%; padding:20px;">
-                    <h2>System Profile</h2>
-                    <div class="form-group">
-                        <label class="form-label">Display Name</label>
-                        <input type="text" id="edit-name" class="input-field" style="width:100%">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Profile Image URL</label>
-                        <input type="text" id="edit-pfp" class="input-field" style="width:100%">
-                    </div>
-                    <button onclick="updateProfile()" class="admin-btn" style="background:var(--accent); color:#000;">UPDATE RECORDS</button>
-                    <button onclick="logOut()" class="admin-btn" style="background:#222; margin-top:30px;">DISCONNECT SESSION</button>
+                <div style="padding:40px; max-width:500px; margin:0 auto;">
+                    <h2>User Settings</h2>
+                    <input type="text" id="edit-name" class="input-field" style="width:100%; margin-bottom:15px;" placeholder="Name">
+                    <input type="text" id="edit-pfp" class="input-field" style="width:100%; margin-bottom:15px;" placeholder="PFP URL">
+                    <button onclick="updateProfile()" style="width:100%; padding:12px; background:white; color:black; border:none; border-radius:10px; font-weight:bold;">SAVE RECORDS</button>
                 </div>
             </section>
 
             <section id="tab-admin" class="screen">
-                <div style="max-width:500px; margin:40px auto; width:90%; padding:20px;">
-                    <h2 style="color:var(--admin-neon)">Global Control Console</h2>
-                    <div class="profile-card" style="border-color:var(--admin-neon)">
-                        <p style="font-size:13px">Administrative Privileges: <strong>ACTIVE</strong></p>
-                        <p style="font-size:11px; color:var(--text-dim)">Endpoint: ekosecuruty-firebasestorage-app</p>
-                    </div>
-
-                    <h3>Database Management</h3>
-                    <button class="admin-btn" onclick="clearAllChat()">PURGE ALL MESSAGES (TOTAL WIPE)</button>
-                    <p style="font-size:11px; color:var(--text-dim); margin-top:10px;">Warning: This action is irreversible and affects all connected users.</p>
+                <div style="padding:40px; max-width:500px; margin:0 auto;">
+                    <h2 style="color:var(--admin-neon)">Global Control</h2>
+                    <button onclick="clearAllChat()" style="width:100%; padding:20px; background:var(--danger); border:none; border-radius:10px; color:white; font-weight:bold;">PURGE ALL MESSAGES</button>
                 </div>
             </section>
-
         </main>
     </div>
 
     <div class="mobile-nav">
-        <div class="nav-item active" onclick="switchTab('chat')" id="m-nav-chat">
-            <i class="fa fa-comments"></i><span>Chat</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('profile')" id="m-nav-profile">
-            <i class="fa fa-user"></i><span>Profile</span>
-        </div>
-        <div class="nav-item admin-only" onclick="switchTab('admin')" id="m-nav-admin">
-            <i class="fa fa-shield-halved"></i><span>Admin</span>
-        </div>
+        <div class="nav-item active" onclick="switchTab('chat')"><i class="fa fa-comments"></i><span>Chat</span></div>
+        <div class="nav-item" onclick="switchTab('profile')"><i class="fa fa-user"></i><span>Profile</span></div>
+        <div class="nav-item admin-only" onclick="switchTab('admin')"><i class="fa fa-shield"></i><span>Admin</span></div>
     </div>
 
     <script type="module">
@@ -331,7 +232,6 @@
         import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // CONFIGURATION
         const firebaseConfig = {
             apiKey: "AIzaSyBCZlueIRciUi4hHxT00y0ez1jKT70ATWw",
             authDomain: "ekosecuruty.firebaseapp.com",
@@ -345,82 +245,39 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         const MASTER_ADMIN = "bytestorm.corp@gmail.com";
-        let userData = { name: "ByteUser", pfp: "", role: "user" };
+        let userData = {};
 
-        // NAVIGATION LOGIC
+        // NAVIGATION
         window.switchTab = (tabId) => {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
             document.getElementById(`tab-${tabId}`).classList.add('active-screen');
-            
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            const mobileBtn = document.getElementById(`m-nav-${tabId}`);
-            if(mobileBtn) mobileBtn.classList.add('active');
         };
 
-        // AUTHENTICATION
+        // AUTH
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const isAdmin = user.email.toLowerCase() === MASTER_ADMIN.toLowerCase();
-                const userRef = doc(db, "users", user.uid);
-                const snap = await getDoc(userRef);
+                const snap = await getDoc(doc(db, "users", user.uid));
+                
+                userData = snap.exists() ? snap.data() : { name: user.displayName, pfp: user.photoURL, role: isAdmin ? 'admin' : 'user' };
+                if (isAdmin) document.body.classList.add('is-admin');
 
-                if(snap.exists()) {
-                    userData = snap.data();
-                } else {
-                    userData = { name: user.displayName || "User", pfp: user.photoURL || "https://via.placeholder.com/100", role: isAdmin ? "admin" : "user" };
-                    await setDoc(userRef, userData);
-                }
-
-                if(isAdmin) {
-                    userData.role = "admin";
-                    document.body.classList.add('is-admin');
-                }
-
-                // Sync UI
                 document.getElementById('pc-pfp').src = userData.pfp;
                 document.getElementById('pc-name').innerText = userData.name;
                 document.getElementById('edit-name').value = userData.name;
                 document.getElementById('edit-pfp').value = userData.pfp;
-
                 loadMessages();
             } else {
-                const provider = new GoogleAuthProvider();
-                await signInWithPopup(auth, provider);
+                await signInWithPopup(auth, new GoogleAuthProvider());
             }
         });
 
         // ACTIONS
-        window.updateProfile = async () => {
-            const name = document.getElementById('edit-name').value;
-            const pfp = document.getElementById('edit-pfp').value;
-            await setDoc(doc(db, "users", auth.currentUser.uid), { name, pfp }, { merge: true });
-            alert("System Records Updated.");
-            location.reload();
-        };
-
-        window.logOut = () => signOut(auth);
-
-        window.deleteMessage = async (id) => {
-            if(confirm("Permanently erase this record?")) {
-                await deleteDoc(doc(db, "messages", id));
-            }
-        };
-
-        window.clearAllChat = async () => {
-            if(confirm("CRITICAL WARNING: This will delete ALL messages from the cloud. Proceed?")) {
-                const q = await getDocs(collection(db, "messages"));
-                q.forEach(async (d) => await deleteDoc(doc(db, "messages", d.id)));
-                alert("Protocol Complete. Database Empty.");
-            }
-        };
-
-        // SEND MESSAGE
-        document.getElementById('send-trigger').onclick = async () => {
-            const text = document.getElementById('chat-input').value;
-            if(!text.trim()) return;
-
+        window.sendMessage = async () => {
+            const val = document.getElementById('chat-input').value;
+            if(!val.trim()) return;
             await addDoc(collection(db, "messages"), {
-                text: text,
+                text: val,
                 userName: userData.name,
                 userPfp: userData.pfp,
                 isAdmin: auth.currentUser.email.toLowerCase() === MASTER_ADMIN.toLowerCase(),
@@ -429,30 +286,42 @@
             document.getElementById('chat-input').value = "";
         };
 
-        // RENDER MESSAGES
+        window.deleteMessage = async (id) => {
+            if(confirm("Erase?")) await deleteDoc(doc(db, "messages", id));
+        };
+
+        window.clearAllChat = async () => {
+            if(confirm("Wipe all?")) {
+                const q = await getDocs(collection(db, "messages"));
+                q.forEach(async (d) => await deleteDoc(doc(db, "messages", d.id)));
+            }
+        };
+
+        window.updateProfile = async () => {
+            const name = document.getElementById('edit-name').value;
+            const pfp = document.getElementById('edit-pfp').value;
+            await setDoc(doc(db, "users", auth.currentUser.uid), { name, pfp }, { merge: true });
+            location.reload();
+        };
+
+        window.logOut = () => signOut(auth);
+
         function loadMessages() {
-            const q = query(collection(db, "messages"), orderBy("timestamp", "asc"));
-            onSnapshot(q, (snapshot) => {
+            onSnapshot(query(collection(db, "messages"), orderBy("timestamp", "asc")), (snap) => {
                 const container = document.getElementById('messages-container');
                 container.innerHTML = "";
-                snapshot.forEach((doc) => {
+                snap.forEach((doc) => {
                     const m = doc.data();
-                    const isMe = m.userName === userData.name;
-                    const adminClass = m.isAdmin ? 'admin-glow' : '';
-                    
+                    const isMe = auth.currentUser.displayName === m.userName;
                     container.innerHTML += `
                         <div class="message-row ${isMe ? 'self' : ''}">
-                            <img src="${m.userPfp || 'https://via.placeholder.com/40'}" class="msg-pfp">
-                            <div class="msg-content ${adminClass}">
-                                <div class="msg-header">
-                                    ${m.userName} ${m.isAdmin ? '<i class="fa fa-bolt"></i>' : ''}
-                                </div>
+                            <img src="${m.userPfp}" class="msg-pfp" style="width:30px; height:30px; border-radius:50%">
+                            <div class="msg-content ${m.isAdmin ? 'admin-glow' : ''}">
+                                <div class="msg-header">${m.userName} ${m.isAdmin ? '⚡' : ''}</div>
                                 <div class="msg-text">${m.text}</div>
                             </div>
-                            ${auth.currentUser.email === MASTER_ADMIN ? 
-                                `<i class="fa fa-trash delete-trigger" onclick="deleteMessage('${doc.id}')"></i>` : ''}
-                        </div>
-                    `;
+                            ${auth.currentUser.email === MASTER_ADMIN ? `<i class="fa fa-trash delete-trigger" onclick="deleteMessage('${doc.id}')"></i>` : ''}
+                        </div>`;
                 });
                 container.scrollTop = container.scrollHeight;
             });
@@ -460,6 +329,5 @@
     </script>
 </body>
 </html>
-
 
 
