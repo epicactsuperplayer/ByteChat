@@ -1,370 +1,1161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ByteChat</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>ByteChat</title>
 
-    <!-- FAVICON: A stable, secure, inline SVG favicon showing the letter 'B'. -->
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='sans-serif'>B</text></svg>">
-    
-    <style>
-        :root {
-            --bg-deep: #050505;
-            --bg-surface: #0a0a0a;
-            --admin-neon: #00d4ff;
-            --danger: #ff3b3b;
-            --text-main: #f0f0f0;
-            --sidebar-width: 300px;
-            --nav-height: 80px;
-        }
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='sans-serif'>B</text></svg>">
 
-        /* --- RGB LOGO ANIMATION --- */
-        @keyframes rgbFlow {
-            0% { color: #ff0000; text-shadow: 0 0 15px #ff0000; }
-            33% { color: #00ff00; text-shadow: 0 0 15px #00ff00; }
-            66% { color: #0000ff; text-shadow: 0 0 15px #0000ff; }
-            100% { color: #ff0000; text-shadow: 0 0 15px #ff0000; }
-        }
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
-        .rgb-logo {
-            animation: rgbFlow 4s infinite linear;
-            font-weight: 900;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-        }
+  <style>
+    :root{
+      --bg-deep:#050505;
+      --bg-surface:#0a0a0a;
+      --panel:#0e0e0e;
+      --line:#1a1a1a;
+      --text:#f0f0f0;
+      --muted:#777;
+      --admin:#00d4ff;
+      --danger:#ff3b3b;
+      --ok:#23ff7a;
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background: var(--bg-deep); color: var(--text-main); font-family: 'Inter', sans-serif; }
+      --sidebar:300px;
+      --nav:80px;
+      --radius:22px;
+    }
 
-        /* --- AUTH SCREEN --- */
-        #auth-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #111 0%, #000 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
+    @keyframes rgbFlow {
+      0% { color:#ff0000; text-shadow:0 0 15px #ff0000; }
+      33%{ color:#00ff00; text-shadow:0 0 15px #00ff00; }
+      66%{ color:#0000ff; text-shadow:0 0 15px #0000ff; }
+      100%{ color:#ff0000; text-shadow:0 0 15px #ff0000; }
+    }
 
-        .auth-card {
-            text-align: center;
-            padding: 50px;
-            background: rgba(10, 10, 10, 0.8);
-            border: 1px solid #222;
-            border-radius: 30px;
-            backdrop-filter: blur(10px);
-            max-width: 450px;
-            width: 90%;
-        }
+    .rgb-logo{
+      animation: rgbFlow 4s infinite linear;
+      font-weight:900;
+      letter-spacing:4px;
+      text-transform:uppercase;
+    }
 
-        .auth-btn {
-            background: #fff;
-            color: #000;
-            border: none;
-            padding: 18px;
-            border-radius: 15px;
-            font-weight: 900;
-            cursor: pointer;
-            margin-top: 25px;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: 0.3s;
-        }
+    *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    html,body{
+      margin:0; padding:0; height:100%; width:100%;
+      overflow:hidden;
+      background:var(--bg-deep);
+      color:var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
 
-        .auth-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,255,255,0.1); }
+    /* Auth */
+    #auth-screen{
+      position:fixed; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      background: radial-gradient(circle at center, #111 0%, #000 100%);
+      z-index:9999;
+    }
+    .auth-card{
+      width:min(460px, 92vw);
+      padding:46px;
+      background: rgba(10,10,10,.82);
+      border:1px solid #222;
+      border-radius: 30px;
+      backdrop-filter: blur(10px);
+      text-align:center;
+    }
+    .auth-sub{
+      color:#666; font-size:13px; margin:10px 0 0;
+      letter-spacing:1px;
+    }
+    .auth-btn{
+      width:100%;
+      margin-top:18px;
+      padding:16px 18px;
+      border-radius:16px;
+      border:1px solid #333;
+      background:#fff;
+      color:#000;
+      font-weight:900;
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      transition:.2s;
+    }
+    .auth-btn.secondary{
+      background: transparent;
+      color:#aaa;
+    }
+    .auth-btn:hover{ transform: translateY(-2px); box-shadow:0 10px 24px rgba(255,255,255,.06); }
+    .tiny-legal{
+      margin-top:34px;
+      font-size:10px;
+      color:#333;
+      line-height:1.5;
+    }
 
-        /* --- APP STRUCTURE --- */
-        #app-shell { display: none; width: 100vw; height: 100vh; }
-        body.logged-in #app-shell { display: flex; }
-        body.logged-in #auth-screen { display: none !important; }
+    /* Shell */
+    #app-shell{ display:none; width:100vw; height:100vh; }
+    body.logged-in #app-shell{ display:flex; }
+    body.logged-in #auth-screen{ display:none !important; }
 
-        #sidebar {
-            width: var(--sidebar-width);
-            background: var(--bg-surface);
-            border-right: 1px solid #1a1a1a;
-            display: flex;
-            flex-direction: column;
-            padding: 30px;
-            flex-shrink: 0;
-            position: relative;
-        }
+    #sidebar{
+      width:var(--sidebar);
+      background:var(--bg-surface);
+      border-right:1px solid var(--line);
+      padding:28px;
+      display:flex; flex-direction:column;
+      flex-shrink:0;
+    }
 
-        #viewport { flex-grow: 1; display: flex; flex-direction: column; position: relative; min-width: 0; }
+    #viewport{
+      flex:1; min-width:0;
+      display:flex; flex-direction:column;
+      position:relative;
+    }
 
-        /* --- COPYRIGHT IN SIDEBAR --- */
-        .sidebar-credits {
-            margin-top: auto;
-            padding-top: 20px;
-            border-top: 1px solid #1a1a1a;
-            font-size: 10px;
-            color: #444;
-            line-height: 1.6;
-        }
+    .card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+    }
 
-        /* --- MOBILE ADAPTATION --- */
-        @media (max-width: 850px) {
-            #sidebar { display: none !important; }
-            .mobile-nav { display: flex !important; }
-            #messages-container { padding: 20px 20px 180px 20px !important; }
-            .mobile-credits { display: block !important; }
-        }
+    .side-profile{
+      padding:18px;
+      margin:22px 0;
+      text-align:center;
+    }
+    .side-profile img{
+      width:72px; height:72px;
+      border-radius:50%;
+      border:2px solid var(--admin);
+      object-fit:cover;
+      background:#000;
+    }
+    .side-name{
+      margin-top:12px;
+      font-weight:800;
+      font-size:18px;
+    }
+    .side-status{
+      margin-top:6px;
+      font-size:10px;
+      color:var(--ok);
+      letter-spacing:.5px;
+    }
 
-        .admin-only { display: none !important; }
-        .is-master .admin-only { display: flex !important; }
+    .side-nav{
+      flex:1;
+      display:flex; flex-direction:column;
+      gap:10px;
+    }
+    .side-item{
+      padding:12px 10px;
+      border-radius:14px;
+      cursor:pointer;
+      color:#ddd;
+      border:1px solid transparent;
+      display:flex; align-items:center; gap:10px;
+      user-select:none;
+    }
+    .side-item:hover{ border-color:#222; background:#090909; }
+    .side-item.danger{ color:var(--danger); }
+    .side-item.admin{ color:var(--admin); display:none; }
+    body.is-master .side-item.admin{ display:flex; }
 
-        #messages-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+    .credits{
+      margin-top:auto;
+      padding-top:16px;
+      border-top:1px solid var(--line);
+      font-size:10px; color:#444; line-height:1.6;
+    }
 
-        .msg-row { display: flex; gap: 12px; max-width: 85%; align-items: flex-start; }
-        .msg-row.me { align-self: flex-end; flex-direction: row-reverse; }
-        .chat-pfp { width: 42px; height: 42px; border-radius: 50%; border: 1px solid #333; object-fit: cover; }
-        .bubble { background: #111; padding: 14px 18px; border-radius: 20px; border: 1px solid #222; }
-        .admin-glow { border-color: var(--admin-neon); box-shadow: 0 0 10px rgba(0, 212, 255, 0.1); }
-        .sender-tag { font-size: 10px; font-weight: 800; color: var(--admin-neon); margin-bottom: 4px; }
+    /* Screens */
+    .screen{ display:none; height:100%; flex-direction:column; }
+    .screen.active{ display:flex; }
 
-        .input-bar { padding: 20px; background: #000; border-top: 1px solid #1a1a1a; display: flex; gap: 12px; }
-        .main-input { flex: 1; background: #0f0f0f; border: 1px solid #222; color: #fff; padding: 15px 25px; border-radius: 30px; font-size: 15px; }
+    /* Chat */
+    #messages{
+      flex:1;
+      overflow-y:auto;
+      padding:26px;
+      display:flex; flex-direction:column;
+      gap:14px;
+    }
+    .msg-row{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      max-width:85%;
+    }
+    .msg-row.me{ align-self:flex-end; flex-direction:row-reverse; }
+    .pfp{
+      width:42px; height:42px;
+      border-radius:50%;
+      border:1px solid #333;
+      object-fit:cover;
+      background:#000;
+    }
+    .bubble{
+      background:#111;
+      border:1px solid #222;
+      border-radius:20px;
+      padding:12px 14px;
+      min-width: 180px;
+      max-width: 680px;
+      overflow:hidden;
+    }
+    .bubble.admin-glow{
+      border-color:var(--admin);
+      box-shadow:0 0 10px rgba(0,212,255,.10);
+    }
+    .sender{
+      font-size:10px;
+      font-weight:900;
+      color:var(--admin);
+      margin-bottom:6px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .sender .tag{
+      opacity:.95;
+      white-space:nowrap;
+    }
+    .sender .meta{
+      color:#555;
+      font-weight:700;
+      font-size:10px;
+      white-space:nowrap;
+    }
+    .text{
+      font-size:15px;
+      line-height:1.4;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+    .media{
+      margin-top:10px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .media img{
+      max-width:min(420px, 70vw);
+      border-radius:16px;
+      border:1px solid #222;
+    }
 
-        .mobile-nav {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            height: var(--nav-height);
-            background: #000;
-            border-top: 1px solid #1a1a1a;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
-        }
+    .msg-actions{
+      margin-top:10px;
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+    }
+    .mini-btn{
+      font-size:10px;
+      font-weight:900;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid #222;
+      background:#0c0c0c;
+      color:#bbb;
+      cursor:pointer;
+    }
+    .mini-btn:hover{ border-color:#333; color:#fff; }
+    .mini-btn.danger{ border-color:#331111; color:var(--danger); }
+    .mini-btn.admin{ border-color:#113333; color:var(--admin); }
 
-        .nav-item { color: #444; text-align: center; font-size: 10px; cursor: pointer; }
-        .nav-item.active { color: #fff; }
-        .nav-item i { font-size: 24px; display: block; margin-bottom: 5px; }
+    /* Input bar */
+    .inputbar{
+      border-top:1px solid var(--line);
+      background:#000;
+      padding:16px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .btn-icon{
+      width:46px; height:46px;
+      border-radius:50%;
+      border:1px solid #222;
+      background:#0b0b0b;
+      color:#ddd;
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .btn-icon:hover{ border-color:#333; }
+    .input{
+      flex:1;
+      background:#0f0f0f;
+      border:1px solid #222;
+      color:#fff;
+      padding:14px 18px;
+      border-radius:999px;
+      font-size:15px;
+      outline:none;
+    }
+    .send{
+      width:50px; height:50px;
+      border-radius:50%;
+      border:none;
+      background:#fff;
+      color:#000;
+      cursor:pointer;
+      font-size:16px;
+    }
 
-        .screen { display: none; height: 100%; flex-direction: column; }
-        .active-screen { display: flex; }
-    </style>
+    /* Profile */
+    .profile-wrap{
+      padding:42px;
+      max-width:520px;
+      margin:0 auto;
+      width:92%;
+    }
+    .label{
+      font-size:11px;
+      color:#555;
+      font-weight:900;
+      letter-spacing:1px;
+    }
+    .full{
+      width:100%;
+      margin:10px 0 18px;
+    }
+    .primary{
+      width:100%;
+      padding:16px;
+      border-radius:16px;
+      border:none;
+      background:var(--admin);
+      color:#000;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    /* Admin tools */
+    .admin-wrap{
+      padding:42px;
+      max-width:720px;
+      margin:0 auto;
+      width:92%;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    .admin-title{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:16px;
+    }
+    .admin-title h2{ margin:0; }
+    .admin-panel{
+      padding:18px;
+    }
+    .row{
+      display:flex; gap:12px; flex-wrap:wrap; align-items:center;
+      margin-top:10px;
+    }
+    .small{
+      background:#0f0f0f;
+      border:1px solid #222;
+      color:#fff;
+      padding:12px 14px;
+      border-radius:14px;
+      outline:none;
+      min-width: 260px;
+      flex:1;
+    }
+    .danger-btn{
+      padding:14px 16px;
+      border-radius:14px;
+      border:none;
+      background:var(--danger);
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+      flex:1;
+      min-width: 220px;
+    }
+    .ghost-btn{
+      padding:14px 16px;
+      border-radius:14px;
+      border:1px solid #222;
+      background:#0b0b0b;
+      color:#ddd;
+      font-weight:900;
+      cursor:pointer;
+      flex:1;
+      min-width: 220px;
+    }
+
+    /* Mobile bottom nav */
+    .mobile-nav{
+      display:none;
+      position:fixed;
+      bottom:0; left:0; right:0;
+      height:var(--nav);
+      background:#000;
+      border-top:1px solid var(--line);
+      z-index:1000;
+      justify-content:space-around;
+      align-items:center;
+    }
+    .nav-item{
+      color:#444;
+      text-align:center;
+      font-size:10px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .nav-item.active{ color:#fff; }
+    .nav-item i{ font-size:22px; display:block; margin-bottom:6px; }
+    .nav-item.admin{ display:none; }
+    body.is-master .nav-item.admin{ display:block; }
+
+    @media (max-width: 850px){
+      #sidebar{ display:none !important; }
+      .mobile-nav{ display:flex !important; }
+      #messages{ padding:18px 16px calc(var(--nav) + 120px) 16px; }
+      .inputbar{ position:fixed; left:0; right:0; bottom:var(--nav); }
+    }
+
+    /* Modal (GIF search) */
+    .modal{
+      position:fixed; inset:0;
+      display:none;
+      align-items:center; justify-content:center;
+      background: rgba(0,0,0,.55);
+      z-index:2000;
+      padding:16px;
+    }
+    .modal.open{ display:flex; }
+    .modal-card{
+      width:min(900px, 96vw);
+      max-height:min(80vh, 720px);
+      overflow:hidden;
+      border-radius:22px;
+      border:1px solid #222;
+      background:#0a0a0a;
+      display:flex;
+      flex-direction:column;
+    }
+    .modal-head{
+      padding:14px;
+      border-bottom:1px solid #1a1a1a;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .modal-body{
+      padding:14px;
+      overflow:auto;
+    }
+    .gif-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap:10px;
+    }
+    .gif{
+      border-radius:16px;
+      border:1px solid #222;
+      overflow:hidden;
+      cursor:pointer;
+      background:#000;
+    }
+    .gif img{ width:100%; height:160px; object-fit:cover; display:block; }
+    .xbtn{
+      width:42px; height:42px;
+      border-radius:12px;
+      border:1px solid #222;
+      background:#0c0c0c;
+      color:#ddd;
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+    }
+  </style>
 </head>
+
 <body>
+  <!-- AUTH -->
+  <div id="auth-screen">
+    <div class="auth-card">
+      <h1 class="rgb-logo" style="font-size:40px; margin:0;">BYTECHAT</h1>
+      <p class="auth-sub">The Chat Source From Bytestorm</p>
 
-    <div id="auth-screen">
-        <div class="auth-card">
-            <h1 class="rgb-logo" style="font-size: 40px; margin: 0;">BYTECHAT</h1>
-            <p style="color: #666; font-size: 13px; margin-top: 10px; letter-spacing: 1px;">The Chat Source From Bytestorm</p>
-            
-            <button class="auth-btn" onclick="gateway('login')">
-                <i class="fab fa-google"></i> SIGN IN WITH GOOGLE
-            </button>
-            <button class="auth-btn" style="background: transparent; border: 1px solid #333; color: #888;" onclick="gateway('signup')">
-                CREATE NEW ACCOUNT
-            </button>
+      <button class="auth-btn" id="btn-google">
+        <i class="fa-brands fa-google"></i> SIGN IN WITH GOOGLE
+      </button>
+      <button class="auth-btn secondary" id="btn-create">
+        CREATE NEW ACCOUNT
+      </button>
 
-            <div style="margin-top: 40px; font-size: 10px; color: #333; line-height: 1.5;">
-                © 2026 Bytechat. Powered by Rodss Architecture.<br>
-                made by Bytestorm.
-                Mobile And PC Efiicent
-            </div>
+      <div class="tiny-legal">
+        © 2026 Bytechat. Powered by Rodss Architecture.<br/>
+        made by Bytestorm. Mobile and PC efficient.
+      </div>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="app-shell">
+    <aside id="sidebar">
+      <h2 class="rgb-logo" style="font-size:22px; margin:0;">BYTECHAT</h2>
+
+      <div class="card side-profile">
+        <img id="side-pfp" src="" alt="pfp">
+        <div class="side-name" id="side-name">Operator</div>
+        <div class="side-status"><i class="fa-solid fa-circle"></i> ONLINE</div>
+        <div id="side-mod" style="margin-top:10px; font-size:10px; color:#666;"></div>
+      </div>
+
+      <div class="side-nav">
+        <div class="side-item" data-go="chat"><i class="fa-solid fa-comments"></i> Chat</div>
+        <div class="side-item" data-go="profile"><i class="fa-solid fa-user-gear"></i> Personal Info</div>
+        <div class="side-item admin" data-go="admin"><i class="fa-solid fa-shield-halved"></i> Admin Tools</div>
+        <div class="side-item danger" id="btn-exit"><i class="fa-solid fa-power-off"></i> Disconnect</div>
+      </div>
+
+      <div class="credits">
+        <b>© 2026 Bytechat.</b><br>
+        Powered by Rodss Architecture.<br>
+        Made by Bytestorm.<br>
+        Optimized for Command Efficiency.
+      </div>
+    </aside>
+
+    <main id="viewport">
+      <!-- CHAT -->
+      <section id="scr-chat" class="screen active">
+        <div id="messages"></div>
+
+        <div class="inputbar">
+          <input id="file" type="file" accept="image/*" style="display:none"/>
+          <button class="btn-icon" id="btn-photo" title="Send image"><i class="fa-solid fa-image"></i></button>
+          <button class="btn-icon" id="btn-gif" title="Send GIF"><i class="fa-solid fa-film"></i></button>
+
+          <input class="input" id="msg" type="text" placeholder="Enter secure packet..." autocomplete="off">
+          <button class="send" id="btn-send" title="Send"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
-    </div>
+      </section>
 
-    <div id="app-shell">
-        <aside id="sidebar">
-            <h2 class="rgb-logo" style="font-size: 22px; text-align: left;">BYTECHAT</h2>
-            
-            <div style="background:#0e0e0e; padding:20px; border-radius:20px; text-align:center; border:1px solid #1a1a1a; margin: 30px 0;">
-                <img id="side-pfp" src="" style="width:70px; height:70px; border-radius:50%; border:2px solid var(--admin-neon);">
-                <div id="side-name" style="margin-top:12px; font-weight:bold; font-size: 18px;">Operator</div>
-                <div id="side-status" style="font-size: 9px; color: #0f0; margin-top: 5px;"><i class="fa fa-circle"></i> ONLINE</div>
+      <!-- PROFILE -->
+      <section id="scr-profile" class="screen">
+        <div class="profile-wrap">
+          <h2 class="rgb-logo" style="margin:0 0 18px;">Identity Settings</h2>
+
+          <div class="label">ALIAS</div>
+          <input class="input full" id="in-name" type="text" />
+
+          <div class="label">PFP URL</div>
+          <input class="input full" id="in-pfp" type="text" placeholder="https://..." />
+
+          <button class="primary" id="btn-save">COMMIT CHANGES</button>
+
+          <div style="margin-top:20px; font-size:11px; color:#555; line-height:1.5;">
+            Tip: for best results, use a square image URL.
+          </div>
+        </div>
+      </section>
+
+      <!-- ADMIN -->
+      <section id="scr-admin" class="screen">
+        <div class="admin-wrap">
+          <div class="admin-title">
+            <h2 class="rgb-logo">Admin Tools</h2>
+            <div style="font-size:11px; color:#666;">ban / mute are enforced by rules</div>
+          </div>
+
+          <div class="card admin-panel">
+            <div style="font-weight:900;">Moderation by UID</div>
+            <div style="font-size:11px; color:#666; margin-top:6px;">
+              Paste a user UID (from messages). Ban blocks sending. Mute blocks sending until time.
             </div>
 
-            <nav style="flex:1">
-                <div onclick="show('chat')" style="padding:15px 0; cursor:pointer; font-size: 14px;"><i class="fa fa-th-large"></i> &nbsp; Chat</div>
-                <div onclick="show('profile')" style="padding:15px 0; cursor:pointer; font-size: 14px;"><i class="fa fa-user-shield"></i> &nbsp; Personal Info</div>
-                <div onclick="show('admin')" class="admin-only" style="padding:15px 0; cursor:pointer; color:var(--admin-neon); font-size: 14px;"><i class="fa fa-unlock-alt"></i> &nbsp; Root Terminal</div>
-                <div onclick="exit()" style="padding:15px 0; cursor:pointer; color: var(--danger); font-size: 14px; margin-top: 20px;"><i class="fa fa-power-off"></i> &nbsp; Disconnect</div>
-            </nav>
-
-            <div class="sidebar-credits">
-                <b>© 2026 Bytechat.</b><br>
-                Powered by Rodss Architecture.<br>
-                Made by Bytestorm.<br>
-                Optimized for Command Efficiency.
+            <div class="row">
+              <input class="small" id="mod-uid" placeholder="target user uid">
+              <button class="ghost-btn" id="btn-copyuid" title="click a message's UID to auto-fill">Auto-fill from message</button>
             </div>
-        </aside>
 
-        <main id="viewport">
-            <section id="scr-chat" class="screen active-screen">
-                <div id="messages-container"></div>
-                <div class="input-bar">
-                    <input type="text" id="msg-input" class="main-input" placeholder="Enter secure packet...">
-                    <button onclick="transmit()" style="background:white; color:black; border:none; width:50px; height:50px; border-radius:50%; cursor:pointer;"><i class="fa fa-paper-plane"></i></button>
-                </div>
-            </section>
+            <div class="row">
+              <button class="danger-btn" id="btn-ban"><i class="fa-solid fa-ban"></i> BAN</button>
+              <button class="ghost-btn" id="btn-unban"><i class="fa-solid fa-check"></i> UNBAN</button>
+            </div>
 
-            <section id="scr-profile" class="screen">
-                <div style="padding:50px; max-width:500px; margin:0 auto; width:90%;">
-                    <h2 class="rgb-logo">Identity Settings</h2>
-                    <br>
-                    <label style="font-size:11px; color:#555;">ALIAS</label>
-                    <input type="text" id="in-name" class="main-input" style="width:100%; margin:10px 0 20px 0;">
-                    <label style="font-size:11px; color:#555;">PFP URL</label>
-                    <input type="text" id="in-pfp" class="main-input" style="width:100%; margin:10px 0 30px 0;">
-                    <button onclick="updateUser()" style="width:100%; padding:18px; background:var(--admin-neon); color:black; border:none; border-radius:15px; font-weight:bold; cursor:pointer;">COMMIT CHANGES</button>
-                    
-                    <div class="mobile-credits" style="display:none; margin-top:50px; text-align:center; font-size:10px; color:#333;">
-                        © 2026 Bytechat. Powered by Rodss Architecture.<br>
-                        Made by Bytestorm.
-                    </div>
-                </div>
-            </section>
+            <div class="row">
+              <input class="small" id="mute-min" type="number" min="1" placeholder="mute minutes (e.g. 60)">
+              <button class="danger-btn" id="btn-mute"><i class="fa-solid fa-volume-xmark"></i> MUTE</button>
+              <button class="ghost-btn" id="btn-unmute"><i class="fa-solid fa-volume-high"></i> UNMUTE</button>
+            </div>
 
-            <section id="scr-admin" class="screen admin-only">
-                <div style="padding:50px; text-align:center;">
-                    <h1 style="color:var(--danger)">DESTRUCTION PROTOCOL</h1>
-                    <p style="color:#555">This action will erase all messages from the Firebase cloud.</p>
-                    <button onclick="purge()" style="background:var(--danger); color:white; border:none; padding:20px; border-radius:15px; width:100%; font-weight:bold; cursor:pointer; margin-top:30px;">EXECUTE GLOBAL WIPE</button>
-                </div>
-            </section>
-        </main>
+            <div style="margin-top:14px; font-size:11px; color:#666;">
+              Note: “Global wipe” is dangerous — keep it, but admin-only.
+            </div>
+
+            <div class="row">
+              <button class="danger-btn" id="btn-wipe"><i class="fa-solid fa-skull-crossbones"></i> EXECUTE GLOBAL WIPE</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MOBILE NAV -->
+  <div class="mobile-nav">
+    <div class="nav-item active" data-go="chat"><i class="fa-solid fa-comment-dots"></i>Chat</div>
+    <div class="nav-item" data-go="profile"><i class="fa-solid fa-user"></i>User</div>
+    <div class="nav-item admin" data-go="admin"><i class="fa-solid fa-shield-halved"></i>Admin</div>
+    <div class="nav-item" id="m-exit" style="color:var(--danger);"><i class="fa-solid fa-right-from-bracket"></i>Exit</div>
+  </div>
+
+  <!-- GIF MODAL -->
+  <div class="modal" id="gif-modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <button class="xbtn" id="gif-close"><i class="fa-solid fa-xmark"></i></button>
+        <input class="input" id="gif-q" placeholder="Search Tenor GIFs (e.g. landooo)" />
+        <button class="btn-icon" id="gif-search"><i class="fa-solid fa-magnifying-glass"></i></button>
+      </div>
+      <div class="modal-body">
+        <div id="gif-status" style="font-size:12px; color:#666; margin-bottom:10px;"></div>
+        <div class="gif-grid" id="gif-grid"></div>
+      </div>
     </div>
+  </div>
 
-    <div class="mobile-nav">
-        <div class="nav-item active" id="m-chat" onclick="show('chat')"><i class="fa fa-comment-dots"></i>Chat</div>
-        <div class="nav-item" id="m-profile" onclick="show('profile')"><i class="fa fa-user-circle"></i>User</div>
-        <div class="nav-item admin-only" id="m-admin" onclick="show('admin')"><i class="fa fa-skull-crossbones"></i>Root</div>
-        <div class="nav-item" onclick="exit()" style="color:var(--danger);"><i class="fa fa-sign-out-alt"></i>Exit</div>
-    </div>
+  <script type="module">
+    // -----------------------------
+    // Firebase imports
+    // -----------------------------
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getAuth, onAuthStateChanged, signOut,
+      GoogleAuthProvider, signInWithPopup
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import {
+      getFirestore, doc, setDoc, getDoc,
+      collection, addDoc, query, orderBy, onSnapshot,
+      serverTimestamp, deleteDoc, getDocs
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import {
+      getStorage, ref, uploadBytes, getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    // -----------------------------
+    // CONFIG
+    // -----------------------------
+    const firebaseConfig = {
+      apiKey: "AIzaSyBCZlueIRciUi4hHxT00y0ez1jKT70ATWw",
+      authDomain: "ekosecuruty.firebaseapp.com",
+      projectId: "ekosecuruty",
+      storageBucket: "ekosecuruty.firebasestorage.app",
+      messagingSenderId: "655599032933",
+      appId: "1:655599032933:web:c3c429704561672895c48c"
+    };
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBCZlueIRciUi4hHxT00y0ez1jKT70ATWw",
-            authDomain: "ekosecuruty.firebaseapp.com",
-            projectId: "ekosecuruty",
-            storageBucket: "ekosecuruty.firebasestorage.app",
-            messagingSenderId: "655599032933",
-            appId: "1:655599032933:web:c3c429704561672895c48c"
-        };
+    // IMPORTANT: set your admin email here
+    const MASTER_EMAIL = "bytestorm.corp@gmail.com";
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const MASTER = "bytestorm.corp@gmail.com";
-        let local = {};
+    // Tenor: put your Tenor API key here
+    // Create a key in Google Cloud / Tenor, then paste it:
+    const TENOR_KEY = "PUT_TENOR_KEY_HERE";
 
-        // AUTH GATEWAY
-        window.gateway = (mode) => {
-            const provider = new GoogleAuthProvider();
-            signInWithPopup(auth, provider).catch(e => console.error(e));
-        };
+    // -----------------------------
+    // Init
+    // -----------------------------
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
 
-        window.exit = () => {
-            if(confirm("Logout from Secure Session?")) {
-                signOut(auth).then(() => {
-                    document.body.classList.remove('logged-in');
-                    window.location.reload();
-                });
-            }
-        };
+    const $ = (id) => document.getElementById(id);
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                document.body.classList.add('logged-in');
-                const isM = user.email.toLowerCase() === MASTER.toLowerCase();
-                if(isM) document.body.classList.add('is-master');
+    const state = {
+      me: null,
+      profile: { name: "Operator", pfp: "" },
+      isAdmin: false,
+      myMod: { banned: false, mutedUntil: null },
+      lastClickedUid: null,
+    };
 
-                const snap = await getDoc(doc(db, "users", user.uid));
-                local = snap.exists() ? snap.data() : { name: user.displayName, pfp: user.photoURL };
-                if(!snap.exists()) await setDoc(doc(db, "users", user.uid), local);
+    // -----------------------------
+    // Small helpers
+    // -----------------------------
+    const escapeText = (s) => (s ?? "").toString();
+    const fmtTime = (d) => {
+      try {
+        return new Intl.DateTimeFormat(undefined, { hour:"2-digit", minute:"2-digit" }).format(d);
+      } catch {
+        return "";
+      }
+    };
 
-                document.getElementById('side-pfp').src = local.pfp;
-                document.getElementById('side-name').innerText = local.name;
-                document.getElementById('in-name').value = local.name;
-                document.getElementById('in-pfp').value = local.pfp;
-                initMainframe();
-            } else {
-                document.body.classList.remove('logged-in');
-            }
-        });
+    function go(screen){
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      $(`scr-${screen}`).classList.add("active");
 
-        // UI CORE
-        window.show = (t) => {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-            document.getElementById('scr-' + t).classList.add('active-screen');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if(document.getElementById('m-' + t)) document.getElementById('m-' + t).classList.add('active');
-        };
+      document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+      document.querySelectorAll(`[data-go="${screen}"]`).forEach(n => n.classList.add("active"));
+    }
 
-        // MESSAGING
-        window.transmit = async () => {
-            const input = document.getElementById('msg-input');
-            const val = input.value.trim();
-            if(!val) return;
-            await addDoc(collection(db, "messages"), {
-                text: val, user: local.name, pfp: local.pfp,
-                uid: auth.currentUser.uid, isA: auth.currentUser.email.toLowerCase() === MASTER,
-                time: serverTimestamp()
-            });
-            input.value = "";
-        };
+    function setLoggedIn(on){
+      document.body.classList.toggle("logged-in", on);
+    }
 
-        function initMainframe() {
-            onSnapshot(query(collection(db, "messages"), orderBy("time", "asc")), (snap) => {
-                const box = document.getElementById('messages-container');
-                box.innerHTML = "";
-                snap.forEach(d => {
-                    const m = d.data();
-                    const isMe = m.uid === auth.currentUser.uid;
-                    box.innerHTML += `
-                        <div class="msg-row ${isMe ? 'me' : ''}">
-                            <img src="${m.pfp}" class="chat-pfp">
-                            <div class="bubble ${m.isA ? 'admin-glow' : ''}">
-                                <div class="sender-tag">${m.isA ? '[ADMIN] ' : ''}${m.user}</div>
-                                <div style="font-size:15px; line-height:1.4;">${m.text}</div>
-                                ${auth.currentUser.email.toLowerCase() === MASTER ? `<div style="color:red; font-size:9px; cursor:pointer; margin-top:8px;" onclick="wipeMsg('${d.id}')">ERASE</div>` : ''}
-                            </div>
-                        </div>
-                    `;
-                });
-                box.scrollTop = box.scrollHeight;
-            });
+    function setAdmin(on){
+      document.body.classList.toggle("is-master", on);
+    }
+
+    function setSide(){
+      $("side-pfp").src = state.profile.pfp || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+      $("side-name").innerText = state.profile.name || "Operator";
+
+      const mod = [];
+      if (state.myMod.banned) mod.push("BANNED");
+      const mu = state.myMod.mutedUntil ? new Date(state.myMod.mutedUntil) : null;
+      if (mu && mu.getTime() > Date.now()) mod.push("MUTED");
+      $("side-mod").innerText = mod.length ? `Status: ${mod.join(" + ")}` : "";
+    }
+
+    async function readMyModeration(){
+      if(!state.me) return;
+      const mref = doc(db, "moderation", state.me.uid);
+      const snap = await getDoc(mref);
+      if(!snap.exists()){
+        state.myMod = { banned:false, mutedUntil:null };
+        return;
+      }
+      const data = snap.data();
+      state.myMod = {
+        banned: !!data.banned,
+        mutedUntil: data.mutedUntil ?? null
+      };
+    }
+
+    function canSend(){
+      if (!state.me) return false;
+      if (state.myMod.banned) return false;
+      if (state.myMod.mutedUntil && new Date(state.myMod.mutedUntil).getTime() > Date.now()) return false;
+      return true;
+    }
+
+    // -----------------------------
+    // Auth
+    // -----------------------------
+    $("btn-google").onclick = async () => {
+      const provider = new GoogleAuthProvider();
+      try{
+        await signInWithPopup(auth, provider);
+      } catch(e){
+        console.error(e);
+        alert("Login failed.");
+      }
+    };
+    $("btn-create").onclick = () => $("btn-google").click();
+
+    $("btn-exit").onclick = doLogout;
+    $("m-exit").onclick = doLogout;
+
+    async function doLogout(){
+      if(confirm("Logout from Secure Session?")){
+        await signOut(auth);
+        setLoggedIn(false);
+        location.reload();
+      }
+    }
+
+    // -----------------------------
+    // Navigation
+    // -----------------------------
+    document.querySelectorAll("[data-go]").forEach(el => {
+      el.addEventListener("click", () => go(el.getAttribute("data-go")));
+    });
+
+    // -----------------------------
+    // Profile save
+    // -----------------------------
+    $("btn-save").onclick = async () => {
+      if(!state.me) return;
+      const name = $("in-name").value.trim().slice(0, 40);
+      const pfp = $("in-pfp").value.trim().slice(0, 500);
+
+      if(!name){
+        alert("Alias required.");
+        return;
+      }
+
+      await setDoc(doc(db, "users", state.me.uid), { name, pfp }, { merge:true });
+      alert("Mainframe records updated.");
+      location.reload();
+    };
+
+    // -----------------------------
+    // Chat send (text / image / gif)
+    // -----------------------------
+    $("btn-send").onclick = () => sendText();
+    $("msg").addEventListener("keydown", (e) => {
+      if(e.key === "Enter") sendText();
+    });
+
+    async function sendText(){
+      if(!state.me) return;
+      const val = $("msg").value.trim();
+      if(!val) return;
+
+      await sendMessage({ text: val });
+      $("msg").value = "";
+    }
+
+    async function sendMessage({ text = "", imageUrl = "", gifUrl = "" }){
+      if(!canSend()){
+        alert("You are muted/banned and cannot send messages.");
+        return;
+      }
+
+      const payload = {
+        text: text || "",
+        imageUrl: imageUrl || "",
+        gifUrl: gifUrl || "",
+        user: state.profile.name,
+        pfp: state.profile.pfp,
+        uid: state.me.uid,
+        isA: state.isAdmin,
+        time: serverTimestamp()
+      };
+
+      try{
+        await addDoc(collection(db, "messages"), payload);
+      } catch(e){
+        console.error(e);
+        alert("Send failed (check rules).");
+      }
+    }
+
+    // Image upload
+    $("btn-photo").onclick = () => $("file").click();
+    $("file").addEventListener("change", async (e) => {
+      const file = e.target.files?.[0];
+      if(!file) return;
+
+      if(!file.type.startsWith("image/")){
+        alert("Only images supported.");
+        return;
+      }
+      if(file.size > 8 * 1024 * 1024){
+        alert("Image too large (max 8MB).");
+        return;
+      }
+      if(!canSend()){
+        alert("You are muted/banned and cannot send images.");
+        return;
+      }
+
+      try{
+        const path = `chat_uploads/${state.me.uid}/${Date.now()}_${file.name.replaceAll(" ", "_")}`;
+        const r = ref(storage, path);
+        await uploadBytes(r, file, { contentType: file.type });
+        const url = await getDownloadURL(r);
+        await sendMessage({ imageUrl: url });
+      } catch(err){
+        console.error(err);
+        alert("Upload failed (check Storage rules).");
+      } finally {
+        $("file").value = "";
+      }
+    });
+
+    // -----------------------------
+    // Tenor GIF modal
+    // -----------------------------
+    const gifModal = $("gif-modal");
+    $("btn-gif").onclick = () => openGif();
+    $("gif-close").onclick = () => closeGif();
+    $("gif-search").onclick = () => searchGif();
+    $("gif-q").addEventListener("keydown", (e) => { if(e.key === "Enter") searchGif(); });
+
+    function openGif(){
+      gifModal.classList.add("open");
+      $("gif-q").focus();
+      $("gif-status").innerText = TENOR_KEY.includes("PUT_TENOR") ? "Add TENOR_KEY in code to use GIF search." : "Search something…";
+      $("gif-grid").innerHTML = "";
+    }
+    function closeGif(){
+      gifModal.classList.remove("open");
+    }
+
+    async function searchGif(){
+      const q = $("gif-q").value.trim();
+      if(!q) return;
+
+      if(TENOR_KEY.includes("PUT_TENOR")){
+        $("gif-status").innerText = "Missing TENOR_KEY. Add it in the code.";
+        return;
+      }
+
+      $("gif-status").innerText = "Searching…";
+      $("gif-grid").innerHTML = "";
+
+      try{
+        const limit = 18;
+        // Tenor v2 search
+        const url = new URL("https://tenor.googleapis.com/v2/search");
+        url.searchParams.set("key", TENOR_KEY);
+        url.searchParams.set("q", q);
+        url.searchParams.set("limit", String(limit));
+        url.searchParams.set("media_filter", "gif,tinygif,mediumgif");
+        url.searchParams.set("contentfilter", "medium");
+
+        const res = await fetch(url.toString());
+        const data = await res.json();
+
+        const results = (data?.results ?? []);
+        if(!results.length){
+          $("gif-status").innerText = "No GIFs found.";
+          return;
         }
+        $("gif-status").innerText = `Results: ${results.length} (click to send)`;
 
-        window.wipeMsg = async (id) => { if(confirm("Erase Packet?")) await deleteDoc(doc(db, "messages", id)); };
+        const grid = $("gif-grid");
+        for(const r of results){
+          const m = r?.media_formats?.tinygif?.url || r?.media_formats?.gif?.url || r?.media_formats?.mediumgif?.url;
+          if(!m) continue;
 
-        window.purge = async () => {
-            if(confirm("GLOBAL WIPE?")) {
-                const q = await getDocs(collection(db, "messages"));
-                q.forEach(async (d) => await deleteDoc(doc(db, "messages", d.id)));
-            }
+          const cell = document.createElement("div");
+          cell.className = "gif";
+          const img = document.createElement("img");
+          img.src = m;
+          img.alt = "gif";
+          cell.appendChild(img);
+
+          cell.onclick = async () => {
+            closeGif();
+            await sendMessage({ gifUrl: m });
+          };
+          grid.appendChild(cell);
+        }
+      } catch(e){
+        console.error(e);
+        $("gif-status").innerText = "GIF search failed.";
+      }
+    }
+
+    // -----------------------------
+    // Render messages safely
+    // -----------------------------
+    function renderMessage(docSnap){
+      const m = docSnap.data();
+      const id = docSnap.id;
+
+      const row = document.createElement("div");
+      row.className = "msg-row";
+
+      const isMe = m.uid === state.me.uid;
+      if(isMe) row.classList.add("me");
+
+      const p = document.createElement("img");
+      p.className = "pfp";
+      p.src = m.pfp || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+      p.alt = "pfp";
+
+      const b = document.createElement("div");
+      b.className = "bubble";
+      if(m.isA) b.classList.add("admin-glow");
+
+      const head = document.createElement("div");
+      head.className = "sender";
+
+      const left = document.createElement("div");
+      left.className = "tag";
+      left.textContent = `${m.isA ? "[ADMIN] " : ""}${escapeText(m.user)}`;
+
+      const ts = document.createElement("div");
+      ts.className = "meta";
+      const d = m.time?.toDate ? m.time.toDate() : null;
+      ts.textContent = d ? fmtTime(d) : "";
+
+      head.appendChild(left);
+      head.appendChild(ts);
+
+      const text = document.createElement("div");
+      text.className = "text";
+      text.textContent = escapeText(m.text);
+
+      b.appendChild(head);
+      if(m.text) b.appendChild(text);
+
+      // Media
+      if(m.imageUrl || m.gifUrl){
+        const media = document.createElement("div");
+        media.className = "media";
+        const img = document.createElement("img");
+        img.src = m.imageUrl || m.gifUrl;
+        img.alt = "media";
+        media.appendChild(img);
+        b.appendChild(media);
+      }
+
+      // Admin actions: delete + quick moderation fill
+      const actions = document.createElement("div");
+      actions.className = "msg-actions";
+
+      const uidBtn = document.createElement("button");
+      uidBtn.className = "mini-btn admin";
+      uidBtn.textContent = "UID";
+      uidBtn.title = "Click to use this UID in Admin Tools";
+      uidBtn.style.display = state.isAdmin ? "inline-flex" : "none";
+      uidBtn.onclick = () => {
+        state.lastClickedUid = m.uid;
+        $("mod-uid").value = m.uid;
+        alert("UID loaded into Admin Tools.");
+      };
+      actions.appendChild(uidBtn);
+
+      // Delete: admin OR own message
+      const canDelete = state.isAdmin || isMe;
+      if(canDelete){
+        const del = document.createElement("button");
+        del.className = "mini-btn danger";
+        del.textContent = "ERASE";
+        del.onclick = async () => {
+          if(confirm("Erase Packet?")){
+            await deleteDoc(doc(db, "messages", id));
+          }
         };
+        actions.appendChild(del);
+      }
 
-        window.updateUser = async () => {
-            const name = document.getElementById('in-name').value;
-            const pfp = document.getElementById('in-pfp').value;
-            await setDoc(doc(db, "users", auth.currentUser.uid), { name, pfp }, { merge: true });
-            alert("Mainframe records updated.");
-            location.reload();
+      if(actions.children.length) b.appendChild(actions);
+
+      row.appendChild(p);
+      row.appendChild(b);
+      return row;
+    }
+
+    function initChat(){
+      const q = query(collection(db, "messages"), orderBy("time", "asc"));
+      onSnapshot(q, (snap) => {
+        const box = $("messages");
+        box.innerHTML = "";
+        snap.forEach((d) => box.appendChild(renderMessage(d)));
+        box.scrollTop = box.scrollHeight;
+      });
+    }
+
+    // -----------------------------
+    // Admin moderation actions
+    // -----------------------------
+    function assertAdmin(){
+      if(!state.isAdmin){
+        alert("Admin only.");
+        return false;
+      }
+      return true;
+    }
+
+    $("btn-copyuid").onclick = () => {
+      if(state.lastClickedUid){
+        $("mod-uid").value = state.lastClickedUid;
+        alert("UID filled.");
+      } else {
+        alert("Click a message’s UID button first (admin).");
+      }
+    };
+
+    $("btn-ban").onclick = async () => {
+      if(!assertAdmin()) return;
+      const uid = $("mod-uid").value.trim();
+      if(!uid) return alert("UID required.");
+      await setDoc(doc(db, "moderation", uid), { banned:true, mutedUntil:null }, { merge:true });
+      alert("User banned.");
+    };
+
+    $("btn-unban").onclick = async () => {
+      if(!assertAdmin()) return;
+      const uid = $("mod-uid").value.trim();
+      if(!uid) return alert("UID required.");
+      await setDoc(doc(db, "moderation", uid), { banned:false }, { merge:true });
+      alert("User unbanned.");
+    };
+
+    $("btn-mute").onclick = async () => {
+      if(!assertAdmin()) return;
+      const uid = $("mod-uid").value.trim();
+      const minutes = Number($("mute-min").value);
+      if(!uid) return alert("UID required.");
+      if(!Number.isFinite(minutes) || minutes <= 0) return alert("Enter mute minutes (e.g. 60).");
+
+      const until = new Date(Date.now() + minutes * 60 * 1000).toISOString();
+      await setDoc(doc(db, "moderation", uid), { mutedUntil: until }, { merge:true });
+      alert(`User muted for ${minutes} minutes.`);
+    };
+
+    $("btn-unmute").onclick = async () => {
+      if(!assertAdmin()) return;
+      const uid = $("mod-uid").value.trim();
+      if(!uid) return alert("UID required.");
+      await setDoc(doc(db, "moderation", uid), { mutedUntil:null }, { merge:true });
+      alert("User unmuted.");
+    };
+
+    $("btn-wipe").onclick = async () => {
+      if(!assertAdmin()) return;
+      if(!confirm("GLOBAL WIPE? This deletes ALL messages.")) return;
+
+      const q = await getDocs(collection(db, "messages"));
+      const tasks = [];
+      q.forEach((d) => tasks.push(deleteDoc(doc(db, "messages", d.id))));
+      await Promise.all(tasks);
+      alert("Global wipe done.");
+    };
+
+    // -----------------------------
+    // Auth state
+    // -----------------------------
+    onAuthStateChanged(auth, async (user) => {
+      if(!user){
+        setLoggedIn(false);
+        return;
+      }
+
+      state.me = user;
+      state.isAdmin = (user.email || "").toLowerCase() === MASTER_EMAIL.toLowerCase();
+      setAdmin(state.isAdmin);
+
+      // user profile doc
+      const uref = doc(db, "users", user.uid);
+      const snap = await getDoc(uref);
+      if(snap.exists()){
+        state.profile = snap.data();
+      } else {
+        state.profile = {
+          name: (user.displayName || "Operator").slice(0, 40),
+          pfp: user.photoURL || ""
         };
-    </script>
+        await setDoc(uref, state.profile);
+      }
+
+      // fill profile UI
+      $("in-name").value = state.profile.name || "Operator";
+      $("in-pfp").value = state.profile.pfp || "";
+
+      // read moderation state (for showing + send checks)
+      await readMyModeration();
+
+      // update sidebar
+      setSide();
+
+      setLoggedIn(true);
+      initChat();
+
+      // If admin, stay on chat; if not admin, hide admin screen anyway
+      if(!state.isAdmin && $("scr-admin")){
+        // no-op; CSS hides admin nav already
+      }
+    });
+  </script>
 </body>
 </html>
-
-
-
