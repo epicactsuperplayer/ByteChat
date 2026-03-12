@@ -1,11 +1,9 @@
-```html
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>ByteChat</title>
 
-<!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TKJ9JKK7ZF"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
@@ -15,370 +13,222 @@ gtag('config', 'G-TKJ9JKK7ZF');
 </script>
 
 <style>
-
-body{
-font-family:Arial;
-background:#0f0f0f;
-color:white;
-text-align:center;
-margin:0;
-}
-
-h1{
-background:#111;
-padding:15px;
-margin:0;
-}
-
-#login,#profile,#chat,#admin{
-display:none;
-padding:20px;
-}
-
-input{
-padding:10px;
-margin:5px;
-border-radius:6px;
-border:none;
-}
-
-button{
-padding:10px 20px;
-margin:5px;
-border:none;
-border-radius:6px;
-background:#00aaff;
-color:white;
-cursor:pointer;
-}
-
-#messages{
-height:400px;
-overflow-y:auto;
-border:1px solid #333;
-margin:10px;
-padding:10px;
-}
-
-.msg{
-display:flex;
-align-items:center;
-margin:6px;
-}
-
-.msg img{
-width:35px;
-height:35px;
-border-radius:50%;
-margin-right:8px;
-cursor:pointer;
-}
-
+body { font-family: Arial; background: #0f0f0f; color: white; text-align: center; margin: 0; }
+h1 { background: #111; padding: 15px; margin: 0; }
+#login, #profile, #chat, #admin { display: none; padding: 20px; }
+input { padding: 10px; margin: 5px; border-radius: 6px; border: none; }
+button { padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; background: #00aaff; color: white; cursor: pointer; }
+#messages { height: 400px; overflow-y: auto; border: 1px solid #333; margin: 10px; padding: 10px; }
+.msg { display: flex; align-items: center; margin: 6px; }
+.msg img { width: 35px; height: 35px; border-radius: 50%; margin-right: 8px; cursor: pointer; }
 </style>
-
 </head>
 
 <body>
-
 <h1>ByteChat</h1>
 
-<!-- LOGIN -->
-
 <div id="login">
-
-<h2>Login</h2>
-
-<input id="email" placeholder="Email"><br>
-<input id="password" type="password" placeholder="Password"><br>
-
-<button onclick="login()">Login</button>
-<button onclick="signup()">Signup</button>
-<button onclick="googleLogin()">Google Login</button>
-
-<br><br>
-
-<input id="resetEmail" placeholder="Email for reset">
-<button onclick="resetPassword()">Forgot Password</button>
-
+  <h2>Login</h2>
+  <input id="email" placeholder="Email"><br>
+  <input id="password" type="password" placeholder="Password"><br>
+  <button id="btnLogin">Login</button>
+  <button id="btnSignup">Signup</button>
+  <button id="btnGoogle">Google Login</button>
+  <br><br>
+  <input id="resetEmail" placeholder="Email for reset">
+  <button id="btnReset">Forgot Password</button>
 </div>
-
-
-<!-- PROFILE SETUP -->
 
 <div id="profile">
-
-<h2>Create Profile</h2>
-
-<input id="name" placeholder="Your Name"><br>
-<input type="file" id="pfp"><br><br>
-
-<button onclick="saveProfile()">Save Profile</button>
-
+  <h2>Create Profile</h2>
+  <input id="name" placeholder="Your Name"><br>
+  <input type="file" id="pfp"><br><br>
+  <button id="btnSaveProfile">Save Profile</button>
 </div>
-
-
-<!-- CHAT -->
 
 <div id="chat">
-
-<div id="messages"></div>
-
-<input id="messageInput" placeholder="Message">
-<button onclick="sendMessage()">Send</button>
-
-<br><br>
-
-<button onclick="logout()">Logout</button>
-
+  <div id="messages"></div>
+  <input id="messageInput" placeholder="Message">
+  <button id="btnSend">Send</button>
+  <br><br>
+  <button id="btnLogout">Logout</button>
 </div>
-
-
-<!-- ADMIN PANEL -->
 
 <div id="admin">
-
-<h2>Admin Panel</h2>
-
-<button onclick="clearChat()">Delete All Messages</button>
-
+  <h2>Admin Panel</h2>
+  <button id="btnClearChat">Delete All Messages</button>
 </div>
 
-
-
 <script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-analytics.js";
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
 import {
-getAuth,
-signInWithEmailAndPassword,
-createUserWithEmailAndPassword,
-signInWithPopup,
-GoogleAuthProvider,
-sendPasswordResetEmail,
-onAuthStateChanged,
-signOut
-} from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
-
+  getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail,
+  onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 import {
-getFirestore,
-doc,
-setDoc,
-getDoc,
-addDoc,
-collection,
-onSnapshot,
-getDocs,
-deleteDoc
-} from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
-
+  getFirestore, doc, setDoc, getDoc, addDoc,
+  collection, onSnapshot, getDocs, deleteDoc
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 import {
-getStorage,
-ref,
-uploadBytes,
-getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
-
+  getStorage, ref, uploadBytes, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js";
 
 const firebaseConfig = {
-
-apiKey: "AIzaSyAY49sWaN-DSKV10uyBB3CeOiABLCtFrSI",
-authDomain: "bytestorm-friebase-server.firebaseapp.com",
-databaseURL: "https://bytestorm-friebase-server-default-rtdb.europe-west1.firebasedatabase.app",
-projectId: "bytestorm-friebase-server",
-storageBucket: "bytestorm-friebase-server.firebasestorage.app",
-messagingSenderId: "400056781433",
-appId: "1:400056781433:web:9803b0711d85de437f62a8",
-measurementId: "G-TKJ9JKK7ZF"
-
+  apiKey: "AIzaSyAY49sWaN-DSKV10uyBB3CeOiABLCtFrSI",
+  authDomain: "bytestorm-friebase-server.firebaseapp.com",
+  databaseURL: "https://bytestorm-friebase-server-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "bytestorm-friebase-server",
+  storageBucket: "bytestorm-friebase-server.firebasestorage.app",
+  messagingSenderId: "400056781433",
+  appId: "1:400056781433:web:9803b0711d85de437f62a8",
+  measurementId: "G-TKJ9JKK7ZF"
 };
 
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
-
 const provider = new GoogleAuthProvider();
 
-const loginDiv=document.getElementById("login")
-const profileDiv=document.getElementById("profile")
-const chatDiv=document.getElementById("chat")
-const adminDiv=document.getElementById("admin")
+const loginDiv = document.getElementById("login");
+const profileDiv = document.getElementById("profile");
+const chatDiv = document.getElementById("chat");
+const adminDiv = document.getElementById("admin");
+const messagesDiv = document.getElementById("messages");
 
-loginDiv.style.display="block"
+loginDiv.style.display = "block";
 
+// --- Button listeners (no onclick needed) ---
 
+document.getElementById("btnLogin").addEventListener("click", async () => {
+  try {
+    const email = document.getElementById("email").value;
+    const pass = document.getElementById("password").value;
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch(e) { alert(e.message); }
+});
 
-window.login = async function(){
+document.getElementById("btnSignup").addEventListener("click", async () => {
+  try {
+    const email = document.getElementById("email").value;
+    const pass = document.getElementById("password").value;
+    await createUserWithEmailAndPassword(auth, email, pass);
+  } catch(e) { alert(e.message); }
+});
 
-let email=document.getElementById("email").value
-let pass=document.getElementById("password").value
+document.getElementById("btnGoogle").addEventListener("click", async () => {
+  try {
+    await signInWithPopup(auth, provider);
+  } catch(e) { alert(e.message); }
+});
 
-await signInWithEmailAndPassword(auth,email,pass)
+document.getElementById("btnReset").addEventListener("click", async () => {
+  try {
+    const email = document.getElementById("resetEmail").value;
+    await sendPasswordResetEmail(auth, email);
+    alert("Reset email sent!");
+  } catch(e) { alert(e.message); }
+});
 
+document.getElementById("btnSaveProfile").addEventListener("click", async () => {
+  try {
+    const name = document.getElementById("name").value;
+    const file = document.getElementById("pfp").files[0];
+    const uid = auth.currentUser.uid;
+    const storageRef = ref(storage, "pfp/" + uid);
+    await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(storageRef);
+    await setDoc(doc(db, "users", uid), {
+      name: name,
+      pfp: url,
+      email: auth.currentUser.email
+    });
+    loadChat();
+  } catch(e) { alert(e.message); }
+});
+
+document.getElementById("btnSend").addEventListener("click", async () => {
+  try {
+    const text = document.getElementById("messageInput").value;
+    if (!text.trim()) return;
+    const uid = auth.currentUser.uid;
+    const user = await getDoc(doc(db, "users", uid));
+    await addDoc(collection(db, "messages"), {
+      text: text,
+      name: user.data().name,
+      pfp: user.data().pfp,
+      uid: uid,
+      time: Date.now()
+    });
+    document.getElementById("messageInput").value = "";
+  } catch(e) { alert(e.message); }
+});
+
+document.getElementById("btnLogout").addEventListener("click", () => signOut(auth));
+
+document.getElementById("btnClearChat").addEventListener("click", async () => {
+  try {
+    const snap = await getDocs(collection(db, "messages"));
+    snap.forEach(async d => await deleteDoc(d.ref));
+  } catch(e) { alert(e.message); }
+});
+
+// Also send on Enter key
+document.getElementById("messageInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") document.getElementById("btnSend").click();
+});
+
+// --- Core functions ---
+
+function loadChat() {
+  loginDiv.style.display = "none";
+  profileDiv.style.display = "none";
+  chatDiv.style.display = "block";
+
+  if (auth.currentUser.email === "bytestorm.corp@gmail.com") {
+    adminDiv.style.display = "block";
+  }
+
+  onSnapshot(collection(db, "messages"), snap => {
+    messagesDiv.innerHTML = "";
+    const sorted = [];
+    snap.forEach(d => sorted.push(d.data()));
+    sorted.sort((a, b) => a.time - b.time);
+    sorted.forEach(m => {
+      const div = document.createElement("div");
+      div.className = "msg";
+      const img = document.createElement("img");
+      img.src = m.pfp;
+      img.title = "User: " + m.name;
+      img.addEventListener("click", () => alert("User: " + m.name));
+      const text = document.createElement("span");
+      text.innerHTML = `<b>${m.name}:</b> ${m.text}`;
+      div.appendChild(img);
+      div.appendChild(text);
+      messagesDiv.appendChild(div);
+    });
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  });
 }
 
-
-
-window.signup = async function(){
-
-let email=document.getElementById("email").value
-let pass=document.getElementById("password").value
-
-await createUserWithEmailAndPassword(auth,email,pass)
-
-}
-
-
-
-window.googleLogin = async function(){
-
-await signInWithPopup(auth,provider)
-
-}
-
-
-
-window.resetPassword = async function(){
-
-let email=document.getElementById("resetEmail").value
-
-await sendPasswordResetEmail(auth,email)
-
-alert("Reset email sent")
-
-}
-
-
-
-window.logout = function(){
-
-signOut(auth)
-
-}
-
-
-
-window.saveProfile = async function(){
-
-let name=document.getElementById("name").value
-let file=document.getElementById("pfp").files[0]
-
-let uid=auth.currentUser.uid
-
-let storageRef=ref(storage,"pfp/"+uid)
-
-await uploadBytes(storageRef,file)
-
-let url=await getDownloadURL(storageRef)
-
-await setDoc(doc(db,"users",uid),{
-name:name,
-pfp:url,
-email:auth.currentUser.email
-})
-
-loadChat()
-
-}
-
-
-
-window.sendMessage = async function(){
-
-let text=document.getElementById("messageInput").value
-
-let uid=auth.currentUser.uid
-
-let user=await getDoc(doc(db,"users",uid))
-
-await addDoc(collection(db,"messages"),{
-
-text:text,
-name:user.data().name,
-pfp:user.data().pfp,
-uid:uid,
-time:Date.now()
-
-})
-
-document.getElementById("messageInput").value=""
-
-}
-
-
-
-async function loadChat(){
-
-loginDiv.style.display="none"
-profileDiv.style.display="none"
-chatDiv.style.display="block"
-
-if(auth.currentUser.email=="bytestorm.corp@gmail.com"){
-adminDiv.style.display="block"
-}
-
-onSnapshot(collection(db,"messages"),snap=>{
-
-messages.innerHTML=""
-
-snap.forEach(d=>{
-
-let m=d.data()
-
-messages.innerHTML+=`
-<div class="msg">
-<img src="${m.pfp}" onclick="alert('User: ${m.name}')">
-<b>${m.name}:</b> ${m.text}
-</div>
-`
-
-})
-
-})
-
-}
-
-
-
-window.clearChat = async function(){
-
-let snap=await getDocs(collection(db,"messages"))
-
-snap.forEach(async d=>{
-await deleteDoc(d.ref)
-})
-
-}
-
-
-
-onAuthStateChanged(auth,async user=>{
-
-if(!user){
-loginDiv.style.display="block"
-chatDiv.style.display="none"
-return
-}
-
-let docSnap=await getDoc(doc(db,"users",user.uid))
-
-if(!docSnap.exists()){
-loginDiv.style.display="none"
-profileDiv.style.display="block"
-}else{
-loadChat()
-}
-
-})
-
+onAuthStateChanged(auth, async user => {
+  if (!user) {
+    loginDiv.style.display = "block";
+    chatDiv.style.display = "none";
+    profileDiv.style.display = "none";
+    return;
+  }
+  const docSnap = await getDoc(doc(db, "users", user.uid));
+  if (!docSnap.exists()) {
+    loginDiv.style.display = "none";
+    profileDiv.style.display = "block";
+  } else {
+    loadChat();
+  }
+});
 </script>
-
 </body>
 </html>
-```
-
-
