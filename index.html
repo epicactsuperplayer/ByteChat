@@ -13,15 +13,41 @@ gtag('config', 'G-TKJ9JKK7ZF');
 </script>
 
 <style>
+* { box-sizing: border-box; }
 body { font-family: Arial; background: #0f0f0f; color: white; text-align: center; margin: 0; }
 h1 { background: #111; padding: 15px; margin: 0; }
 #login, #profile, #chat, #admin { display: none; padding: 20px; }
 input { padding: 10px; margin: 5px; border-radius: 6px; border: none; }
 button { padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; background: #00aaff; color: white; cursor: pointer; }
-#messages { height: 400px; overflow-y: auto; border: 1px solid #333; margin: 10px; padding: 10px; }
+button.red { background: #cc0000; }
+button.orange { background: #e67e00; }
+button.green { background: #00aa44; }
+#messages { height: 400px; overflow-y: auto; border: 1px solid #333; margin: 10px; padding: 10px; text-align: left; }
 .msg { display: flex; align-items: center; margin: 6px; }
-.msg img { width: 35px; height: 35px; border-radius: 50%; margin-right: 8px; cursor: pointer; object-fit: cover; }
+.msg img { width: 35px; height: 35px; border-radius: 50%; margin-right: 8px; cursor: pointer; object-fit: cover; flex-shrink: 0; }
 #pfpPreview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 10px; display: none; border: 2px solid #00aaff; }
+
+/* Modal */
+#modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999; justify-content: center; align-items: center; }
+#modalBox { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 25px; min-width: 280px; max-width: 350px; text-align: center; }
+#modalBox img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #00aaff; margin-bottom: 10px; }
+#modalBox h3 { margin: 5px 0; }
+#modalBox p { color: #aaa; font-size: 14px; margin: 4px 0; }
+#modalClose { margin-top: 15px; }
+#adminActions { margin-top: 15px; display: none; }
+
+/* Admin panel */
+#admin { text-align: left; max-width: 600px; margin: 0 auto; }
+#admin h2 { text-align: center; }
+#adminUserList { margin-top: 10px; }
+.adminUser { display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; border-radius: 8px; padding: 10px; margin: 6px 0; }
+.adminUser img { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; margin-right: 10px; }
+.adminUser .info { flex: 1; text-align: left; font-size: 14px; }
+.adminUser .info span { display: block; color: #aaa; font-size: 12px; }
+.adminUser .btns button { padding: 6px 10px; font-size: 12px; margin: 2px; }
+.badge { font-size: 11px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; }
+.badge.banned { background: #cc0000; }
+.badge.muted { background: #e67e00; }
 </style>
 </head>
 
@@ -44,6 +70,7 @@ button { padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; back
   <h2>Create Profile</h2>
   <input id="name" placeholder="Your Name"><br>
   <input id="pfpUrl" placeholder="Profile Picture URL (https://...)"><br>
+  <input id="about" placeholder="About me (optional)"><br>
   <img id="pfpPreview" src="" alt="Preview"><br>
   <button id="btnSaveProfile">Save Profile</button>
 </div>
@@ -57,8 +84,26 @@ button { padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; back
 </div>
 
 <div id="admin">
-  <h2>Admin Panel</h2>
-  <button id="btnClearChat">Delete All Messages</button>
+  <h2>⚙️ Admin Panel</h2>
+  <button id="btnClearChat" class="red">🗑️ Delete All Messages</button>
+  <button id="btnRefreshUsers" class="green">🔄 Refresh Users</button>
+  <div id="adminUserList"></div>
+</div>
+
+<!-- User Profile Modal -->
+<div id="modal">
+  <div id="modalBox">
+    <img id="modalPfp" src="">
+    <h3 id="modalName"></h3>
+    <p id="modalEmail"></p>
+    <p id="modalAbout"></p>
+    <div id="adminActions">
+      <button id="btnModalBan" class="red">🔨 Ban User</button>
+      <button id="btnModalMute" class="orange">🔇 Mute User</button>
+      <button id="btnModalDeleteMsgs" class="red">🗑️ Delete Messages</button>
+    </div>
+    <button id="modalClose">Close</button>
+  </div>
 </div>
 
 <script type="module">
@@ -70,8 +115,8 @@ import {
   onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 import {
-  getFirestore, doc, setDoc, getDoc, addDoc,
-  collection, onSnapshot, getDocs, deleteDoc
+  getFirestore, doc, setDoc, getDoc, addDoc, updateDoc,
+  collection, onSnapshot, getDocs, deleteDoc, query, where
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -91,31 +136,44 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
+const ADMIN_EMAIL = "bytestorm.corp@gmail.com";
+const DEFAULT_PFP = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+
+// Bad words list — add more as needed
+const BAD_WORDS = ["badword1", "badword2", "fuck", "shit", "ass", "bitch", "bastard"];
+
 const loginDiv = document.getElementById("login");
 const profileDiv = document.getElementById("profile");
 const chatDiv = document.getElementById("chat");
 const adminDiv = document.getElementById("admin");
 const messagesDiv = document.getElementById("messages");
+const modal = document.getElementById("modal");
 
-const DEFAULT_PFP = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+let currentModalUid = null;
+let isAdmin = false;
 
 loginDiv.style.display = "block";
 
-// Live preview of profile picture URL
+// --- Bad word filter ---
+function containsBadWord(text) {
+  const lower = text.toLowerCase();
+  return BAD_WORDS.some(w => lower.includes(w));
+}
+
+// --- PFP URL preview ---
 document.getElementById("pfpUrl").addEventListener("input", () => {
   const url = document.getElementById("pfpUrl").value.trim();
   const preview = document.getElementById("pfpPreview");
   if (url) {
     preview.src = url;
     preview.style.display = "inline-block";
-    preview.onerror = () => {
-      preview.style.display = "none";
-    };
+    preview.onerror = () => { preview.style.display = "none"; };
   } else {
     preview.style.display = "none";
   }
 });
 
+// --- Auth buttons ---
 document.getElementById("btnLogin").addEventListener("click", async () => {
   try {
     const email = document.getElementById("email").value;
@@ -146,47 +204,52 @@ document.getElementById("btnReset").addEventListener("click", async () => {
   } catch(e) { alert(e.message); }
 });
 
+// --- Save profile ---
 document.getElementById("btnSaveProfile").addEventListener("click", async () => {
   try {
     const name = document.getElementById("name").value.trim();
     if (!name) { alert("Please enter a name!"); return; }
-
     let pfp = document.getElementById("pfpUrl").value.trim();
-    if (!pfp) pfp = DEFAULT_PFP; // use default avatar if no URL given
-
+    if (!pfp) pfp = DEFAULT_PFP;
+    const about = document.getElementById("about").value.trim() || "No bio yet.";
     const uid = auth.currentUser.uid;
     await setDoc(doc(db, "users", uid), {
-      name: name,
-      pfp: pfp,
-      email: auth.currentUser.email
+      name, pfp, about,
+      email: auth.currentUser.email,
+      banned: false,
+      muted: false
     });
     loadChat();
   } catch(e) { alert(e.message); }
 });
 
+// --- Send message ---
 document.getElementById("btnSend").addEventListener("click", async () => {
   try {
-    const text = document.getElementById("messageInput").value;
-    if (!text.trim()) return;
+    const text = document.getElementById("messageInput").value.trim();
+    if (!text) return;
+
     const uid = auth.currentUser.uid;
-    const user = await getDoc(doc(db, "users", uid));
+    const userSnap = await getDoc(doc(db, "users", uid));
+    const userData = userSnap.data();
+
+    if (userData.banned) { alert("You are banned from this chat."); return; }
+    if (userData.muted) { alert("You are currently muted."); return; }
+
+    // Auto-delete if bad word detected — just don't send it
+    if (containsBadWord(text)) {
+      document.getElementById("messageInput").value = "";
+      return;
+    }
+
     await addDoc(collection(db, "messages"), {
-      text: text,
-      name: user.data().name,
-      pfp: user.data().pfp,
-      uid: uid,
+      text,
+      name: userData.name,
+      pfp: userData.pfp,
+      uid,
       time: Date.now()
     });
     document.getElementById("messageInput").value = "";
-  } catch(e) { alert(e.message); }
-});
-
-document.getElementById("btnLogout").addEventListener("click", () => signOut(auth));
-
-document.getElementById("btnClearChat").addEventListener("click", async () => {
-  try {
-    const snap = await getDocs(collection(db, "messages"));
-    snap.forEach(async d => await deleteDoc(d.ref));
   } catch(e) { alert(e.message); }
 });
 
@@ -194,28 +257,168 @@ document.getElementById("messageInput").addEventListener("keydown", e => {
   if (e.key === "Enter") document.getElementById("btnSend").click();
 });
 
+document.getElementById("btnLogout").addEventListener("click", () => signOut(auth));
+
+// --- Admin: clear all messages ---
+document.getElementById("btnClearChat").addEventListener("click", async () => {
+  if (!confirm("Delete ALL messages?")) return;
+  try {
+    const snap = await getDocs(collection(db, "messages"));
+    snap.forEach(async d => await deleteDoc(d.ref));
+  } catch(e) { alert(e.message); }
+});
+
+// --- Admin: refresh user list ---
+document.getElementById("btnRefreshUsers").addEventListener("click", loadAdminUsers);
+
+// --- Modal close ---
+document.getElementById("modalClose").addEventListener("click", () => {
+  modal.style.display = "none";
+  currentModalUid = null;
+});
+modal.addEventListener("click", e => {
+  if (e.target === modal) { modal.style.display = "none"; currentModalUid = null; }
+});
+
+// --- Modal admin actions ---
+document.getElementById("btnModalBan").addEventListener("click", async () => {
+  if (!currentModalUid) return;
+  const userRef = doc(db, "users", currentModalUid);
+  const snap = await getDoc(userRef);
+  const banned = snap.data().banned;
+  await updateDoc(userRef, { banned: !banned });
+  alert(banned ? "User unbanned." : "User banned.");
+  modal.style.display = "none";
+  loadAdminUsers();
+});
+
+document.getElementById("btnModalMute").addEventListener("click", async () => {
+  if (!currentModalUid) return;
+  const userRef = doc(db, "users", currentModalUid);
+  const snap = await getDoc(userRef);
+  const muted = snap.data().muted;
+  await updateDoc(userRef, { muted: !muted });
+  alert(muted ? "User unmuted." : "User muted.");
+  modal.style.display = "none";
+  loadAdminUsers();
+});
+
+document.getElementById("btnModalDeleteMsgs").addEventListener("click", async () => {
+  if (!currentModalUid) return;
+  if (!confirm("Delete all messages from this user?")) return;
+  try {
+    const q = query(collection(db, "messages"), where("uid", "==", currentModalUid));
+    const snap = await getDocs(q);
+    snap.forEach(async d => await deleteDoc(d.ref));
+    alert("Messages deleted.");
+    modal.style.display = "none";
+  } catch(e) { alert(e.message); }
+});
+
+// --- Open user profile modal ---
+async function openUserModal(uid) {
+  try {
+    const snap = await getDoc(doc(db, "users", uid));
+    if (!snap.exists()) return;
+    const u = snap.data();
+    currentModalUid = uid;
+
+    document.getElementById("modalPfp").src = u.pfp || DEFAULT_PFP;
+    document.getElementById("modalName").textContent = u.name;
+    document.getElementById("modalEmail").textContent = "📧 " + (u.email || "Unknown");
+    document.getElementById("modalAbout").textContent = "ℹ️ " + (u.about || "No bio yet.");
+
+    // Show admin buttons only for admin, not on own profile
+    const adminActions = document.getElementById("adminActions");
+    if (isAdmin && uid !== auth.currentUser.uid) {
+      adminActions.style.display = "block";
+      const banBtn = document.getElementById("btnModalBan");
+      const muteBtn = document.getElementById("btnModalMute");
+      banBtn.textContent = u.banned ? "✅ Unban User" : "🔨 Ban User";
+      muteBtn.textContent = u.muted ? "✅ Unmute User" : "🔇 Mute User";
+    } else {
+      adminActions.style.display = "none";
+    }
+
+    modal.style.display = "flex";
+  } catch(e) { alert(e.message); }
+}
+
+// --- Load admin user list ---
+async function loadAdminUsers() {
+  const list = document.getElementById("adminUserList");
+  list.innerHTML = "<p>Loading...</p>";
+  try {
+    const snap = await getDocs(collection(db, "users"));
+    list.innerHTML = "";
+    snap.forEach(d => {
+      const u = d.data();
+      const uid = d.id;
+      const div = document.createElement("div");
+      div.className = "adminUser";
+      div.innerHTML = `
+        <img src="${u.pfp || DEFAULT_PFP}" onerror="this.src='${DEFAULT_PFP}'">
+        <div class="info">
+          <b>${u.name}</b>
+          ${u.banned ? '<span class="badge banned">Banned</span>' : ''}
+          ${u.muted ? '<span class="badge muted">Muted</span>' : ''}
+          <span>${u.email}</span>
+        </div>
+        <div class="btns">
+          <button class="orange" onclick="window._viewUser('${uid}')">👁️ View</button>
+          <button class="${u.banned ? 'green' : 'red'}" onclick="window._toggleBan('${uid}', ${u.banned})">${u.banned ? 'Unban' : 'Ban'}</button>
+          <button class="${u.muted ? 'green' : 'orange'}" onclick="window._toggleMute('${uid}', ${u.muted})">${u.muted ? 'Unmute' : 'Mute'}</button>
+          <button class="red" onclick="window._deleteUserMsgs('${uid}')">🗑️ Msgs</button>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+  } catch(e) { list.innerHTML = "<p>Error loading users.</p>"; }
+}
+
+// Admin quick actions from user list
+window._viewUser = (uid) => openUserModal(uid);
+window._toggleBan = async (uid, banned) => {
+  await updateDoc(doc(db, "users", uid), { banned: !banned });
+  loadAdminUsers();
+};
+window._toggleMute = async (uid, muted) => {
+  await updateDoc(doc(db, "users", uid), { muted: !muted });
+  loadAdminUsers();
+};
+window._deleteUserMsgs = async (uid) => {
+  if (!confirm("Delete all messages from this user?")) return;
+  const q = query(collection(db, "messages"), where("uid", "==", uid));
+  const snap = await getDocs(q);
+  snap.forEach(async d => await deleteDoc(d.ref));
+  alert("Done.");
+};
+
+// --- Load chat ---
 function loadChat() {
   loginDiv.style.display = "none";
   profileDiv.style.display = "none";
   chatDiv.style.display = "block";
 
-  if (auth.currentUser.email === "bytestorm.corp@gmail.com") {
+  if (auth.currentUser.email === ADMIN_EMAIL) {
+    isAdmin = true;
     adminDiv.style.display = "block";
+    loadAdminUsers();
   }
 
   onSnapshot(collection(db, "messages"), snap => {
     messagesDiv.innerHTML = "";
     const sorted = [];
-    snap.forEach(d => sorted.push(d.data()));
+    snap.forEach(d => sorted.push({ id: d.id, ...d.data() }));
     sorted.sort((a, b) => a.time - b.time);
     sorted.forEach(m => {
       const div = document.createElement("div");
       div.className = "msg";
       const img = document.createElement("img");
-      img.src = m.pfp;
-      img.title = "User: " + m.name;
+      img.src = m.pfp || DEFAULT_PFP;
       img.onerror = () => { img.src = DEFAULT_PFP; };
-      img.addEventListener("click", () => alert("User: " + m.name));
+      img.title = m.name;
+      img.addEventListener("click", () => openUserModal(m.uid));
       const text = document.createElement("span");
       text.innerHTML = `<b>${m.name}:</b> ${m.text}`;
       div.appendChild(img);
@@ -226,11 +429,14 @@ function loadChat() {
   });
 }
 
+// --- Auth state ---
 onAuthStateChanged(auth, async user => {
   if (!user) {
     loginDiv.style.display = "block";
     chatDiv.style.display = "none";
     profileDiv.style.display = "none";
+    adminDiv.style.display = "none";
+    isAdmin = false;
     return;
   }
   const docSnap = await getDoc(doc(db, "users", user.uid));
