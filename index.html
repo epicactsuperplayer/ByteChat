@@ -87,10 +87,12 @@ const firebaseConfig = {
   measurementId: "G-TKJ9JKK7ZF"
 };
 
+// Debug token - check console for the token value, then add it to Firebase App Check
+self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-// App Check - must be initialized right after initializeApp
 const appCheck = initializeAppCheck(app, {
   provider: new ReCaptchaV3Provider("6Lfu7ocsAAAAAFmE0hTYaL61ivTy-4gyQkhHorWE"),
   isTokenAutoRefreshEnabled: true
@@ -235,3 +237,8 @@ onAuthStateChanged(auth, async user => {
 </script>
 </body>
 </html>
+```
+
+After deploying, open **F12 → Console** and look for a line like:
+```
+App Check debug token: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
