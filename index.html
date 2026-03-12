@@ -20,7 +20,8 @@ input { padding: 10px; margin: 5px; border-radius: 6px; border: none; }
 button { padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; background: #00aaff; color: white; cursor: pointer; }
 #messages { height: 400px; overflow-y: auto; border: 1px solid #333; margin: 10px; padding: 10px; }
 .msg { display: flex; align-items: center; margin: 6px; }
-.msg img { width: 35px; height: 35px; border-radius: 50%; margin-right: 8px; cursor: pointer; }
+.msg img { width: 35px; height: 35px; border-radius: 50%; margin-right: 8px; cursor: pointer; object-fit: cover; }
+#pfpPreview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 10px; display: none; border: 2px solid #00aaff; }
 </style>
 </head>
 
@@ -42,7 +43,8 @@ button { padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; back
 <div id="profile">
   <h2>Create Profile</h2>
   <input id="name" placeholder="Your Name"><br>
-  <input type="file" id="pfp"><br><br>
+  <input id="pfpUrl" placeholder="Profile Picture URL (https://...)"><br>
+  <img id="pfpPreview" src="" alt="Preview"><br>
   <button id="btnSaveProfile">Save Profile</button>
 </div>
 
@@ -71,9 +73,6 @@ import {
   getFirestore, doc, setDoc, getDoc, addDoc,
   collection, onSnapshot, getDocs, deleteDoc
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
-import {
-  getStorage, ref, uploadBytes, getDownloadURL
-} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAY49sWaN-DSKV10uyBB3CeOiABLCtFrSI",
@@ -90,7 +89,6 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
 
 const loginDiv = document.getElementById("login");
@@ -99,7 +97,24 @@ const chatDiv = document.getElementById("chat");
 const adminDiv = document.getElementById("admin");
 const messagesDiv = document.getElementById("messages");
 
+const DEFAULT_PFP = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+
 loginDiv.style.display = "block";
+
+// Live preview of profile picture URL
+document.getElementById("pfpUrl").addEventListener("input", () => {
+  const url = document.getElementById("pfpUrl").value.trim();
+  const preview = document.getElementById("pfpPreview");
+  if (url) {
+    preview.src = url;
+    preview.style.display = "inline-block";
+    preview.onerror = () => {
+      preview.style.display = "none";
+    };
+  } else {
+    preview.style.display = "none";
+  }
+});
 
 document.getElementById("btnLogin").addEventListener("click", async () => {
   try {
@@ -133,15 +148,16 @@ document.getElementById("btnReset").addEventListener("click", async () => {
 
 document.getElementById("btnSaveProfile").addEventListener("click", async () => {
   try {
-    const name = document.getElementById("name").value;
-    const file = document.getElementById("pfp").files[0];
+    const name = document.getElementById("name").value.trim();
+    if (!name) { alert("Please enter a name!"); return; }
+
+    let pfp = document.getElementById("pfpUrl").value.trim();
+    if (!pfp) pfp = DEFAULT_PFP; // use default avatar if no URL given
+
     const uid = auth.currentUser.uid;
-    const storageRef = ref(storage, "pfp/" + uid);
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
     await setDoc(doc(db, "users", uid), {
       name: name,
-      pfp: url,
+      pfp: pfp,
       email: auth.currentUser.email
     });
     loadChat();
@@ -198,6 +214,7 @@ function loadChat() {
       const img = document.createElement("img");
       img.src = m.pfp;
       img.title = "User: " + m.name;
+      img.onerror = () => { img.src = DEFAULT_PFP; };
       img.addEventListener("click", () => alert("User: " + m.name));
       const text = document.createElement("span");
       text.innerHTML = `<b>${m.name}:</b> ${m.text}`;
