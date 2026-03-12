@@ -24,33 +24,26 @@ button.orange { background: #e67e00; }
 button.green { background: #00aa44; }
 button.gray { background: #444; }
 #messages { height: 400px; overflow-y: auto; border: 1px solid #333; margin: 10px; padding: 10px; text-align: left; }
-.msg { display: flex; align-items: center; margin: 6px; }
+.msg { display: flex; align-items: center; margin: 6px; position: relative; }
 .msg img { width: 35px; height: 35px; border-radius: 50%; margin-right: 8px; cursor: pointer; object-fit: cover; flex-shrink: 0; }
+.msg .delbtn { display: none; background: #cc0000; border: none; color: white; border-radius: 4px; padding: 2px 7px; cursor: pointer; font-size: 12px; margin-left: 8px; }
+.msg:hover .delbtn { display: inline-block; }
 #pfpPreview, #settingsPfpPreview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 10px; display: none; border: 2px solid #00aaff; }
-
-/* top bar */
 #topBar { display: none; background: #111; padding: 8px 15px; justify-content: flex-end; gap: 8px; }
 #topBar button { padding: 7px 14px; font-size: 13px; }
-
-/* Modal */
 #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999; justify-content: center; align-items: center; }
 #modalBox { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 25px; min-width: 280px; max-width: 350px; text-align: center; }
 #modalBox img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #00aaff; margin-bottom: 10px; }
 #modalBox h3 { margin: 5px 0; }
 #modalBox p { color: #aaa; font-size: 14px; margin: 4px 0; }
 #adminActions { margin-top: 15px; display: none; }
-
-/* Settings */
 #settings { max-width: 400px; margin: 0 auto; text-align: left; }
 #settings h2 { text-align: center; }
 #settings label { display: block; margin: 15px 0 4px; color: #aaa; font-size: 13px; }
 #settings input { width: 100%; }
 #settingsPfpPreview { display: block; margin: 8px auto; }
-
-/* Admin */
 #admin { text-align: left; max-width: 600px; margin: 0 auto; }
 #admin h2 { text-align: center; }
-#adminUserList { margin-top: 10px; }
 .adminUser { display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; border-radius: 8px; padding: 10px; margin: 6px 0; flex-wrap: wrap; gap: 6px; }
 .adminUser img { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; margin-right: 10px; }
 .adminUser .info { flex: 1; text-align: left; font-size: 14px; }
@@ -59,9 +52,6 @@ button.gray { background: #444; }
 .badge { font-size: 11px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; }
 .badge.banned { background: #cc0000; }
 .badge.muted { background: #e67e00; }
-.badge.unverified { background: #555; }
-
-/* Verification banner */
 #verifyBanner { display: none; background: #7a4a00; padding: 10px; font-size: 14px; }
 #verifyBanner button { padding: 5px 12px; font-size: 13px; margin-left: 10px; }
 </style>
@@ -70,20 +60,17 @@ button.gray { background: #444; }
 <body>
 <h1>ByteChat</h1>
 
-<!-- Top bar -->
 <div id="topBar">
   <button id="btnOpenSettings">⚙️ Settings</button>
   <button id="btnBackToChat" style="display:none">💬 Back to Chat</button>
   <button class="gray" id="btnLogout">Logout</button>
 </div>
 
-<!-- Verify email banner -->
 <div id="verifyBanner">
   ⚠️ Please verify your email to use the chat.
   <button id="btnResendVerify">Resend Email</button>
 </div>
 
-<!-- LOGIN -->
 <div id="login">
   <h2>Login</h2>
   <input id="email" placeholder="Email"><br>
@@ -96,7 +83,6 @@ button.gray { background: #444; }
   <button id="btnReset">Forgot Password</button>
 </div>
 
-<!-- PROFILE SETUP -->
 <div id="profile">
   <h2>Create Profile</h2>
   <input id="name" placeholder="Your Name"><br>
@@ -106,14 +92,12 @@ button.gray { background: #444; }
   <button id="btnSaveProfile">Save Profile</button>
 </div>
 
-<!-- CHAT -->
 <div id="chat">
   <div id="messages"></div>
   <input id="messageInput" placeholder="Message">
   <button id="btnSend">Send</button>
 </div>
 
-<!-- SETTINGS -->
 <div id="settings">
   <h2>⚙️ Settings</h2>
   <label>Username</label>
@@ -131,7 +115,6 @@ button.gray { background: #444; }
   <button id="btnChangePassword" class="orange">📧 Send Password Reset Email</button>
 </div>
 
-<!-- ADMIN -->
 <div id="admin">
   <h2>⚙️ Admin Panel</h2>
   <button id="btnClearChat" class="red">🗑️ Delete All Messages</button>
@@ -139,18 +122,17 @@ button.gray { background: #444; }
   <div id="adminUserList"></div>
 </div>
 
-<!-- USER PROFILE MODAL -->
 <div id="modal">
   <div id="modalBox">
     <img id="modalPfp" src="">
     <h3 id="modalName"></h3>
     <p id="modalEmail"></p>
     <p id="modalAbout"></p>
-    <p id="modalVerified"></p>
+    <p id="modalStatus"></p>
     <div id="adminActions">
       <button id="btnModalBan" class="red">🔨 Ban User</button>
       <button id="btnModalMute" class="orange">🔇 Mute User</button>
-      <button id="btnModalDeleteMsgs" class="red">🗑️ Delete Messages</button>
+      <button id="btnModalDeleteMsgs" class="red">🗑️ Delete All Messages</button>
     </div>
     <button id="modalClose" class="gray">Close</button>
   </div>
@@ -203,7 +185,6 @@ const modal = document.getElementById("modal");
 let currentModalUid = null;
 let isAdmin = false;
 
-// --- Helpers ---
 function containsBadWord(text) {
   const lower = text.toLowerCase();
   return BAD_WORDS.some(w => lower.includes(w));
@@ -215,7 +196,6 @@ function showPage(page) {
   adminDiv.style.display = "none";
   document.getElementById("btnBackToChat").style.display = "none";
   document.getElementById("btnOpenSettings").style.display = "inline-block";
-
   if (page === "chat") {
     chatDiv.style.display = "block";
     if (isAdmin) adminDiv.style.display = "block";
@@ -227,7 +207,6 @@ function showPage(page) {
   }
 }
 
-// --- PFP previews ---
 document.getElementById("pfpUrl").addEventListener("input", () => {
   const url = document.getElementById("pfpUrl").value.trim();
   const preview = document.getElementById("pfpPreview");
@@ -242,7 +221,6 @@ document.getElementById("settingsPfpUrl").addEventListener("input", () => {
   else { preview.style.display = "none"; }
 });
 
-// --- Login / Signup ---
 document.getElementById("btnLogin").addEventListener("click", async () => {
   try {
     const email = document.getElementById("email").value;
@@ -257,7 +235,7 @@ document.getElementById("btnSignup").addEventListener("click", async () => {
     const pass = document.getElementById("password").value;
     const cred = await createUserWithEmailAndPassword(auth, email, pass);
     await sendEmailVerification(cred.user);
-    alert("Account created! Please check your email to verify your account before chatting.");
+    alert("Account created! Please verify your email before chatting.");
   } catch(e) { alert(e.message); }
 });
 
@@ -275,15 +253,13 @@ document.getElementById("btnReset").addEventListener("click", async () => {
   } catch(e) { alert(e.message); }
 });
 
-// --- Resend verification ---
 document.getElementById("btnResendVerify").addEventListener("click", async () => {
   try {
     await sendEmailVerification(auth.currentUser);
-    alert("Verification email sent! Check your inbox and spam folder.");
+    alert("Verification email sent!");
   } catch(e) { alert(e.message); }
 });
 
-// --- Save profile ---
 document.getElementById("btnSaveProfile").addEventListener("click", async () => {
   try {
     const name = document.getElementById("name").value.trim();
@@ -302,7 +278,6 @@ document.getElementById("btnSaveProfile").addEventListener("click", async () => 
   } catch(e) { alert(e.message); }
 });
 
-// --- Settings: load current data ---
 async function loadSettingsForm() {
   try {
     const uid = auth.currentUser.uid;
@@ -317,7 +292,6 @@ async function loadSettingsForm() {
   } catch(e) { alert(e.message); }
 }
 
-// --- Settings: save ---
 document.getElementById("btnSaveSettings").addEventListener("click", async () => {
   try {
     const name = document.getElementById("settingsName").value.trim();
@@ -332,7 +306,6 @@ document.getElementById("btnSaveSettings").addEventListener("click", async () =>
   } catch(e) { alert(e.message); }
 });
 
-// --- Settings: change password ---
 document.getElementById("btnChangePassword").addEventListener("click", async () => {
   try {
     await sendPasswordResetEmail(auth, auth.currentUser.email);
@@ -340,32 +313,25 @@ document.getElementById("btnChangePassword").addEventListener("click", async () 
   } catch(e) { alert(e.message); }
 });
 
-// --- Top bar buttons ---
 document.getElementById("btnOpenSettings").addEventListener("click", () => showPage("settings"));
 document.getElementById("btnBackToChat").addEventListener("click", () => showPage("chat"));
 document.getElementById("btnLogout").addEventListener("click", () => signOut(auth));
 
-// --- Send message ---
 document.getElementById("btnSend").addEventListener("click", async () => {
   try {
     const text = document.getElementById("messageInput").value.trim();
     if (!text) return;
-
     const uid = auth.currentUser.uid;
-
-    // Check email verified (skip for Google users — already verified)
     await reload(auth.currentUser);
     if (!auth.currentUser.emailVerified) {
       alert("Please verify your email before sending messages.");
       return;
     }
-
     const userSnap = await getDoc(doc(db, "users", uid));
     const userData = userSnap.data();
     if (userData.banned) { alert("You are banned from this chat."); return; }
     if (userData.muted) { alert("You are currently muted."); return; }
     if (containsBadWord(text)) { document.getElementById("messageInput").value = ""; return; }
-
     await addDoc(collection(db, "messages"), {
       text, name: userData.name, pfp: userData.pfp, uid, time: Date.now()
     });
@@ -377,7 +343,6 @@ document.getElementById("messageInput").addEventListener("keydown", e => {
   if (e.key === "Enter") document.getElementById("btnSend").click();
 });
 
-// --- Admin: clear all messages ---
 document.getElementById("btnClearChat").addEventListener("click", async () => {
   if (!confirm("Delete ALL messages?")) return;
   try {
@@ -388,27 +353,34 @@ document.getElementById("btnClearChat").addEventListener("click", async () => {
 
 document.getElementById("btnRefreshUsers").addEventListener("click", loadAdminUsers);
 
-// --- Modal ---
 document.getElementById("modalClose").addEventListener("click", () => { modal.style.display = "none"; currentModalUid = null; });
 modal.addEventListener("click", e => { if (e.target === modal) { modal.style.display = "none"; currentModalUid = null; } });
 
 document.getElementById("btnModalBan").addEventListener("click", async () => {
   if (!currentModalUid) return;
-  const ref = doc(db, "users", currentModalUid);
-  const snap = await getDoc(ref);
+  const userRef = doc(db, "users", currentModalUid);
+  const snap = await getDoc(userRef);
   const banned = snap.data().banned;
-  await updateDoc(ref, { banned: !banned });
-  alert(banned ? "User unbanned." : "User banned.");
+  await updateDoc(userRef, { banned: !banned });
+
+  // Delete all messages from user when banned
+  if (!banned) {
+    const q = query(collection(db, "messages"), where("uid", "==", currentModalUid));
+    const msgSnap = await getDocs(q);
+    msgSnap.forEach(async d => await deleteDoc(d.ref));
+  }
+
+  alert(banned ? "User unbanned." : "User banned and messages deleted.");
   modal.style.display = "none";
   loadAdminUsers();
 });
 
 document.getElementById("btnModalMute").addEventListener("click", async () => {
   if (!currentModalUid) return;
-  const ref = doc(db, "users", currentModalUid);
-  const snap = await getDoc(ref);
+  const userRef = doc(db, "users", currentModalUid);
+  const snap = await getDoc(userRef);
   const muted = snap.data().muted;
-  await updateDoc(ref, { muted: !muted });
+  await updateDoc(userRef, { muted: !muted });
   alert(muted ? "User unmuted." : "User muted.");
   modal.style.display = "none";
   loadAdminUsers();
@@ -424,7 +396,6 @@ document.getElementById("btnModalDeleteMsgs").addEventListener("click", async ()
   modal.style.display = "none";
 });
 
-// --- Open user profile modal ---
 async function openUserModal(uid) {
   try {
     const snap = await getDoc(doc(db, "users", uid));
@@ -435,7 +406,7 @@ async function openUserModal(uid) {
     document.getElementById("modalName").textContent = u.name;
     document.getElementById("modalEmail").textContent = "📧 " + (u.email || "Unknown");
     document.getElementById("modalAbout").textContent = "ℹ️ " + (u.about || "No bio yet.");
-    document.getElementById("modalVerified").textContent = u.banned ? "🚫 Banned" : u.muted ? "🔇 Muted" : "";
+    document.getElementById("modalStatus").textContent = u.banned ? "🚫 Banned" : u.muted ? "🔇 Muted" : "";
     const adminActions = document.getElementById("adminActions");
     if (isAdmin && uid !== auth.currentUser.uid) {
       adminActions.style.display = "block";
@@ -448,7 +419,6 @@ async function openUserModal(uid) {
   } catch(e) { alert(e.message); }
 }
 
-// --- Load admin user list ---
 async function loadAdminUsers() {
   const list = document.getElementById("adminUserList");
   list.innerHTML = "<p>Loading...</p>";
@@ -481,7 +451,16 @@ async function loadAdminUsers() {
 }
 
 window._viewUser = uid => openUserModal(uid);
-window._toggleBan = async (uid, banned) => { await updateDoc(doc(db, "users", uid), { banned: !banned }); loadAdminUsers(); };
+window._toggleBan = async (uid, banned) => {
+  await updateDoc(doc(db, "users", uid), { banned: !banned });
+  // Delete messages when banning
+  if (!banned) {
+    const q = query(collection(db, "messages"), where("uid", "==", uid));
+    const snap = await getDocs(q);
+    snap.forEach(async d => await deleteDoc(d.ref));
+  }
+  loadAdminUsers();
+};
 window._toggleMute = async (uid, muted) => { await updateDoc(doc(db, "users", uid), { muted: !muted }); loadAdminUsers(); };
 window._deleteUserMsgs = async uid => {
   if (!confirm("Delete all messages from this user?")) return;
@@ -491,13 +470,19 @@ window._deleteUserMsgs = async uid => {
   alert("Done.");
 };
 
-// --- Load chat ---
+// Delete single message — only visible to admin
+async function deleteSingleMessage(msgId) {
+  if (!confirm("Delete this message?")) return;
+  try {
+    await deleteDoc(doc(db, "messages", msgId));
+  } catch(e) { alert(e.message); }
+}
+
 function loadChat() {
   loginDiv.style.display = "none";
   profileDiv.style.display = "none";
   topBar.style.display = "flex";
 
-  // Show verify banner if email not verified and not Google
   const user = auth.currentUser;
   if (!user.emailVerified && user.providerData[0]?.providerId === "password") {
     verifyBanner.style.display = "block";
@@ -520,22 +505,35 @@ function loadChat() {
     sorted.forEach(m => {
       const div = document.createElement("div");
       div.className = "msg";
+
       const img = document.createElement("img");
       img.src = m.pfp || DEFAULT_PFP;
       img.onerror = () => { img.src = DEFAULT_PFP; };
       img.title = m.name;
       img.addEventListener("click", () => openUserModal(m.uid));
+
       const text = document.createElement("span");
       text.innerHTML = `<b>${m.name}:</b> ${m.text}`;
+
       div.appendChild(img);
       div.appendChild(text);
+
+      // Single message delete button — admin only
+      if (isAdmin) {
+        const delBtn = document.createElement("button");
+        delBtn.className = "delbtn";
+        delBtn.textContent = "🗑️";
+        delBtn.title = "Delete this message";
+        delBtn.addEventListener("click", () => deleteSingleMessage(m.id));
+        div.appendChild(delBtn);
+      }
+
       messagesDiv.appendChild(div);
     });
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   });
 }
 
-// --- Auth state ---
 onAuthStateChanged(auth, async user => {
   if (!user) {
     topBar.style.display = "none";
