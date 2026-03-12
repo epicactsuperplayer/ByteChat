@@ -1,10 +1,9 @@
-
+```html
 <!DOCTYPE html>
 <html>
 <head>
-
-<title>ByteChat</title>
 <meta charset="UTF-8">
+<title>ByteChat</title>
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TKJ9JKK7ZF"></script>
@@ -19,9 +18,15 @@ gtag('config', 'G-TKJ9JKK7ZF');
 
 body{
 font-family:Arial;
-background:#111;
+background:#0f0f0f;
 color:white;
 text-align:center;
+margin:0;
+}
+
+h1{
+background:#111;
+padding:15px;
 margin:0;
 }
 
@@ -33,38 +38,39 @@ padding:20px;
 input{
 padding:10px;
 margin:5px;
+border-radius:6px;
 border:none;
-border-radius:5px;
 }
 
 button{
 padding:10px 20px;
-background:#00aaff;
+margin:5px;
 border:none;
-border-radius:5px;
+border-radius:6px;
+background:#00aaff;
 color:white;
 cursor:pointer;
 }
 
 #messages{
 height:400px;
-overflow:auto;
+overflow-y:auto;
 border:1px solid #333;
-padding:10px;
 margin:10px;
+padding:10px;
 }
 
-.message{
+.msg{
 display:flex;
 align-items:center;
-margin:5px;
+margin:6px;
 }
 
-.message img{
+.msg img{
 width:35px;
 height:35px;
 border-radius:50%;
-margin-right:10px;
+margin-right:8px;
 cursor:pointer;
 }
 
@@ -76,16 +82,14 @@ cursor:pointer;
 
 <h1>ByteChat</h1>
 
-<!-- LOGIN PAGE -->
+<!-- LOGIN -->
 
 <div id="login">
 
 <h2>Login</h2>
 
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-
-<br>
+<input id="email" placeholder="Email"><br>
+<input id="password" type="password" placeholder="Password"><br>
 
 <button onclick="login()">Login</button>
 <button onclick="signup()">Signup</button>
@@ -98,22 +102,20 @@ cursor:pointer;
 
 </div>
 
+
 <!-- PROFILE SETUP -->
 
 <div id="profile">
 
 <h2>Create Profile</h2>
 
-<input id="name" placeholder="Your name">
-<br>
-
-<input type="file" id="pfp">
-
-<br><br>
+<input id="name" placeholder="Your Name"><br>
+<input type="file" id="pfp"><br><br>
 
 <button onclick="saveProfile()">Save Profile</button>
 
 </div>
+
 
 <!-- CHAT -->
 
@@ -121,7 +123,7 @@ cursor:pointer;
 
 <div id="messages"></div>
 
-<input id="messageInput" placeholder="Type message">
+<input id="messageInput" placeholder="Message">
 <button onclick="sendMessage()">Send</button>
 
 <br><br>
@@ -130,7 +132,8 @@ cursor:pointer;
 
 </div>
 
-<!-- ADMIN -->
+
+<!-- ADMIN PANEL -->
 
 <div id="admin">
 
@@ -140,9 +143,12 @@ cursor:pointer;
 
 </div>
 
+
+
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-analytics.js";
 
 import {
 getAuth,
@@ -153,7 +159,7 @@ GoogleAuthProvider,
 sendPasswordResetEmail,
 onAuthStateChanged,
 signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
 import {
 getFirestore,
@@ -163,28 +169,34 @@ getDoc,
 addDoc,
 collection,
 onSnapshot,
-deleteDoc,
-getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+getDocs,
+deleteDoc
+} from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
 import {
 getStorage,
 ref,
 uploadBytes,
 getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+} from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
+
 
 const firebaseConfig = {
 
-apiKey:"YOURKEY",
-authDomain:"YOURPROJECT.firebaseapp.com",
-projectId:"YOURPROJECT",
-storageBucket:"YOURPROJECT.appspot.com",
-appId:"APPID"
+apiKey: "AIzaSyAY49sWaN-DSKV10uyBB3CeOiABLCtFrSI",
+authDomain: "bytestorm-friebase-server.firebaseapp.com",
+databaseURL: "https://bytestorm-friebase-server-default-rtdb.europe-west1.firebasedatabase.app",
+projectId: "bytestorm-friebase-server",
+storageBucket: "bytestorm-friebase-server.firebasestorage.app",
+messagingSenderId: "400056781433",
+appId: "1:400056781433:web:9803b0711d85de437f62a8",
+measurementId: "G-TKJ9JKK7ZF"
 
 };
 
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
@@ -198,45 +210,59 @@ const adminDiv=document.getElementById("admin")
 
 loginDiv.style.display="block"
 
-window.login=async()=>{
 
-let email=email.value
-let pass=password.value
+
+window.login = async function(){
+
+let email=document.getElementById("email").value
+let pass=document.getElementById("password").value
 
 await signInWithEmailAndPassword(auth,email,pass)
 
 }
 
-window.signup=async()=>{
 
-let email=email.value
-let pass=password.value
+
+window.signup = async function(){
+
+let email=document.getElementById("email").value
+let pass=document.getElementById("password").value
 
 await createUserWithEmailAndPassword(auth,email,pass)
 
 }
 
-window.googleLogin=async()=>{
+
+
+window.googleLogin = async function(){
 
 await signInWithPopup(auth,provider)
 
 }
 
-window.resetPassword=async()=>{
 
-await sendPasswordResetEmail(auth,resetEmail.value)
 
-alert("Password reset sent")
+window.resetPassword = async function(){
+
+let email=document.getElementById("resetEmail").value
+
+await sendPasswordResetEmail(auth,email)
+
+alert("Reset email sent")
 
 }
 
-window.logout=()=>{
+
+
+window.logout = function(){
 
 signOut(auth)
 
 }
 
-window.saveProfile=async()=>{
+
+
+window.saveProfile = async function(){
 
 let name=document.getElementById("name").value
 let file=document.getElementById("pfp").files[0]
@@ -250,20 +276,20 @@ await uploadBytes(storageRef,file)
 let url=await getDownloadURL(storageRef)
 
 await setDoc(doc(db,"users",uid),{
-
 name:name,
 pfp:url,
 email:auth.currentUser.email
-
 })
 
 loadChat()
 
 }
 
-window.sendMessage=async()=>{
 
-let text=messageInput.value
+
+window.sendMessage = async function(){
+
+let text=document.getElementById("messageInput").value
 
 let uid=auth.currentUser.uid
 
@@ -272,16 +298,18 @@ let user=await getDoc(doc(db,"users",uid))
 await addDoc(collection(db,"messages"),{
 
 text:text,
-uid:uid,
 name:user.data().name,
 pfp:user.data().pfp,
+uid:uid,
 time:Date.now()
 
 })
 
-messageInput.value=""
+document.getElementById("messageInput").value=""
 
 }
+
+
 
 async function loadChat(){
 
@@ -302,7 +330,7 @@ snap.forEach(d=>{
 let m=d.data()
 
 messages.innerHTML+=`
-<div class="message">
+<div class="msg">
 <img src="${m.pfp}" onclick="alert('User: ${m.name}')">
 <b>${m.name}:</b> ${m.text}
 </div>
@@ -314,7 +342,9 @@ messages.innerHTML+=`
 
 }
 
-window.clearChat=async()=>{
+
+
+window.clearChat = async function(){
 
 let snap=await getDocs(collection(db,"messages"))
 
@@ -324,28 +354,23 @@ await deleteDoc(d.ref)
 
 }
 
+
+
 onAuthStateChanged(auth,async user=>{
 
 if(!user){
-
 loginDiv.style.display="block"
 chatDiv.style.display="none"
-
 return
-
 }
 
 let docSnap=await getDoc(doc(db,"users",user.uid))
 
 if(!docSnap.exists()){
-
 loginDiv.style.display="none"
 profileDiv.style.display="block"
-
 }else{
-
 loadChat()
-
 }
 
 })
