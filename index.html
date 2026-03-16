@@ -20,6 +20,12 @@
 <meta name="twitter:image" content="https://i.imgur.com/NLz6Jfd.png">
 <link rel="icon" type="image/png" href="https://i.imgur.com/NLz6Jfd.png">
 <link rel="apple-touch-icon" href="https://i.imgur.com/NLz6Jfd.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00aaff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ByteChat">
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TKJ9JKK7ZF"></script>
 <script>
@@ -28,8 +34,6 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-TKJ9JKK7ZF');
 </script>
-
-<!-- Vercel Analytics & Speed Insights -->
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 
@@ -44,17 +48,12 @@ button.red { background: #cc0000; }
 button.orange { background: #e67e00; }
 button.green { background: #00aa44; }
 button.gray { background: #444; }
-
 #topBar { display: none; background: #111; padding: 8px 12px; justify-content: flex-end; align-items: center; gap: 6px; flex-wrap: wrap; }
 #topBar button { padding: 7px 12px; font-size: 13px; }
-
 #verifyBanner { display: none; background: #7a4a00; padding: 10px; font-size: 13px; }
 #verifyBanner button { padding: 5px 10px; font-size: 12px; margin-left: 6px; }
-
-#notifBanner { display: none; background: #004400; padding: 10px; font-size: 13px; cursor: pointer; }
-
+#notifBanner { display: none; padding: 10px; font-size: 13px; cursor: pointer; background: #004400; }
 #appLayout { display: none; flex-direction: row; height: calc(100vh - 100px); }
-
 #sidebar { width: 220px; min-width: 220px; background: #111; display: flex; flex-direction: column; border-right: 1px solid #333; overflow: hidden; }
 #sidebarHeader { padding: 10px; border-bottom: 1px solid #333; display: flex; flex-direction: column; gap: 6px; }
 #sidebarHeader button { width: 100%; margin: 0; padding: 8px; font-size: 13px; }
@@ -68,7 +67,6 @@ button.gray { background: #444; }
 .convItem .convPreview { font-size: 11px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .convItem .removeBtn { display: none; position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: #cc0000; border: none; color: white; border-radius: 4px; padding: 3px 7px; font-size: 11px; cursor: pointer; }
 .convItem:hover .removeBtn { display: inline-block; }
-
 #chatArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 #chatHeader { background: #111; padding: 10px 15px; border-bottom: 1px solid #333; text-align: left; font-weight: bold; font-size: 15px; display: flex; align-items: center; gap: 10px; }
 #chatHeader img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
@@ -85,20 +83,15 @@ button.gray { background: #444; }
 #chatInputRow { display: flex; gap: 6px; padding: 8px; border-top: 1px solid #333; position: relative; }
 #chatInputRow input { flex: 1; max-width: none; margin: 0; }
 #chatInputRow button { flex-shrink: 0; margin: 0; }
-
-/* Mention autocomplete */
 #mentionDropdown { display: none; position: absolute; bottom: 60px; left: 8px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; max-height: 180px; overflow-y: auto; z-index: 100; min-width: 200px; }
 .mentionOption { padding: 8px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .mentionOption:hover { background: #003355; }
 .mentionOption img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
-
 #pfpPreview, #settingsPfpPreview { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin: 8px auto; display: none; border: 2px solid #00aaff; }
-
 #settings { max-width: 460px; margin: 0 auto; text-align: left; padding: 15px; }
 #settings h2 { text-align: center; margin-bottom: 10px; }
 #settings label { display: block; margin: 12px 0 4px; color: #aaa; font-size: 13px; }
 #settings input { max-width: 100%; }
-
 #adminPanel { display: none; max-width: 600px; margin: 0 auto; padding: 15px; text-align: left; }
 #adminPanel h2 { text-align: center; margin-bottom: 10px; }
 .adminUser { display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; border-radius: 8px; padding: 10px; margin: 6px 0; flex-wrap: wrap; gap: 6px; }
@@ -110,7 +103,6 @@ button.gray { background: #444; }
 .badge { font-size: 11px; padding: 2px 6px; border-radius: 10px; margin-left: 4px; }
 .badge.banned { background: #cc0000; }
 .badge.muted { background: #e67e00; }
-
 #modal, #dmModal, #requestModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
 .modalBox { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; width: 100%; max-width: 320px; text-align: center; }
 .modalBox img { width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 2px solid #00aaff; margin-bottom: 10px; }
@@ -119,16 +111,13 @@ button.gray { background: #444; }
 #adminActions { margin-top: 12px; display: none; }
 #adminActions button { margin: 3px; }
 #dmModal .modalBox input { width: 100%; margin: 8px 0; }
-
 #hamburgerWrap { position: fixed; top: 15px; left: 15px; z-index: 9999; font-family: monospace; }
 #hamburgerBtn { cursor: pointer; background: #0a0a0a; border: 1px solid #333; border-radius: 6px; padding: 8px 12px; font-size: 18px; color: white; user-select: none; }
 #byteNav { display: none; flex-direction: column; gap: 8px; margin-top: 8px; background: #0a0a0a; border: 1px solid #333; border-radius: 6px; padding: 10px; min-width: 180px; }
 #byteNav a { color: #fff; text-decoration: none; padding: 6px 10px; border-radius: 4px; border: 1px solid #222; display: flex; align-items: center; gap: 8px; font-size: 13px; }
 #byteNav a:hover { background: #1a1a1a; }
-
 #profile, #login { max-width: 360px; margin: 0 auto; }
 #login h2, #profile h2 { margin-bottom: 12px; }
-
 #sidebarToggle { display: none; }
 @media (max-width: 600px) {
   #sidebar { position: fixed; left: -220px; top: 0; height: 100vh; z-index: 500; transition: left 0.2s; padding-top: 60px; }
@@ -331,7 +320,7 @@ const provider = new GoogleAuthProvider();
 const ADMIN_EMAIL = "bytestorm.corp@gmail.com";
 const DEFAULT_PFP = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 const BAD_WORDS = ["fuck", "shit", "ass", "bitch", "bastard"];
-const MENTION_COOLDOWN = 60000; // 1 minute in ms
+const MENTION_COOLDOWN = 60000;
 
 const loginDiv = document.getElementById("login");
 const profileDiv = document.getElementById("profile");
@@ -355,12 +344,26 @@ let currentChatId = "global";
 let currentChatUnsub = null;
 let pendingRequests = [];
 let currentRequestIndex = 0;
-let allUsers = []; // cache of all users for mention autocomplete
-let lastMentionTime = {}; // cooldown tracker per sender uid
-let processedMsgIds = new Set(); // avoid duplicate notifications
+let allUsers = [];
+let lastMentionTime = {};
+let processedMsgIds = new Set();
+let mentionActive = false;
 
 function containsBadWord(t) { return BAD_WORDS.some(w => t.toLowerCase().includes(w)); }
 function getDmId(uid1, uid2) { return [uid1, uid2].sort().join("_"); }
+
+// --- Service Worker ---
+async function registerSW() {
+  if (!('serviceWorker' in navigator)) return null;
+  try {
+    const reg = await navigator.serviceWorker.register('/sw.js');
+    await navigator.serviceWorker.ready;
+    return reg;
+  } catch(e) {
+    console.log('SW registration failed:', e);
+    return null;
+  }
+}
 
 // --- Notifications ---
 window.requestNotifPermission = async function() {
@@ -368,33 +371,66 @@ window.requestNotifPermission = async function() {
   const perm = await Notification.requestPermission();
   if (perm === "granted") {
     notifBanner.style.display = "none";
-    localStorage.setItem("notifGranted", "true");
+    await registerSW();
   }
 };
 
-function checkNotifBanner() {
+async function checkNotifBanner() {
   if (!("Notification" in window)) return;
-  if (Notification.permission === "granted") {
-    notifBanner.style.display = "none";
-    localStorage.setItem("notifGranted", "true");
-  } else if (Notification.permission !== "denied") {
+  if (Notification.permission === "default") {
+    const perm = await Notification.requestPermission();
+    if (perm === "granted") {
+      notifBanner.style.display = "none";
+      await registerSW();
+    } else {
+      notifBanner.style.display = "block";
+      notifBanner.style.background = "#440000";
+      notifBanner.textContent = "Notifications blocked — go to browser settings to allow them for this site.";
+      notifBanner.onclick = null;
+    }
+  } else if (Notification.permission === "denied") {
     notifBanner.style.display = "block";
+    notifBanner.style.background = "#440000";
+    notifBanner.textContent = "Notifications blocked — go to browser settings to allow them for this site.";
+    notifBanner.onclick = null;
+  } else if (Notification.permission === "granted") {
+    notifBanner.style.display = "none";
+    await registerSW();
   }
 }
 
 function sendNotification(title, body, icon) {
   if (!("Notification" in window) || Notification.permission !== "granted") return;
   try {
-    new Notification(title, { body, icon: icon || DEFAULT_PFP });
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.ready.then(reg => {
+        reg.showNotification(title, {
+          body,
+          icon: icon || DEFAULT_PFP,
+          badge: 'https://i.imgur.com/NLz6Jfd.png',
+          vibrate: [200, 100, 200],
+          tag: title + body,
+          renotify: true,
+          data: { url: 'https://bytestormchat.vercel.app' }
+        });
+      });
+    } else {
+      const n = new Notification(title, {
+        body,
+        icon: icon || DEFAULT_PFP,
+        badge: 'https://i.imgur.com/NLz6Jfd.png',
+        tag: title + body,
+        renotify: true
+      });
+      n.onclick = () => { window.focus(); n.close(); };
+    }
   } catch(e) { console.log("Notification failed:", e); }
 }
 
-// --- Parse mentions in message text ---
-function parseMentions(text, currentUserName) {
-  // Highlight @everyone
+// --- Mentions ---
+function parseMentions(text, myName) {
   let parsed = text.replace(/@everyone/g, '<span class="mention everyone">@everyone</span>');
-  // Highlight @username mentions
-  parsed = parsed.replace(/@([a-zA-Z0-9_\- ]+?)(?=\s|$|[^a-zA-Z0-9_\-])/g, (match, name) => {
+  parsed = parsed.replace(/@([^\s@]+)/g, (match, name) => {
     return `<span class="mention">@${name}</span>`;
   });
   return parsed;
@@ -402,44 +438,39 @@ function parseMentions(text, currentUserName) {
 
 function isMentioned(text, myName) {
   const lower = text.toLowerCase();
-  const myLower = myName.toLowerCase();
-  return lower.includes(`@${myLower}`) || lower.includes("@everyone");
+  return lower.includes(`@${myName.toLowerCase()}`) || lower.includes("@everyone");
 }
 
 // --- Mention autocomplete ---
-let mentionQuery = "";
-let mentionActive = false;
-
 messageInput.addEventListener("input", () => {
   const val = messageInput.value;
   const cursorPos = messageInput.selectionStart;
   const textBefore = val.slice(0, cursorPos);
   const atMatch = textBefore.match(/@(\w*)$/);
-
   if (atMatch) {
-    mentionQuery = atMatch[1].toLowerCase();
+    const mentionQuery = atMatch[1].toLowerCase();
     mentionActive = true;
-
-    // Filter users
     let filtered = [];
-    if (isAdmin && mentionQuery === "" || (isAdmin && "everyone".startsWith(mentionQuery))) {
+    if (isAdmin && ("everyone".startsWith(mentionQuery) || mentionQuery === "")) {
       filtered.push({ name: "everyone", pfp: null, isEveryone: true });
     }
     filtered = filtered.concat(
-      allUsers.filter(u =>
-        u.uid !== auth.currentUser.uid &&
-        u.name.toLowerCase().startsWith(mentionQuery)
-      )
+      allUsers.filter(u => u.uid !== auth.currentUser?.uid && u.name.toLowerCase().startsWith(mentionQuery))
     );
-
     if (filtered.length > 0) {
       mentionDropdown.innerHTML = "";
       filtered.forEach(u => {
         const div = document.createElement("div");
         div.className = "mentionOption";
-        div.innerHTML = `
-          <img src="${u.pfp || DEFAULT_PFP}" onerror="this.src='${DEFAULT_PFP}'" style="${u.isEveryone ? 'display:none' : ''}">
-          <span>${u.isEveryone ? '@everyone (Admin only)' : '@' + u.name}</span>`;
+        if (!u.isEveryone) {
+          const img = document.createElement("img");
+          img.src = u.pfp || DEFAULT_PFP;
+          img.onerror = () => img.src = DEFAULT_PFP;
+          div.appendChild(img);
+        }
+        const span = document.createElement("span");
+        span.textContent = u.isEveryone ? "@everyone (Admin only)" : "@" + u.name;
+        div.appendChild(span);
         div.addEventListener("click", () => {
           const before = textBefore.slice(0, textBefore.lastIndexOf("@"));
           const after = val.slice(cursorPos);
@@ -467,10 +498,9 @@ document.addEventListener("click", e => {
 });
 
 messageInput.addEventListener("keydown", e => {
-  if (e.key === "Escape") mentionDropdown.style.display = "none";
+  if (e.key === "Escape") { mentionDropdown.style.display = "none"; mentionActive = false; }
 });
 
-// --- Load all users for autocomplete ---
 async function loadAllUsers() {
   const snap = await getDocs(collection(db, "users"));
   allUsers = [];
@@ -499,7 +529,6 @@ function showPage(page) {
     if (user && !user.emailVerified && user.providerData[0]?.providerId === "password") {
       verifyBanner.style.display = "block";
     }
-    checkNotifBanner();
   } else if (page === "settings") {
     topBar.style.display = "flex";
     settingsDiv.style.display = "block";
@@ -548,7 +577,6 @@ document.getElementById("btnLogout").addEventListener("click", () => signOut(aut
 document.getElementById("btnOpenSettings").addEventListener("click", () => showPage("settings"));
 document.getElementById("btnBackToChat").addEventListener("click", () => showPage("chat"));
 
-// --- Update all messages with new name/pfp ---
 async function updateAllMessages(uid, name, pfp) {
   try {
     const globalSnap = await getDocs(query(collection(db, "messages"), where("uid", "==", uid)));
@@ -606,7 +634,6 @@ document.getElementById("btnChangePassword").addEventListener("click", async () 
   catch(e) { alert(e.message); }
 });
 
-// --- Send message with mention handling ---
 document.getElementById("btnSend").addEventListener("click", async () => {
   try {
     const text = messageInput.value.trim();
@@ -619,14 +646,10 @@ document.getElementById("btnSend").addEventListener("click", async () => {
     if (ud.banned) { alert("You are banned."); return; }
     if (ud.muted) { alert("You are muted."); return; }
     if (containsBadWord(text)) { messageInput.value = ""; return; }
-
-    // Check @everyone permission
     if (text.includes("@everyone") && auth.currentUser.email !== ADMIN_EMAIL) {
       alert("Only the admin can use @everyone.");
       return;
     }
-
-    // Check mention cooldown
     const now = Date.now();
     const hasMention = /@\w+/.test(text);
     if (hasMention) {
@@ -637,7 +660,6 @@ document.getElementById("btnSend").addEventListener("click", async () => {
       }
       lastMentionTime[uid] = now;
     }
-
     const col = currentChatId === "global"
       ? collection(db, "messages")
       : collection(db, "dms", currentChatId, "messages");
@@ -667,37 +689,20 @@ function loadMessages() {
   const col = currentChatId === "global"
     ? collection(db, "messages")
     : collection(db, "dms", currentChatId, "messages");
-
   const myUid = auth.currentUser.uid;
-
   currentChatUnsub = onSnapshot(col, async snap => {
-    // Get current user's name for mention detection
     const mySnap = await getDoc(doc(db, "users", myUid));
     const myName = mySnap.exists() ? mySnap.data().name : "";
-
     messagesDiv.innerHTML = "";
     const sorted = [];
     snap.forEach(d => sorted.push({ id: d.id, ...d.data() }));
     sorted.sort((a, b) => a.time - b.time);
-
     sorted.forEach(m => {
       const mentioned = m.uid !== myUid && isMentioned(m.text, myName);
-
-      // Send notification for new messages that mention me
-      if (
-        m.uid !== myUid &&
-        !processedMsgIds.has(m.id) &&
-        mentioned &&
-        Date.now() - m.time < 10000 // only notify for recent messages
-      ) {
+      if (m.uid !== myUid && !processedMsgIds.has(m.id) && mentioned && Date.now() - m.time < 10000) {
         processedMsgIds.add(m.id);
-        sendNotification(
-          `${m.name} mentioned you in ByteChat`,
-          m.text,
-          m.pfp || DEFAULT_PFP
-        );
+        sendNotification(`${m.name} mentioned you in ByteChat`, m.text, m.pfp || DEFAULT_PFP);
       }
-
       const div = document.createElement("div");
       div.className = "msg";
       const img = document.createElement("img");
@@ -705,17 +710,14 @@ function loadMessages() {
       img.onerror = () => img.src = DEFAULT_PFP;
       img.title = m.name;
       img.addEventListener("click", () => openUserModal(m.uid));
-
       const text = document.createElement("span");
-      let classList = "msgtext";
-      if (m.uid === myUid) classList += " mine";
-      else if (mentioned) classList += " mentioned";
-      text.className = classList;
+      let cls = "msgtext";
+      if (m.uid === myUid) cls += " mine";
+      else if (mentioned) cls += " mentioned";
+      text.className = cls;
       text.innerHTML = `<b>${m.name}:</b> ${parseMentions(m.text, myName)}`;
-
       div.appendChild(img);
       div.appendChild(text);
-
       if (isAdmin || (currentChatId !== "global" && m.uid === myUid)) {
         const delBtn = document.createElement("button");
         delBtn.className = "delbtn";
@@ -738,14 +740,12 @@ function loadMessages() {
   });
 }
 
-// --- Listen for new DM requests and notify ---
 function listenForDmNotifications() {
   const uid = auth.currentUser.uid;
   onSnapshot(query(collection(db, "dms"), where("users", "array-contains", uid)), async snap => {
     snap.docChanges().forEach(async change => {
       const dm = change.doc.data();
       if (change.type === "added" && dm.status === "accepted") {
-        // Listen for new messages in this DM
         const dmId = change.doc.id;
         onSnapshot(collection(db, "dms", dmId, "messages"), msgSnap => {
           msgSnap.docChanges().forEach(async msgChange => {
@@ -754,11 +754,7 @@ function listenForDmNotifications() {
               const msgId = msgChange.doc.id;
               if (m.uid !== uid && !processedMsgIds.has(msgId) && Date.now() - m.time < 10000) {
                 processedMsgIds.add(msgId);
-                sendNotification(
-                  `New message from ${m.name}`,
-                  m.text,
-                  m.pfp || DEFAULT_PFP
-                );
+                sendNotification(`New message from ${m.name}`, m.text, m.pfp || DEFAULT_PFP);
               }
             }
           });
@@ -795,12 +791,9 @@ document.getElementById("btnSendDmRequest").addEventListener("click", async () =
     }
     const mySnap = await getDoc(doc(db, "users", myUid));
     await setDoc(doc(db, "dms", dmId), {
-      users: [myUid, targetUid],
-      status: "pending",
-      requestFrom: myUid,
-      requestFromName: mySnap.data().name,
-      requestFromPfp: mySnap.data().pfp,
-      requestFromEmail: auth.currentUser.email,
+      users: [myUid, targetUid], status: "pending",
+      requestFrom: myUid, requestFromName: mySnap.data().name,
+      requestFromPfp: mySnap.data().pfp, requestFromEmail: auth.currentUser.email,
       createdAt: Date.now()
     });
     alert("Chat request sent!");
@@ -833,7 +826,6 @@ async function removeDmChat(dmId) {
 function loadSidebar() {
   const uid = auth.currentUser.uid;
   convList.innerHTML = "";
-
   const globalItem = document.createElement("div");
   globalItem.className = "convItem active";
   globalItem.dataset.id = "global";
@@ -842,7 +834,6 @@ function loadSidebar() {
     <div class="convInfo"><div class="convName">Global Chat</div><div class="convPreview">Everyone</div></div>`;
   globalItem.addEventListener("click", showGlobalChat);
   convList.appendChild(globalItem);
-
   onSnapshot(query(collection(db, "dms"), where("users", "array-contains", uid)), async snap => {
     convList.querySelectorAll(".convItem:not([data-id='global'])").forEach(el => el.remove());
     for (const d of snap.docs) {
@@ -858,15 +849,9 @@ function loadSidebar() {
       item.dataset.id = dmId;
       item.innerHTML = `
         <img src="${other.pfp || DEFAULT_PFP}" onerror="this.src='${DEFAULT_PFP}'">
-        <div class="convInfo">
-          <div class="convName">${other.name}</div>
-          <div class="convPreview">${other.email}</div>
-        </div>
+        <div class="convInfo"><div class="convName">${other.name}</div><div class="convPreview">${other.email}</div></div>
         <button class="removeBtn">Remove</button>`;
-      item.querySelector(".removeBtn").addEventListener("click", async (e) => {
-        e.stopPropagation();
-        await removeDmChat(dmId);
-      });
+      item.querySelector(".removeBtn").addEventListener("click", async (e) => { e.stopPropagation(); await removeDmChat(dmId); });
       item.addEventListener("click", () => openDmChat(dmId, other));
       convList.appendChild(item);
     }
@@ -877,10 +862,7 @@ async function checkPendingRequests() {
   const uid = auth.currentUser.uid;
   const snap = await getDocs(query(collection(db, "dms"), where("users", "array-contains", uid), where("status", "==", "pending")));
   pendingRequests = [];
-  snap.forEach(d => {
-    const dm = d.data();
-    if (dm.requestFrom !== uid) pendingRequests.push({ id: d.id, ...dm });
-  });
+  snap.forEach(d => { const dm = d.data(); if (dm.requestFrom !== uid) pendingRequests.push({ id: d.id, ...dm }); });
   currentRequestIndex = 0;
   showNextRequest();
 }
@@ -985,9 +967,7 @@ async function openUserModal(uid) {
       adminActions.style.display = "block";
       document.getElementById("btnModalBan").textContent = u.banned ? "Unban User" : "Ban User";
       document.getElementById("btnModalMute").textContent = u.muted ? "Unmute User" : "Mute User";
-    } else {
-      adminActions.style.display = "none";
-    }
+    } else { adminActions.style.display = "none"; }
     document.getElementById("btnModalDM").style.display = uid === auth.currentUser.uid ? "none" : "inline-block";
     modal.style.display = "flex";
   } catch(e) { alert(e.message); }
@@ -1053,6 +1033,7 @@ function loadApp() {
   checkPendingRequests();
   loadAllUsers();
   listenForDmNotifications();
+  checkNotifBanner();
 }
 
 onAuthStateChanged(auth, async user => {
