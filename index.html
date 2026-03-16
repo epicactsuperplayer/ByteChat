@@ -5,33 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ByteChat</title>
 
-<!-- SEO -->
 <meta name="description" content="ByteChat - A real-time chat platform by Bytestorm Corporation. Chat globally or privately with other users.">
 <meta name="keywords" content="ByteChat, Bytestorm, chat, messaging, real-time chat, private chat">
 <meta name="author" content="Bytestorm Corporation">
 <meta name="robots" content="index, follow">
-
-       <script defer src="/_vercel/insights/script.js"></script>
-
-    <script defer src="/_vercel/speed-insights/script.js"></script>
-
-<!-- Open Graph (link previews) -->
 <meta property="og:title" content="ByteChat">
 <meta property="og:description" content="Real-time chat platform by Bytestorm Corporation.">
 <meta property="og:image" content="https://i.imgur.com/NLz6Jfd.png">
 <meta property="og:url" content="https://bytestormchat.vercel.app">
 <meta property="og:type" content="website">
-
-<!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ByteChat">
 <meta name="twitter:description" content="Real-time chat platform by Bytestorm Corporation.">
 <meta name="twitter:image" content="https://i.imgur.com/NLz6Jfd.png">
-
-<!-- Favicon -->
 <link rel="icon" type="image/png" href="https://i.imgur.com/NLz6Jfd.png">
 <link rel="apple-touch-icon" href="https://i.imgur.com/NLz6Jfd.png">
 
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+       
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TKJ9JKK7ZF"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
@@ -135,7 +127,6 @@ button.gray { background: #444; }
 }
 </style>
 </head>
-
 <body>
 
 <div id="hamburgerWrap">
@@ -415,6 +406,22 @@ document.getElementById("btnLogout").addEventListener("click", () => signOut(aut
 document.getElementById("btnOpenSettings").addEventListener("click", () => showPage("settings"));
 document.getElementById("btnBackToChat").addEventListener("click", () => showPage("chat"));
 
+// --- Update all messages with new name/pfp ---
+async function updateAllMessages(uid, name, pfp) {
+  try {
+    // Update global messages
+    const globalSnap = await getDocs(query(collection(db, "messages"), where("uid", "==", uid)));
+    globalSnap.forEach(async d => await updateDoc(d.ref, { name, pfp }));
+
+    // Update messages in all DM chats
+    const dmsSnap = await getDocs(query(collection(db, "dms"), where("users", "array-contains", uid)));
+    for (const dmDoc of dmsSnap.docs) {
+      const dmMsgsSnap = await getDocs(query(collection(db, "dms", dmDoc.id, "messages"), where("uid", "==", uid)));
+      dmMsgsSnap.forEach(async d => await updateDoc(d.ref, { name, pfp }));
+    }
+  } catch(e) { console.error("Failed to update messages:", e); }
+}
+
 document.getElementById("btnSaveProfile").addEventListener("click", async () => {
   try {
     const name = document.getElementById("name").value.trim();
@@ -423,6 +430,7 @@ document.getElementById("btnSaveProfile").addEventListener("click", async () => 
     const about = document.getElementById("about").value.trim() || "No bio yet.";
     const uid = auth.currentUser.uid;
     await setDoc(doc(db, "users", uid), { name, pfp, about, email: auth.currentUser.email, banned: false, muted: false });
+    await updateAllMessages(uid, name, pfp);
     loadApp();
   } catch(e) { alert(e.message); }
 });
@@ -446,7 +454,9 @@ document.getElementById("btnSaveSettings").addEventListener("click", async () =>
     if (!name) { alert("Name cannot be empty!"); return; }
     let pfp = document.getElementById("settingsPfpUrl").value.trim() || DEFAULT_PFP;
     const about = document.getElementById("settingsAbout").value.trim() || "No bio yet.";
-    await updateDoc(doc(db, "users", auth.currentUser.uid), { name, pfp, about });
+    const uid = auth.currentUser.uid;
+    await updateDoc(doc(db, "users", uid), { name, pfp, about });
+    await updateAllMessages(uid, name, pfp);
     alert("Profile updated!");
     showPage("chat");
   } catch(e) { alert(e.message); }
@@ -589,16 +599,12 @@ function openDmChat(dmId, otherUser) {
   document.getElementById("sidebar").classList.remove("open");
 }
 
-// Remove private chat for both sides
 async function removeDmChat(dmId) {
   if (!confirm("Remove this private chat for both users? All messages will be deleted.")) return;
   try {
-    // Delete all messages in the DM
     const msgsSnap = await getDocs(collection(db, "dms", dmId, "messages"));
     msgsSnap.forEach(async d => await deleteDoc(d.ref));
-    // Delete the DM document
     await deleteDoc(doc(db, "dms", dmId));
-    // Go back to global chat if currently in this DM
     if (currentChatId === dmId) showGlobalChat();
   } catch(e) { alert(e.message); }
 }
@@ -626,7 +632,6 @@ function loadSidebar() {
       if (!otherSnap.exists()) continue;
       const other = otherSnap.data();
       const dmId = d.id;
-
       const item = document.createElement("div");
       item.className = "convItem";
       item.dataset.id = dmId;
@@ -637,7 +642,6 @@ function loadSidebar() {
           <div class="convPreview">${other.email}</div>
         </div>
         <button class="removeBtn">Remove</button>`;
-
       item.querySelector(".removeBtn").addEventListener("click", async (e) => {
         e.stopPropagation();
         await removeDmChat(dmId);
