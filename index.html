@@ -21,9 +21,6 @@
 <link rel="icon" type="image/png" href="https://i.imgur.com/NLz6Jfd.png">
 <link rel="apple-touch-icon" href="https://i.imgur.com/NLz6Jfd.png">
 
-<script defer src="/_vercel/insights/script.js"></script>
-<script defer src="/_vercel/speed-insights/script.js"></script>
-       
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TKJ9JKK7ZF"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
@@ -31,6 +28,10 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-TKJ9JKK7ZF');
 </script>
+
+<!-- Vercel Analytics & Speed Insights -->
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
 
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,6 +50,8 @@ button.gray { background: #444; }
 
 #verifyBanner { display: none; background: #7a4a00; padding: 10px; font-size: 13px; }
 #verifyBanner button { padding: 5px 10px; font-size: 12px; margin-left: 6px; }
+
+#notifBanner { display: none; background: #004400; padding: 10px; font-size: 13px; cursor: pointer; }
 
 #appLayout { display: none; flex-direction: row; height: calc(100vh - 100px); }
 
@@ -74,11 +77,20 @@ button.gray { background: #444; }
 .msg img { width: 30px; height: 30px; border-radius: 50%; margin-right: 8px; cursor: pointer; object-fit: cover; flex-shrink: 0; }
 .msg .msgtext { flex: 1; font-size: 14px; word-break: break-word; background: #1a1a1a; padding: 7px 10px; border-radius: 8px; }
 .msg .msgtext.mine { background: #003355; }
+.msg .msgtext.mentioned { background: #2a1a00; border-left: 3px solid #e67e00; }
+.mention { color: #00aaff; font-weight: bold; }
+.mention.everyone { color: #ff4444; font-weight: bold; }
 .msg .delbtn { display: none; background: #cc0000; border: none; color: white; border-radius: 4px; padding: 3px 7px; cursor: pointer; font-size: 11px; margin-left: 6px; flex-shrink: 0; align-self: center; }
 .msg:hover .delbtn { display: inline-block; }
-#chatInputRow { display: flex; gap: 6px; padding: 8px; border-top: 1px solid #333; }
+#chatInputRow { display: flex; gap: 6px; padding: 8px; border-top: 1px solid #333; position: relative; }
 #chatInputRow input { flex: 1; max-width: none; margin: 0; }
 #chatInputRow button { flex-shrink: 0; margin: 0; }
+
+/* Mention autocomplete */
+#mentionDropdown { display: none; position: absolute; bottom: 60px; left: 8px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; max-height: 180px; overflow-y: auto; z-index: 100; min-width: 200px; }
+.mentionOption { padding: 8px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.mentionOption:hover { background: #003355; }
+.mentionOption img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
 
 #pfpPreview, #settingsPfpPreview { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin: 8px auto; display: none; border: 2px solid #00aaff; }
 
@@ -176,6 +188,10 @@ document.addEventListener('click', function(e) {
   <button id="btnResendVerify">Resend</button>
 </div>
 
+<div id="notifBanner" onclick="requestNotifPermission()">
+  Click here to enable notifications for mentions and private messages.
+</div>
+
 <div id="login">
   <h2>Login</h2>
   <input id="email" placeholder="Email" type="email"><br>
@@ -228,7 +244,8 @@ document.addEventListener('click', function(e) {
     </div>
     <div id="messages"></div>
     <div id="chatInputRow">
-      <input id="messageInput" placeholder="Message" autocomplete="off">
+      <div id="mentionDropdown"></div>
+      <input id="messageInput" placeholder="Message — use @username to mention" autocomplete="off">
       <button id="btnSend">Send</button>
     </div>
   </div>
@@ -314,6 +331,7 @@ const provider = new GoogleAuthProvider();
 const ADMIN_EMAIL = "bytestorm.corp@gmail.com";
 const DEFAULT_PFP = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 const BAD_WORDS = ["fuck", "shit", "ass", "bitch", "bastard"];
+const MENTION_COOLDOWN = 60000; // 1 minute in ms
 
 const loginDiv = document.getElementById("login");
 const profileDiv = document.getElementById("profile");
@@ -323,10 +341,13 @@ const adminPanel = document.getElementById("adminPanel");
 const messagesDiv = document.getElementById("messages");
 const topBar = document.getElementById("topBar");
 const verifyBanner = document.getElementById("verifyBanner");
+const notifBanner = document.getElementById("notifBanner");
 const modal = document.getElementById("modal");
 const dmModal = document.getElementById("dmModal");
 const requestModal = document.getElementById("requestModal");
 const convList = document.getElementById("convList");
+const mentionDropdown = document.getElementById("mentionDropdown");
+const messageInput = document.getElementById("messageInput");
 
 let currentModalUid = null;
 let isAdmin = false;
@@ -334,10 +355,129 @@ let currentChatId = "global";
 let currentChatUnsub = null;
 let pendingRequests = [];
 let currentRequestIndex = 0;
+let allUsers = []; // cache of all users for mention autocomplete
+let lastMentionTime = {}; // cooldown tracker per sender uid
+let processedMsgIds = new Set(); // avoid duplicate notifications
 
 function containsBadWord(t) { return BAD_WORDS.some(w => t.toLowerCase().includes(w)); }
 function getDmId(uid1, uid2) { return [uid1, uid2].sort().join("_"); }
 
+// --- Notifications ---
+window.requestNotifPermission = async function() {
+  if (!("Notification" in window)) return;
+  const perm = await Notification.requestPermission();
+  if (perm === "granted") {
+    notifBanner.style.display = "none";
+    localStorage.setItem("notifGranted", "true");
+  }
+};
+
+function checkNotifBanner() {
+  if (!("Notification" in window)) return;
+  if (Notification.permission === "granted") {
+    notifBanner.style.display = "none";
+    localStorage.setItem("notifGranted", "true");
+  } else if (Notification.permission !== "denied") {
+    notifBanner.style.display = "block";
+  }
+}
+
+function sendNotification(title, body, icon) {
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+  try {
+    new Notification(title, { body, icon: icon || DEFAULT_PFP });
+  } catch(e) { console.log("Notification failed:", e); }
+}
+
+// --- Parse mentions in message text ---
+function parseMentions(text, currentUserName) {
+  // Highlight @everyone
+  let parsed = text.replace(/@everyone/g, '<span class="mention everyone">@everyone</span>');
+  // Highlight @username mentions
+  parsed = parsed.replace(/@([a-zA-Z0-9_\- ]+?)(?=\s|$|[^a-zA-Z0-9_\-])/g, (match, name) => {
+    return `<span class="mention">@${name}</span>`;
+  });
+  return parsed;
+}
+
+function isMentioned(text, myName) {
+  const lower = text.toLowerCase();
+  const myLower = myName.toLowerCase();
+  return lower.includes(`@${myLower}`) || lower.includes("@everyone");
+}
+
+// --- Mention autocomplete ---
+let mentionQuery = "";
+let mentionActive = false;
+
+messageInput.addEventListener("input", () => {
+  const val = messageInput.value;
+  const cursorPos = messageInput.selectionStart;
+  const textBefore = val.slice(0, cursorPos);
+  const atMatch = textBefore.match(/@(\w*)$/);
+
+  if (atMatch) {
+    mentionQuery = atMatch[1].toLowerCase();
+    mentionActive = true;
+
+    // Filter users
+    let filtered = [];
+    if (isAdmin && mentionQuery === "" || (isAdmin && "everyone".startsWith(mentionQuery))) {
+      filtered.push({ name: "everyone", pfp: null, isEveryone: true });
+    }
+    filtered = filtered.concat(
+      allUsers.filter(u =>
+        u.uid !== auth.currentUser.uid &&
+        u.name.toLowerCase().startsWith(mentionQuery)
+      )
+    );
+
+    if (filtered.length > 0) {
+      mentionDropdown.innerHTML = "";
+      filtered.forEach(u => {
+        const div = document.createElement("div");
+        div.className = "mentionOption";
+        div.innerHTML = `
+          <img src="${u.pfp || DEFAULT_PFP}" onerror="this.src='${DEFAULT_PFP}'" style="${u.isEveryone ? 'display:none' : ''}">
+          <span>${u.isEveryone ? '@everyone (Admin only)' : '@' + u.name}</span>`;
+        div.addEventListener("click", () => {
+          const before = textBefore.slice(0, textBefore.lastIndexOf("@"));
+          const after = val.slice(cursorPos);
+          messageInput.value = before + "@" + (u.isEveryone ? "everyone" : u.name) + " " + after;
+          messageInput.focus();
+          mentionDropdown.style.display = "none";
+          mentionActive = false;
+        });
+        mentionDropdown.appendChild(div);
+      });
+      mentionDropdown.style.display = "block";
+    } else {
+      mentionDropdown.style.display = "none";
+    }
+  } else {
+    mentionDropdown.style.display = "none";
+    mentionActive = false;
+  }
+});
+
+document.addEventListener("click", e => {
+  if (!mentionDropdown.contains(e.target) && e.target !== messageInput) {
+    mentionDropdown.style.display = "none";
+  }
+});
+
+messageInput.addEventListener("keydown", e => {
+  if (e.key === "Escape") mentionDropdown.style.display = "none";
+});
+
+// --- Load all users for autocomplete ---
+async function loadAllUsers() {
+  const snap = await getDocs(collection(db, "users"));
+  allUsers = [];
+  snap.forEach(d => allUsers.push({ uid: d.id, ...d.data() }));
+}
+
+// --- Page management ---
 function showPage(page) {
   loginDiv.style.display = "none";
   profileDiv.style.display = "none";
@@ -346,6 +486,7 @@ function showPage(page) {
   adminPanel.style.display = "none";
   topBar.style.display = "none";
   verifyBanner.style.display = "none";
+  notifBanner.style.display = "none";
   document.getElementById("btnBackToChat").style.display = "none";
   document.getElementById("btnOpenSettings").style.display = "inline-block";
   if (page === "login") { loginDiv.style.display = "block"; }
@@ -358,6 +499,7 @@ function showPage(page) {
     if (user && !user.emailVerified && user.providerData[0]?.providerId === "password") {
       verifyBanner.style.display = "block";
     }
+    checkNotifBanner();
   } else if (page === "settings") {
     topBar.style.display = "flex";
     settingsDiv.style.display = "block";
@@ -409,11 +551,8 @@ document.getElementById("btnBackToChat").addEventListener("click", () => showPag
 // --- Update all messages with new name/pfp ---
 async function updateAllMessages(uid, name, pfp) {
   try {
-    // Update global messages
     const globalSnap = await getDocs(query(collection(db, "messages"), where("uid", "==", uid)));
     globalSnap.forEach(async d => await updateDoc(d.ref, { name, pfp }));
-
-    // Update messages in all DM chats
     const dmsSnap = await getDocs(query(collection(db, "dms"), where("users", "array-contains", uid)));
     for (const dmDoc of dmsSnap.docs) {
       const dmMsgsSnap = await getDocs(query(collection(db, "dms", dmDoc.id, "messages"), where("uid", "==", uid)));
@@ -467,9 +606,10 @@ document.getElementById("btnChangePassword").addEventListener("click", async () 
   catch(e) { alert(e.message); }
 });
 
+// --- Send message with mention handling ---
 document.getElementById("btnSend").addEventListener("click", async () => {
   try {
-    const text = document.getElementById("messageInput").value.trim();
+    const text = messageInput.value.trim();
     if (!text) return;
     const uid = auth.currentUser.uid;
     await reload(auth.currentUser);
@@ -478,17 +618,37 @@ document.getElementById("btnSend").addEventListener("click", async () => {
     const ud = userSnap.data();
     if (ud.banned) { alert("You are banned."); return; }
     if (ud.muted) { alert("You are muted."); return; }
-    if (containsBadWord(text)) { document.getElementById("messageInput").value = ""; return; }
+    if (containsBadWord(text)) { messageInput.value = ""; return; }
+
+    // Check @everyone permission
+    if (text.includes("@everyone") && auth.currentUser.email !== ADMIN_EMAIL) {
+      alert("Only the admin can use @everyone.");
+      return;
+    }
+
+    // Check mention cooldown
+    const now = Date.now();
+    const hasMention = /@\w+/.test(text);
+    if (hasMention) {
+      if (lastMentionTime[uid] && now - lastMentionTime[uid] < MENTION_COOLDOWN) {
+        const remaining = Math.ceil((MENTION_COOLDOWN - (now - lastMentionTime[uid])) / 1000);
+        alert(`Please wait ${remaining} seconds before mentioning again.`);
+        return;
+      }
+      lastMentionTime[uid] = now;
+    }
+
     const col = currentChatId === "global"
       ? collection(db, "messages")
       : collection(db, "dms", currentChatId, "messages");
     await addDoc(col, { text, name: ud.name, pfp: ud.pfp, uid, time: Date.now() });
-    document.getElementById("messageInput").value = "";
+    messageInput.value = "";
+    mentionDropdown.style.display = "none";
   } catch(e) { alert(e.message); }
 });
 
-document.getElementById("messageInput").addEventListener("keydown", e => {
-  if (e.key === "Enter") document.getElementById("btnSend").click();
+messageInput.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !mentionActive) document.getElementById("btnSend").click();
 });
 
 function showGlobalChat() {
@@ -507,12 +667,37 @@ function loadMessages() {
   const col = currentChatId === "global"
     ? collection(db, "messages")
     : collection(db, "dms", currentChatId, "messages");
-  currentChatUnsub = onSnapshot(col, snap => {
+
+  const myUid = auth.currentUser.uid;
+
+  currentChatUnsub = onSnapshot(col, async snap => {
+    // Get current user's name for mention detection
+    const mySnap = await getDoc(doc(db, "users", myUid));
+    const myName = mySnap.exists() ? mySnap.data().name : "";
+
     messagesDiv.innerHTML = "";
     const sorted = [];
     snap.forEach(d => sorted.push({ id: d.id, ...d.data() }));
     sorted.sort((a, b) => a.time - b.time);
+
     sorted.forEach(m => {
+      const mentioned = m.uid !== myUid && isMentioned(m.text, myName);
+
+      // Send notification for new messages that mention me
+      if (
+        m.uid !== myUid &&
+        !processedMsgIds.has(m.id) &&
+        mentioned &&
+        Date.now() - m.time < 10000 // only notify for recent messages
+      ) {
+        processedMsgIds.add(m.id);
+        sendNotification(
+          `${m.name} mentioned you in ByteChat`,
+          m.text,
+          m.pfp || DEFAULT_PFP
+        );
+      }
+
       const div = document.createElement("div");
       div.className = "msg";
       const img = document.createElement("img");
@@ -520,12 +705,18 @@ function loadMessages() {
       img.onerror = () => img.src = DEFAULT_PFP;
       img.title = m.name;
       img.addEventListener("click", () => openUserModal(m.uid));
+
       const text = document.createElement("span");
-      text.className = "msgtext" + (m.uid === auth.currentUser.uid ? " mine" : "");
-      text.innerHTML = `<b>${m.name}:</b> ${m.text}`;
+      let classList = "msgtext";
+      if (m.uid === myUid) classList += " mine";
+      else if (mentioned) classList += " mentioned";
+      text.className = classList;
+      text.innerHTML = `<b>${m.name}:</b> ${parseMentions(m.text, myName)}`;
+
       div.appendChild(img);
       div.appendChild(text);
-      if (isAdmin || (currentChatId !== "global" && m.uid === auth.currentUser.uid)) {
+
+      if (isAdmin || (currentChatId !== "global" && m.uid === myUid)) {
         const delBtn = document.createElement("button");
         delBtn.className = "delbtn";
         delBtn.textContent = "X";
@@ -544,6 +735,36 @@ function loadMessages() {
       messagesDiv.appendChild(div);
     });
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  });
+}
+
+// --- Listen for new DM requests and notify ---
+function listenForDmNotifications() {
+  const uid = auth.currentUser.uid;
+  onSnapshot(query(collection(db, "dms"), where("users", "array-contains", uid)), async snap => {
+    snap.docChanges().forEach(async change => {
+      const dm = change.doc.data();
+      if (change.type === "added" && dm.status === "accepted") {
+        // Listen for new messages in this DM
+        const dmId = change.doc.id;
+        onSnapshot(collection(db, "dms", dmId, "messages"), msgSnap => {
+          msgSnap.docChanges().forEach(async msgChange => {
+            if (msgChange.type === "added") {
+              const m = msgChange.doc.data();
+              const msgId = msgChange.doc.id;
+              if (m.uid !== uid && !processedMsgIds.has(msgId) && Date.now() - m.time < 10000) {
+                processedMsgIds.add(msgId);
+                sendNotification(
+                  `New message from ${m.name}`,
+                  m.text,
+                  m.pfp || DEFAULT_PFP
+                );
+              }
+            }
+          });
+        });
+      }
+    });
   });
 }
 
@@ -830,6 +1051,8 @@ function loadApp() {
   loadSidebar();
   showGlobalChat();
   checkPendingRequests();
+  loadAllUsers();
+  listenForDmNotifications();
 }
 
 onAuthStateChanged(auth, async user => {
