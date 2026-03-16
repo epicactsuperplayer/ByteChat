@@ -25,40 +25,26 @@ button.orange { background: #e67e00; }
 button.green { background: #00aa44; }
 button.gray { background: #444; }
 
-/* Top bar */
 #topBar { display: none; background: #111; padding: 8px 12px; justify-content: flex-end; align-items: center; gap: 6px; flex-wrap: wrap; }
 #topBar button { padding: 7px 12px; font-size: 13px; }
 
-/* Verify banner */
 #verifyBanner { display: none; background: #7a4a00; padding: 10px; font-size: 13px; }
 #verifyBanner button { padding: 5px 10px; font-size: 12px; margin-left: 6px; }
 
-/* Main layout */
 #appLayout { display: none; flex-direction: row; height: calc(100vh - 100px); }
 
-/* Sidebar */
-#sidebar {
-  width: 220px; min-width: 220px; background: #111;
-  display: flex; flex-direction: column;
-  border-right: 1px solid #333; overflow: hidden;
-}
+#sidebar { width: 220px; min-width: 220px; background: #111; display: flex; flex-direction: column; border-right: 1px solid #333; overflow: hidden; }
 #sidebarHeader { padding: 10px; border-bottom: 1px solid #333; display: flex; flex-direction: column; gap: 6px; }
 #sidebarHeader button { width: 100%; margin: 0; padding: 8px; font-size: 13px; }
 #convList { flex: 1; overflow-y: auto; }
-.convItem {
-  display: flex; align-items: center; gap: 8px;
-  padding: 10px; cursor: pointer; border-bottom: 1px solid #222;
-  text-align: left; transition: background 0.1s;
-}
+.convItem { display: flex; align-items: center; gap: 8px; padding: 10px; cursor: pointer; border-bottom: 1px solid #222; text-align: left; transition: background 0.1s; }
 .convItem:hover { background: #1a1a1a; }
 .convItem.active { background: #003355; }
 .convItem img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
 .convItem .convInfo { flex: 1; overflow: hidden; }
 .convItem .convName { font-size: 13px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .convItem .convPreview { font-size: 11px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.convItem .unread { background: #00aaff; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-/* Chat area */
 #chatArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 #chatHeader { background: #111; padding: 10px 15px; border-bottom: 1px solid #333; text-align: left; font-weight: bold; font-size: 15px; display: flex; align-items: center; gap: 10px; }
 #chatHeader img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
@@ -73,16 +59,13 @@ button.gray { background: #444; }
 #chatInputRow input { flex: 1; max-width: none; margin: 0; }
 #chatInputRow button { flex-shrink: 0; margin: 0; }
 
-/* PFP previews */
 #pfpPreview, #settingsPfpPreview { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin: 8px auto; display: none; border: 2px solid #00aaff; }
 
-/* Settings */
 #settings { max-width: 460px; margin: 0 auto; text-align: left; padding: 15px; }
 #settings h2 { text-align: center; margin-bottom: 10px; }
 #settings label { display: block; margin: 12px 0 4px; color: #aaa; font-size: 13px; }
 #settings input { max-width: 100%; }
 
-/* Admin */
 #adminPanel { display: none; max-width: 600px; margin: 0 auto; padding: 15px; text-align: left; }
 #adminPanel h2 { text-align: center; margin-bottom: 10px; }
 .adminUser { display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; border-radius: 8px; padding: 10px; margin: 6px 0; flex-wrap: wrap; gap: 6px; }
@@ -95,37 +78,24 @@ button.gray { background: #444; }
 .badge.banned { background: #cc0000; }
 .badge.muted { background: #e67e00; }
 
-/* Modal */
-#modal, #dmModal, #requestModal {
-  display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.75); z-index: 1000;
-  justify-content: center; align-items: center; padding: 20px;
-}
-.modalBox {
-  background: #1a1a1a; border: 1px solid #333; border-radius: 12px;
-  padding: 20px; width: 100%; max-width: 320px; text-align: center;
-}
+#modal, #dmModal, #requestModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+.modalBox { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; width: 100%; max-width: 320px; text-align: center; }
 .modalBox img { width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 2px solid #00aaff; margin-bottom: 10px; }
 .modalBox h3 { margin: 5px 0; }
 .modalBox p { color: #aaa; font-size: 13px; margin: 4px 0; }
 #adminActions { margin-top: 12px; display: none; }
 #adminActions button { margin: 3px; }
-
-/* DM request modal */
 #dmModal .modalBox input { width: 100%; margin: 8px 0; }
 
-/* Hamburger */
 #hamburgerWrap { position: fixed; top: 15px; left: 15px; z-index: 9999; font-family: monospace; }
 #hamburgerBtn { cursor: pointer; background: #0a0a0a; border: 1px solid #333; border-radius: 6px; padding: 8px 12px; font-size: 18px; color: white; user-select: none; }
 #byteNav { display: none; flex-direction: column; gap: 8px; margin-top: 8px; background: #0a0a0a; border: 1px solid #333; border-radius: 6px; padding: 10px; min-width: 180px; }
 #byteNav a { color: #fff; text-decoration: none; padding: 6px 10px; border-radius: 4px; border: 1px solid #222; display: flex; align-items: center; gap: 8px; font-size: 13px; }
 #byteNav a:hover { background: #1a1a1a; }
 
-/* Profile / login */
 #profile, #login { max-width: 360px; margin: 0 auto; }
 #login h2, #profile h2 { margin-bottom: 12px; }
 
-/* Mobile sidebar toggle */
 #sidebarToggle { display: none; }
 @media (max-width: 600px) {
   #sidebar { position: fixed; left: -220px; top: 0; height: 100vh; z-index: 500; transition: left 0.2s; padding-top: 60px; }
@@ -138,7 +108,6 @@ button.gray { background: #444; }
 
 <body>
 
-<!-- Hamburger Menu -->
 <div id="hamburgerWrap">
   <div id="hamburgerBtn" onclick="toggleNav()">&#9776;</div>
   <div id="byteNav">
@@ -160,6 +129,7 @@ button.gray { background: #444; }
     </a>
   </div>
 </div>
+
 <script>
 function toggleNav() {
   const nav = document.getElementById('byteNav');
@@ -173,21 +143,18 @@ document.addEventListener('click', function(e) {
 
 <h1>ByteChat</h1>
 
-<!-- Top bar -->
 <div id="topBar">
-  <button id="sidebarToggle" onclick="document.getElementById('sidebar').classList.toggle('open')">💬</button>
-  <button id="btnOpenSettings">⚙️ Settings</button>
-  <button id="btnBackToChat" style="display:none">💬 Chat</button>
+  <button id="sidebarToggle" onclick="document.getElementById('sidebar').classList.toggle('open')">Menu</button>
+  <button id="btnOpenSettings">Settings</button>
+  <button id="btnBackToChat" style="display:none">Back to Chat</button>
   <button class="gray" id="btnLogout">Logout</button>
 </div>
 
-<!-- Verify banner -->
 <div id="verifyBanner">
-  ⚠️ Verify your email to chat.
+  Please verify your email to chat.
   <button id="btnResendVerify">Resend</button>
 </div>
 
-<!-- LOGIN -->
 <div id="login">
   <h2>Login</h2>
   <input id="email" placeholder="Email" type="email"><br>
@@ -200,7 +167,6 @@ document.addEventListener('click', function(e) {
   <button id="btnReset">Forgot Password</button>
 </div>
 
-<!-- PROFILE SETUP -->
 <div id="profile">
   <h2>Create Profile</h2>
   <input id="name" placeholder="Your Name"><br>
@@ -210,9 +176,8 @@ document.addEventListener('click', function(e) {
   <button id="btnSaveProfile">Save Profile</button>
 </div>
 
-<!-- SETTINGS -->
 <div id="settings">
-  <h2>⚙️ Settings</h2>
+  <h2>Settings</h2>
   <label>Username</label>
   <input id="settingsName" placeholder="Your Name">
   <label>Profile Picture URL</label>
@@ -221,30 +186,24 @@ document.addEventListener('click', function(e) {
   <label>About Me</label>
   <input id="settingsAbout" placeholder="Tell us about yourself">
   <br><br>
-  <button id="btnSaveSettings" class="green">💾 Save Changes</button>
+  <button id="btnSaveSettings" class="green">Save Changes</button>
   <br><br>
   <hr style="border-color:#333; margin: 20px 0;">
   <h3>Change Password</h3>
-  <button id="btnChangePassword" class="orange">📧 Send Password Reset Email</button>
+  <button id="btnChangePassword" class="orange">Send Password Reset Email</button>
 </div>
 
-<!-- MAIN APP LAYOUT -->
 <div id="appLayout">
-
-  <!-- Sidebar -->
   <div id="sidebar">
     <div id="sidebarHeader">
-      <button onclick="showGlobalChat()" style="background:#00aaff">🌐 Global Chat</button>
-      <button onclick="openDmModal()" class="green">➕ New Private Chat</button>
+      <button onclick="openDmModal()" class="green">+ New Private Chat</button>
     </div>
     <div id="convList"></div>
   </div>
-
-  <!-- Chat area -->
   <div id="chatArea">
     <div id="chatHeader">
       <img id="chatHeaderImg" src="" style="display:none">
-      <span id="chatHeaderName">🌐 Global Chat</span>
+      <span id="chatHeaderName">Global Chat</span>
     </div>
     <div id="messages"></div>
     <div id="chatInputRow">
@@ -252,18 +211,15 @@ document.addEventListener('click', function(e) {
       <button id="btnSend">Send</button>
     </div>
   </div>
-
 </div>
 
-<!-- Admin Panel (below layout) -->
 <div id="adminPanel">
-  <h2>⚙️ Admin Panel</h2>
-  <button id="btnClearChat" class="red">🗑️ Delete All Messages</button>
-  <button id="btnRefreshUsers" class="green">🔄 Refresh Users</button>
+  <h2>Admin Panel</h2>
+  <button id="btnClearChat" class="red">Delete All Messages</button>
+  <button id="btnRefreshUsers" class="green">Refresh Users</button>
   <div id="adminUserList"></div>
 </div>
 
-<!-- USER PROFILE MODAL -->
 <div id="modal">
   <div class="modalBox">
     <img id="modalPfp" src="">
@@ -272,20 +228,19 @@ document.addEventListener('click', function(e) {
     <p id="modalAbout"></p>
     <p id="modalStatus"></p>
     <div id="adminActions">
-      <button id="btnModalBan" class="red">🔨 Ban User</button>
-      <button id="btnModalMute" class="orange">🔇 Mute User</button>
-      <button id="btnModalDeleteMsgs" class="red">🗑️ Delete All Messages</button>
+      <button id="btnModalBan" class="red">Ban User</button>
+      <button id="btnModalMute" class="orange">Mute User</button>
+      <button id="btnModalDeleteMsgs" class="red">Delete All Messages</button>
     </div>
     <br>
-    <button id="btnModalDM" class="green">💬 Send Private Message</button>
+    <button id="btnModalDM" class="green">Send Private Message</button>
     <button id="modalClose" class="gray">Close</button>
   </div>
 </div>
 
-<!-- NEW DM MODAL -->
 <div id="dmModal">
   <div class="modalBox">
-    <h3>➕ New Private Chat</h3>
+    <h3>New Private Chat</h3>
     <p style="color:#aaa;font-size:13px;margin:10px 0">Enter the email of the user you want to chat with</p>
     <input id="dmEmail" placeholder="user@email.com" type="email">
     <br><br>
@@ -294,15 +249,14 @@ document.addEventListener('click', function(e) {
   </div>
 </div>
 
-<!-- INCOMING REQUEST MODAL -->
 <div id="requestModal">
   <div class="modalBox">
     <img id="reqPfp" src="">
     <h3 id="reqName"></h3>
     <p style="color:#aaa;font-size:13px;margin:8px 0">wants to start a private chat with you</p>
     <br>
-    <button id="btnAcceptReq" class="green">✅ Accept</button>
-    <button id="btnDenyReq" class="red">❌ Deny</button>
+    <button id="btnAcceptReq" class="green">Accept</button>
+    <button id="btnDenyReq" class="red">Deny</button>
   </div>
 </div>
 
@@ -316,7 +270,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 import {
   getFirestore, doc, setDoc, getDoc, addDoc, updateDoc,
-  collection, onSnapshot, getDocs, deleteDoc, query, where, orderBy
+  collection, onSnapshot, getDocs, deleteDoc, query, where
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -360,12 +314,8 @@ let currentChatUnsub = null;
 let pendingRequests = [];
 let currentRequestIndex = 0;
 
-// --- Helpers ---
 function containsBadWord(t) { return BAD_WORDS.some(w => t.toLowerCase().includes(w)); }
-
-function getDmId(uid1, uid2) {
-  return [uid1, uid2].sort().join("_");
-}
+function getDmId(uid1, uid2) { return [uid1, uid2].sort().join("_"); }
 
 function showPage(page) {
   loginDiv.style.display = "none";
@@ -378,9 +328,11 @@ function showPage(page) {
   document.getElementById("btnBackToChat").style.display = "none";
   document.getElementById("btnOpenSettings").style.display = "inline-block";
 
-  if (page === "login") { loginDiv.style.display = "block"; }
-  else if (page === "profile") { profileDiv.style.display = "block"; }
-  else if (page === "chat") {
+  if (page === "login") {
+    loginDiv.style.display = "block";
+  } else if (page === "profile") {
+    profileDiv.style.display = "block";
+  } else if (page === "chat") {
     topBar.style.display = "flex";
     appLayout.style.display = "flex";
     if (isAdmin) adminPanel.style.display = "block";
@@ -397,13 +349,13 @@ function showPage(page) {
   }
 }
 
-// --- PFP previews ---
 document.getElementById("pfpUrl").addEventListener("input", () => {
   const url = document.getElementById("pfpUrl").value.trim();
   const p = document.getElementById("pfpPreview");
   if (url) { p.src = url; p.style.display = "block"; p.onerror = () => p.style.display = "none"; }
   else p.style.display = "none";
 });
+
 document.getElementById("settingsPfpUrl").addEventListener("input", () => {
   const url = document.getElementById("settingsPfpUrl").value.trim();
   const p = document.getElementById("settingsPfpPreview");
@@ -411,12 +363,11 @@ document.getElementById("settingsPfpUrl").addEventListener("input", () => {
   else p.style.display = "none";
 });
 
-// --- Auth ---
 document.getElementById("btnLogin").addEventListener("click", async () => {
-  try {
-    await signInWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value);
-  } catch(e) { alert(e.message); }
+  try { await signInWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value); }
+  catch(e) { alert(e.message); }
 });
+
 document.getElementById("btnSignup").addEventListener("click", async () => {
   try {
     const cred = await createUserWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value);
@@ -424,20 +375,25 @@ document.getElementById("btnSignup").addEventListener("click", async () => {
     alert("Account created! Please verify your email before chatting.");
   } catch(e) { alert(e.message); }
 });
+
 document.getElementById("btnGoogle").addEventListener("click", async () => {
   try { await signInWithPopup(auth, provider); } catch(e) { alert(e.message); }
 });
+
 document.getElementById("btnReset").addEventListener("click", async () => {
-  try { await sendPasswordResetEmail(auth, document.getElementById("resetEmail").value); alert("Reset email sent!"); } catch(e) { alert(e.message); }
+  try { await sendPasswordResetEmail(auth, document.getElementById("resetEmail").value); alert("Reset email sent!"); }
+  catch(e) { alert(e.message); }
 });
+
 document.getElementById("btnResendVerify").addEventListener("click", async () => {
-  try { await sendEmailVerification(auth.currentUser); alert("Verification email sent!"); } catch(e) { alert(e.message); }
+  try { await sendEmailVerification(auth.currentUser); alert("Verification email sent!"); }
+  catch(e) { alert(e.message); }
 });
+
 document.getElementById("btnLogout").addEventListener("click", () => signOut(auth));
 document.getElementById("btnOpenSettings").addEventListener("click", () => showPage("settings"));
 document.getElementById("btnBackToChat").addEventListener("click", () => showPage("chat"));
 
-// --- Save profile ---
 document.getElementById("btnSaveProfile").addEventListener("click", async () => {
   try {
     const name = document.getElementById("name").value.trim();
@@ -445,14 +401,11 @@ document.getElementById("btnSaveProfile").addEventListener("click", async () => 
     let pfp = document.getElementById("pfpUrl").value.trim() || DEFAULT_PFP;
     const about = document.getElementById("about").value.trim() || "No bio yet.";
     const uid = auth.currentUser.uid;
-    await setDoc(doc(db, "users", uid), {
-      name, pfp, about, email: auth.currentUser.email, banned: false, muted: false
-    });
+    await setDoc(doc(db, "users", uid), { name, pfp, about, email: auth.currentUser.email, banned: false, muted: false });
     loadApp();
   } catch(e) { alert(e.message); }
 });
 
-// --- Settings ---
 async function loadSettingsForm() {
   try {
     const snap = await getDoc(doc(db, "users", auth.currentUser.uid));
@@ -465,6 +418,7 @@ async function loadSettingsForm() {
     if (u.pfp) { p.src = u.pfp; p.style.display = "block"; }
   } catch(e) { alert(e.message); }
 }
+
 document.getElementById("btnSaveSettings").addEventListener("click", async () => {
   try {
     const name = document.getElementById("settingsName").value.trim();
@@ -476,11 +430,12 @@ document.getElementById("btnSaveSettings").addEventListener("click", async () =>
     showPage("chat");
   } catch(e) { alert(e.message); }
 });
+
 document.getElementById("btnChangePassword").addEventListener("click", async () => {
-  try { await sendPasswordResetEmail(auth, auth.currentUser.email); alert("Password reset email sent to " + auth.currentUser.email); } catch(e) { alert(e.message); }
+  try { await sendPasswordResetEmail(auth, auth.currentUser.email); alert("Password reset email sent to " + auth.currentUser.email); }
+  catch(e) { alert(e.message); }
 });
 
-// --- Send message ---
 document.getElementById("btnSend").addEventListener("click", async () => {
   try {
     const text = document.getElementById("messageInput").value.trim();
@@ -493,21 +448,22 @@ document.getElementById("btnSend").addEventListener("click", async () => {
     if (ud.banned) { alert("You are banned."); return; }
     if (ud.muted) { alert("You are muted."); return; }
     if (containsBadWord(text)) { document.getElementById("messageInput").value = ""; return; }
-
-    const col = currentChatId === "global" ? collection(db, "messages") : collection(db, "dms", currentChatId, "messages");
+    const col = currentChatId === "global"
+      ? collection(db, "messages")
+      : collection(db, "dms", currentChatId, "messages");
     await addDoc(col, { text, name: ud.name, pfp: ud.pfp, uid, time: Date.now() });
     document.getElementById("messageInput").value = "";
   } catch(e) { alert(e.message); }
 });
+
 document.getElementById("messageInput").addEventListener("keydown", e => {
   if (e.key === "Enter") document.getElementById("btnSend").click();
 });
 
-// --- Global chat ---
 function showGlobalChat() {
   currentChatId = "global";
   document.getElementById("chatHeaderImg").style.display = "none";
-  document.getElementById("chatHeaderName").textContent = "🌐 Global Chat";
+  document.getElementById("chatHeaderName").textContent = "Global Chat";
   loadMessages();
   document.querySelectorAll(".convItem").forEach(el => el.classList.remove("active"));
   document.querySelector(".convItem[data-id='global']")?.classList.add("active");
@@ -517,7 +473,10 @@ function showGlobalChat() {
 function loadMessages() {
   if (currentChatUnsub) currentChatUnsub();
   messagesDiv.innerHTML = "";
-  const col = currentChatId === "global" ? collection(db, "messages") : collection(db, "dms", currentChatId, "messages");
+  const col = currentChatId === "global"
+    ? collection(db, "messages")
+    : collection(db, "dms", currentChatId, "messages");
+
   currentChatUnsub = onSnapshot(col, snap => {
     messagesDiv.innerHTML = "";
     const sorted = [];
@@ -539,11 +498,16 @@ function loadMessages() {
       if (isAdmin || (currentChatId !== "global" && m.uid === auth.currentUser.uid)) {
         const delBtn = document.createElement("button");
         delBtn.className = "delbtn";
-        delBtn.textContent = "🗑️";
+        delBtn.textContent = "X";
         delBtn.addEventListener("click", async () => {
           if (!confirm("Delete this message?")) return;
-          const col = currentChatId === "global" ? collection(db, "messages") : collection(db, "dms", currentChatId, "messages");
-          await deleteDoc(doc(db, ...col.path.split("/"), m.id));
+          try {
+            if (currentChatId === "global") {
+              await deleteDoc(doc(db, "messages", m.id));
+            } else {
+              await deleteDoc(doc(db, "dms", currentChatId, "messages", m.id));
+            }
+          } catch(e) { alert(e.message); }
         });
         div.appendChild(delBtn);
       }
@@ -553,11 +517,11 @@ function loadMessages() {
   });
 }
 
-// --- Private chats ---
 window.openDmModal = function() {
   document.getElementById("dmEmail").value = "";
   dmModal.style.display = "flex";
 };
+
 document.getElementById("dmModalClose").addEventListener("click", () => dmModal.style.display = "none");
 dmModal.addEventListener("click", e => { if (e.target === dmModal) dmModal.style.display = "none"; });
 
@@ -567,7 +531,6 @@ document.getElementById("btnSendDmRequest").addEventListener("click", async () =
     if (!email) { alert("Please enter an email."); return; }
     if (email === auth.currentUser.email.toLowerCase()) { alert("You can't chat with yourself!"); return; }
 
-    // Find user by email
     const usersSnap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
     if (usersSnap.empty) { alert("No user found with that email."); return; }
 
@@ -576,7 +539,6 @@ document.getElementById("btnSendDmRequest").addEventListener("click", async () =
     const myUid = auth.currentUser.uid;
     const dmId = getDmId(myUid, targetUid);
 
-    // Check if DM already exists
     const dmSnap = await getDoc(doc(db, "dms", dmId));
     if (dmSnap.exists() && dmSnap.data().status === "accepted") {
       alert("You already have a chat with this user!");
@@ -585,7 +547,6 @@ document.getElementById("btnSendDmRequest").addEventListener("click", async () =
       return;
     }
 
-    // Send request
     const mySnap = await getDoc(doc(db, "users", myUid));
     await setDoc(doc(db, "dms", dmId), {
       users: [myUid, targetUid],
@@ -602,7 +563,6 @@ document.getElementById("btnSendDmRequest").addEventListener("click", async () =
   } catch(e) { alert(e.message); }
 });
 
-// Open DM chat
 function openDmChat(dmId, otherUser) {
   currentChatId = dmId;
   const headerImg = document.getElementById("chatHeaderImg");
@@ -615,24 +575,21 @@ function openDmChat(dmId, otherUser) {
   document.getElementById("sidebar").classList.remove("open");
 }
 
-// Load sidebar conversations
 function loadSidebar() {
   const uid = auth.currentUser.uid;
   convList.innerHTML = "";
 
-  // Global chat item
   const globalItem = document.createElement("div");
   globalItem.className = "convItem active";
   globalItem.dataset.id = "global";
-  globalItem.innerHTML = `<div style="width:32px;height:32px;border-radius:50%;background:#00aaff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🌐</div><div class="convInfo"><div class="convName">Global Chat</div><div class="convPreview">Everyone</div></div>`;
+  globalItem.innerHTML = `
+    <div style="width:32px;height:32px;border-radius:50%;background:#00aaff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;font-weight:bold;">G</div>
+    <div class="convInfo"><div class="convName">Global Chat</div><div class="convPreview">Everyone</div></div>`;
   globalItem.addEventListener("click", showGlobalChat);
   convList.appendChild(globalItem);
 
-  // Listen for DM conversations
   onSnapshot(query(collection(db, "dms"), where("users", "array-contains", uid)), async snap => {
-    // Remove old DM items
     convList.querySelectorAll(".convItem:not([data-id='global'])").forEach(el => el.remove());
-
     for (const d of snap.docs) {
       const dm = d.data();
       if (dm.status !== "accepted") continue;
@@ -640,7 +597,6 @@ function loadSidebar() {
       const otherSnap = await getDoc(doc(db, "users", otherUid));
       if (!otherSnap.exists()) continue;
       const other = otherSnap.data();
-
       const item = document.createElement("div");
       item.className = "convItem";
       item.dataset.id = d.id;
@@ -649,24 +605,20 @@ function loadSidebar() {
         <div class="convInfo">
           <div class="convName">${other.name}</div>
           <div class="convPreview">${other.email}</div>
-        </div>
-      `;
+        </div>`;
       item.addEventListener("click", () => openDmChat(d.id, other));
       convList.appendChild(item);
     }
   });
 }
 
-// Check for pending requests on login
 async function checkPendingRequests() {
   const uid = auth.currentUser.uid;
   const snap = await getDocs(query(collection(db, "dms"), where("users", "array-contains", uid), where("status", "==", "pending")));
   pendingRequests = [];
   snap.forEach(d => {
     const dm = d.data();
-    if (dm.requestFrom !== uid) { // only show if you're the receiver
-      pendingRequests.push({ id: d.id, ...dm });
-    }
+    if (dm.requestFrom !== uid) pendingRequests.push({ id: d.id, ...dm });
   });
   currentRequestIndex = 0;
   showNextRequest();
@@ -700,7 +652,6 @@ document.getElementById("btnDenyReq").addEventListener("click", async () => {
   } catch(e) { alert(e.message); }
 });
 
-// --- User modal ---
 document.getElementById("modalClose").addEventListener("click", () => { modal.style.display = "none"; currentModalUid = null; });
 modal.addEventListener("click", e => { if (e.target === modal) { modal.style.display = "none"; currentModalUid = null; } });
 
@@ -714,9 +665,8 @@ document.getElementById("btnModalDM").addEventListener("click", async () => {
     const otherSnap = await getDoc(doc(db, "users", currentModalUid));
     openDmChat(dmId, otherSnap.data());
   } else {
-    document.getElementById("dmEmail").value = "";
     const otherSnap = await getDoc(doc(db, "users", currentModalUid));
-    if (otherSnap.exists()) document.getElementById("dmEmail").value = otherSnap.data().email;
+    document.getElementById("dmEmail").value = otherSnap.exists() ? otherSnap.data().email : "";
     dmModal.style.display = "flex";
   }
 });
@@ -766,24 +716,22 @@ async function openUserModal(uid) {
     currentModalUid = uid;
     document.getElementById("modalPfp").src = u.pfp || DEFAULT_PFP;
     document.getElementById("modalName").textContent = u.name;
-    document.getElementById("modalEmail").textContent = "📧 " + (u.email || "Unknown");
-    document.getElementById("modalAbout").textContent = "ℹ️ " + (u.about || "No bio yet.");
-    document.getElementById("modalStatus").textContent = u.banned ? "🚫 Banned" : u.muted ? "🔇 Muted" : "";
+    document.getElementById("modalEmail").textContent = "Email: " + (u.email || "Unknown");
+    document.getElementById("modalAbout").textContent = "About: " + (u.about || "No bio yet.");
+    document.getElementById("modalStatus").textContent = u.banned ? "Banned" : u.muted ? "Muted" : "";
     const adminActions = document.getElementById("adminActions");
     if (isAdmin && uid !== auth.currentUser.uid) {
       adminActions.style.display = "block";
-      document.getElementById("btnModalBan").textContent = u.banned ? "✅ Unban User" : "🔨 Ban User";
-      document.getElementById("btnModalMute").textContent = u.muted ? "✅ Unmute User" : "🔇 Mute User";
+      document.getElementById("btnModalBan").textContent = u.banned ? "Unban User" : "Ban User";
+      document.getElementById("btnModalMute").textContent = u.muted ? "Unmute User" : "Mute User";
     } else {
       adminActions.style.display = "none";
     }
-    // Hide DM button for own profile
     document.getElementById("btnModalDM").style.display = uid === auth.currentUser.uid ? "none" : "inline-block";
     modal.style.display = "flex";
   } catch(e) { alert(e.message); }
 }
 
-// --- Admin ---
 document.getElementById("btnClearChat").addEventListener("click", async () => {
   if (!confirm("Delete ALL global messages?")) return;
   try {
@@ -791,6 +739,7 @@ document.getElementById("btnClearChat").addEventListener("click", async () => {
     snap.forEach(async d => await deleteDoc(d.ref));
   } catch(e) { alert(e.message); }
 });
+
 document.getElementById("btnRefreshUsers").addEventListener("click", loadAdminUsers);
 
 async function loadAdminUsers() {
@@ -807,10 +756,10 @@ async function loadAdminUsers() {
         <img src="${u.pfp || DEFAULT_PFP}" onerror="this.src='${DEFAULT_PFP}'">
         <div class="info"><b>${u.name}</b>${u.banned ? '<span class="badge banned">Banned</span>' : ''}${u.muted ? '<span class="badge muted">Muted</span>' : ''}<span>${u.email}</span></div>
         <div class="btns">
-          <button class="orange" onclick="window._viewUser('${uid}')">👁️</button>
+          <button class="orange" onclick="window._viewUser('${uid}')">View</button>
           <button class="${u.banned ? 'green' : 'red'}" onclick="window._toggleBan('${uid}', ${u.banned})">${u.banned ? 'Unban' : 'Ban'}</button>
           <button class="${u.muted ? 'green' : 'orange'}" onclick="window._toggleMute('${uid}', ${u.muted})">${u.muted ? 'Unmute' : 'Mute'}</button>
-          <button class="red" onclick="window._deleteUserMsgs('${uid}')">🗑️</button>
+          <button class="red" onclick="window._deleteUserMsgs('${uid}')">Del Msgs</button>
         </div>`;
       list.appendChild(div);
     });
@@ -836,7 +785,6 @@ window._deleteUserMsgs = async uid => {
   alert("Done.");
 };
 
-// --- Load app ---
 function loadApp() {
   if (auth.currentUser.email === ADMIN_EMAIL) isAdmin = true;
   showPage("chat");
@@ -845,7 +793,6 @@ function loadApp() {
   checkPendingRequests();
 }
 
-// --- Auth state ---
 onAuthStateChanged(auth, async user => {
   if (!user) { showPage("login"); isAdmin = false; return; }
   const docSnap = await getDoc(doc(db, "users", user.uid));
