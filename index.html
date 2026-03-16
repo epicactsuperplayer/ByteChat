@@ -1,9 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ByteChat</title>
+
+<!-- SEO -->
+<meta name="description" content="ByteChat - A real-time chat platform by Bytestorm Corporation. Chat globally or privately with other users.">
+<meta name="keywords" content="ByteChat, Bytestorm, chat, messaging, real-time chat, private chat">
+<meta name="author" content="Bytestorm Corporation">
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph (link previews) -->
+<meta property="og:title" content="ByteChat">
+<meta property="og:description" content="Real-time chat platform by Bytestorm Corporation.">
+<meta property="og:image" content="https://i.imgur.com/NLz6Jfd.png">
+<meta property="og:url" content="https://bytestormchat.vercel.app">
+<meta property="og:type" content="website">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ByteChat">
+<meta name="twitter:description" content="Real-time chat platform by Bytestorm Corporation.">
+<meta name="twitter:image" content="https://i.imgur.com/NLz6Jfd.png">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="https://i.imgur.com/NLz6Jfd.png">
+<link rel="apple-touch-icon" href="https://i.imgur.com/NLz6Jfd.png">
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TKJ9JKK7ZF"></script>
 <script>
@@ -37,13 +60,15 @@ button.gray { background: #444; }
 #sidebarHeader { padding: 10px; border-bottom: 1px solid #333; display: flex; flex-direction: column; gap: 6px; }
 #sidebarHeader button { width: 100%; margin: 0; padding: 8px; font-size: 13px; }
 #convList { flex: 1; overflow-y: auto; }
-.convItem { display: flex; align-items: center; gap: 8px; padding: 10px; cursor: pointer; border-bottom: 1px solid #222; text-align: left; transition: background 0.1s; }
+.convItem { display: flex; align-items: center; gap: 8px; padding: 10px; cursor: pointer; border-bottom: 1px solid #222; text-align: left; transition: background 0.1s; position: relative; }
 .convItem:hover { background: #1a1a1a; }
 .convItem.active { background: #003355; }
 .convItem img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
 .convItem .convInfo { flex: 1; overflow: hidden; }
 .convItem .convName { font-size: 13px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .convItem .convPreview { font-size: 11px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.convItem .removeBtn { display: none; position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: #cc0000; border: none; color: white; border-radius: 4px; padding: 3px 7px; font-size: 11px; cursor: pointer; }
+.convItem:hover .removeBtn { display: inline-block; }
 
 #chatArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 #chatHeader { background: #111; padding: 10px 15px; border-bottom: 1px solid #333; text-align: left; font-weight: bold; font-size: 15px; display: flex; align-items: center; gap: 10px; }
@@ -102,6 +127,7 @@ button.gray { background: #444; }
   #sidebar.open { left: 0; }
   #sidebarToggle { display: inline-block; }
   #appLayout { height: calc(100vh - 90px); }
+  .convItem .removeBtn { display: inline-block; }
 }
 </style>
 </head>
@@ -327,12 +353,9 @@ function showPage(page) {
   verifyBanner.style.display = "none";
   document.getElementById("btnBackToChat").style.display = "none";
   document.getElementById("btnOpenSettings").style.display = "inline-block";
-
-  if (page === "login") {
-    loginDiv.style.display = "block";
-  } else if (page === "profile") {
-    profileDiv.style.display = "block";
-  } else if (page === "chat") {
+  if (page === "login") { loginDiv.style.display = "block"; }
+  else if (page === "profile") { profileDiv.style.display = "block"; }
+  else if (page === "chat") {
     topBar.style.display = "flex";
     appLayout.style.display = "flex";
     if (isAdmin) adminPanel.style.display = "block";
@@ -355,7 +378,6 @@ document.getElementById("pfpUrl").addEventListener("input", () => {
   if (url) { p.src = url; p.style.display = "block"; p.onerror = () => p.style.display = "none"; }
   else p.style.display = "none";
 });
-
 document.getElementById("settingsPfpUrl").addEventListener("input", () => {
   const url = document.getElementById("settingsPfpUrl").value.trim();
   const p = document.getElementById("settingsPfpPreview");
@@ -367,7 +389,6 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
   try { await signInWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value); }
   catch(e) { alert(e.message); }
 });
-
 document.getElementById("btnSignup").addEventListener("click", async () => {
   try {
     const cred = await createUserWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value);
@@ -375,21 +396,17 @@ document.getElementById("btnSignup").addEventListener("click", async () => {
     alert("Account created! Please verify your email before chatting.");
   } catch(e) { alert(e.message); }
 });
-
 document.getElementById("btnGoogle").addEventListener("click", async () => {
   try { await signInWithPopup(auth, provider); } catch(e) { alert(e.message); }
 });
-
 document.getElementById("btnReset").addEventListener("click", async () => {
   try { await sendPasswordResetEmail(auth, document.getElementById("resetEmail").value); alert("Reset email sent!"); }
   catch(e) { alert(e.message); }
 });
-
 document.getElementById("btnResendVerify").addEventListener("click", async () => {
   try { await sendEmailVerification(auth.currentUser); alert("Verification email sent!"); }
   catch(e) { alert(e.message); }
 });
-
 document.getElementById("btnLogout").addEventListener("click", () => signOut(auth));
 document.getElementById("btnOpenSettings").addEventListener("click", () => showPage("settings"));
 document.getElementById("btnBackToChat").addEventListener("click", () => showPage("chat"));
@@ -476,7 +493,6 @@ function loadMessages() {
   const col = currentChatId === "global"
     ? collection(db, "messages")
     : collection(db, "dms", currentChatId, "messages");
-
   currentChatUnsub = onSnapshot(col, snap => {
     messagesDiv.innerHTML = "";
     const sorted = [];
@@ -521,7 +537,6 @@ window.openDmModal = function() {
   document.getElementById("dmEmail").value = "";
   dmModal.style.display = "flex";
 };
-
 document.getElementById("dmModalClose").addEventListener("click", () => dmModal.style.display = "none");
 dmModal.addEventListener("click", e => { if (e.target === dmModal) dmModal.style.display = "none"; });
 
@@ -530,15 +545,12 @@ document.getElementById("btnSendDmRequest").addEventListener("click", async () =
     const email = document.getElementById("dmEmail").value.trim().toLowerCase();
     if (!email) { alert("Please enter an email."); return; }
     if (email === auth.currentUser.email.toLowerCase()) { alert("You can't chat with yourself!"); return; }
-
     const usersSnap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
     if (usersSnap.empty) { alert("No user found with that email."); return; }
-
     const targetDoc = usersSnap.docs[0];
     const targetUid = targetDoc.id;
     const myUid = auth.currentUser.uid;
     const dmId = getDmId(myUid, targetUid);
-
     const dmSnap = await getDoc(doc(db, "dms", dmId));
     if (dmSnap.exists() && dmSnap.data().status === "accepted") {
       alert("You already have a chat with this user!");
@@ -546,7 +558,6 @@ document.getElementById("btnSendDmRequest").addEventListener("click", async () =
       openDmChat(dmId, targetDoc.data());
       return;
     }
-
     const mySnap = await getDoc(doc(db, "users", myUid));
     await setDoc(doc(db, "dms", dmId), {
       users: [myUid, targetUid],
@@ -557,7 +568,6 @@ document.getElementById("btnSendDmRequest").addEventListener("click", async () =
       requestFromEmail: auth.currentUser.email,
       createdAt: Date.now()
     });
-
     alert("Chat request sent!");
     dmModal.style.display = "none";
   } catch(e) { alert(e.message); }
@@ -573,6 +583,20 @@ function openDmChat(dmId, otherUser) {
   document.querySelectorAll(".convItem").forEach(el => el.classList.remove("active"));
   document.querySelector(`.convItem[data-id='${dmId}']`)?.classList.add("active");
   document.getElementById("sidebar").classList.remove("open");
+}
+
+// Remove private chat for both sides
+async function removeDmChat(dmId) {
+  if (!confirm("Remove this private chat for both users? All messages will be deleted.")) return;
+  try {
+    // Delete all messages in the DM
+    const msgsSnap = await getDocs(collection(db, "dms", dmId, "messages"));
+    msgsSnap.forEach(async d => await deleteDoc(d.ref));
+    // Delete the DM document
+    await deleteDoc(doc(db, "dms", dmId));
+    // Go back to global chat if currently in this DM
+    if (currentChatId === dmId) showGlobalChat();
+  } catch(e) { alert(e.message); }
 }
 
 function loadSidebar() {
@@ -597,16 +621,24 @@ function loadSidebar() {
       const otherSnap = await getDoc(doc(db, "users", otherUid));
       if (!otherSnap.exists()) continue;
       const other = otherSnap.data();
+      const dmId = d.id;
+
       const item = document.createElement("div");
       item.className = "convItem";
-      item.dataset.id = d.id;
+      item.dataset.id = dmId;
       item.innerHTML = `
         <img src="${other.pfp || DEFAULT_PFP}" onerror="this.src='${DEFAULT_PFP}'">
         <div class="convInfo">
           <div class="convName">${other.name}</div>
           <div class="convPreview">${other.email}</div>
-        </div>`;
-      item.addEventListener("click", () => openDmChat(d.id, other));
+        </div>
+        <button class="removeBtn">Remove</button>`;
+
+      item.querySelector(".removeBtn").addEventListener("click", async (e) => {
+        e.stopPropagation();
+        await removeDmChat(dmId);
+      });
+      item.addEventListener("click", () => openDmChat(dmId, other));
       convList.appendChild(item);
     }
   });
@@ -739,7 +771,6 @@ document.getElementById("btnClearChat").addEventListener("click", async () => {
     snap.forEach(async d => await deleteDoc(d.ref));
   } catch(e) { alert(e.message); }
 });
-
 document.getElementById("btnRefreshUsers").addEventListener("click", loadAdminUsers);
 
 async function loadAdminUsers() {
