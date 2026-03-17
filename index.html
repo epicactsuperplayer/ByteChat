@@ -93,6 +93,10 @@ button.gray:hover { background: #333; color: #fff; }
 .msg .msgtext.mentioned { background: #2a1a00; border-left: 3px solid #888; }
 .msg .msgimg { max-width: 280px; max-height: 300px; border-radius: 8px; cursor: pointer; display: block; object-fit: cover; border: 1px solid #333; }
 .msg .msgimg:hover { opacity: 0.9; }
+.msg .msgvideo { max-width: 280px; border-radius: 8px; display: block; border: 1px solid #333; background: #000; }
+.msg .safelink { color: #aaa; text-decoration: underline; word-break: break-all; }
+.msg .safelink:hover { color: #fff; }
+.msg .unsafelink { color: #cc0000; text-decoration: line-through; cursor: not-allowed; font-size: 12px; }
 .mention { color: #fff; font-weight: bold; text-decoration: underline; }
 .mention.everyone { color: #fff; font-weight: bold; text-decoration: underline; }
 #chatInputRow { display: flex; gap: 6px; padding: 8px; border-top: 1px solid #333; position: relative; align-items: center; }
@@ -151,7 +155,7 @@ button.gray:hover { background: #333; color: #fff; }
   #sidebarToggle { display: inline-block; }
   #appLayout { height: calc(100vh - 90px); }
   .convItem .removeBtn { display: inline-block; }
-  .msg .msgimg { max-width: 200px; }
+  .msg .msgimg, .msg .msgvideo { max-width: 200px; }
 }
 </style>
 </head>
@@ -274,8 +278,8 @@ document.addEventListener('click', function(e) {
     </div>
     <div id="chatInputRow">
       <div id="mentionDropdown"></div>
-      <input type="file" id="chatFileInput" accept="image/*">
-      <button id="photoBtn" title="Send a photo">+</button>
+      <input type="file" id="chatFileInput" accept="image/*,video/mp4,video/webm,video/quicktime">
+      <button id="photoBtn" title="Send photo or video">+</button>
       <input type="text" id="messageInput" placeholder="Message — use @username to mention" autocomplete="off">
       <button id="btnSend">Send</button>
     </div>
@@ -371,6 +375,16 @@ const DEFAULT_PFP = "https://www.gravatar.com/avatar/000000000000000000000000000
 const BAD_WORDS = ["fuck", "shit", "ass", "bitch", "bastard"];
 const MENTION_COOLDOWN = 60000;
 
+// Blocked domains for link safety
+const BLOCKED_DOMAINS = [
+  "bit.ly", "tinyurl.com", "goo.gl", "t.co", "ow.ly", "is.gd",
+  "buff.ly", "adf.ly", "sh.st", "linkvertise.com",
+  "pastebin.com", "hastebin.com",
+  "grabify.link", "iplogger.org", "2no.co", "yip.su",
+  "blasze.com", "ipgrabber.ru", "ezstat.ru",
+  "malware.com", "virus.com", "phishing.com"
+];
+
 const loginDiv = document.getElementById("login");
 const profileDiv = document.getElementById("profile");
 const settingsDiv = document.getElementById("settings");
@@ -403,23 +417,48 @@ let processedMsgIds = new Set();
 let mentionActive = false;
 let profilePfpUrl = "";
 let settingsPfpUrl = "";
-let pendingChatImageFile = null;
+let pendingChatFile = null;
+let pendingChatFileType = null;
 
 function containsBadWord(t) { return BAD_WORDS.some(w => t.toLowerCase().includes(w)); }
 function getDmId(uid1, uid2) { return [uid1, uid2].sort().join("_"); }
 
-async function uploadToCloudinary(file, progressEl) {
-  if (progressEl) { progressEl.style.display = "block"; progressEl.textContent = "Uploading..."; }
+// --- Link safety ---
+function isLinkSafe(url) {
+  try {
+    if (!url.startsWith("https://")) return false;
+    const hostname = new URL(url).hostname.toLowerCase();
+    return !BLOCKED_DOMAINS.some(d => hostname === d || hostname.endsWith("." + d));
+  } catch { return false; }
+}
+
+function processLinks(text) {
+  const urlRegex = /(https?:\/\/[^\s<>"]+)/g;
+  return text.replace(urlRegex, (url) => {
+    if (isLinkSafe(url)) {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="safelink">${url}</a>`;
+    } else {
+      return `<span class="unsafelink" title="Blocked: unsafe or shortener link">${url}</span>`;
+    }
+  });
+}
+
+// --- Cloudinary Upload ---
+async function uploadToCloudinary(file, progressEl, isVideo) {
+  if (progressEl) { progressEl.style.display = "block"; progressEl.textContent = isVideo ? "Uploading video..." : "Uploading..."; }
   const formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", CLOUDINARY_PRESET);
+  if (isVideo) formData.append("resource_type", "video");
   try {
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: "POST", body: formData });
+    const resourceType = isVideo ? "video" : "image";
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${resourceType}/upload`, { method: "POST", body: formData });
     const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
     if (progressEl) { progressEl.textContent = "Upload complete!"; setTimeout(() => progressEl.style.display = "none", 2000); }
     return data.secure_url;
   } catch(e) {
-    if (progressEl) progressEl.textContent = "Upload failed.";
+    if (progressEl) progressEl.textContent = "Upload failed: " + e.message;
     return null;
   }
 }
@@ -436,13 +475,13 @@ function setupDropzone(dropzoneId, fileInputId, previewId, progressId, onUpload)
     e.preventDefault(); zone.classList.remove("dragover");
     const file = e.dataTransfer.files[0];
     if (!file || !file.type.startsWith("image/")) { alert("Please drop an image file."); return; }
-    const url = await uploadToCloudinary(file, progress);
+    const url = await uploadToCloudinary(file, progress, false);
     if (url) { preview.src = url; preview.style.display = "block"; onUpload(url); }
   });
   input.addEventListener("change", async () => {
     const file = input.files[0];
     if (!file) return;
-    const url = await uploadToCloudinary(file, progress);
+    const url = await uploadToCloudinary(file, progress, false);
     if (url) { preview.src = url; preview.style.display = "block"; onUpload(url); }
   });
 }
@@ -450,20 +489,32 @@ function setupDropzone(dropzoneId, fileInputId, previewId, progressId, onUpload)
 setupDropzone("profileDropzone", "profileFileInput", "profileDropPreview", "profileUploadProgress", url => { profilePfpUrl = url; });
 setupDropzone("settingsDropzone", "settingsFileInput", "settingsDropPreview", "settingsUploadProgress", url => { settingsPfpUrl = url; });
 
+// --- Chat file button ---
 document.getElementById("photoBtn").addEventListener("click", () => chatFileInput.click());
 chatFileInput.addEventListener("change", () => {
   const file = chatFileInput.files[0];
   if (!file) return;
-  pendingChatImageFile = file;
-  chatImgPreview.src = URL.createObjectURL(file);
-  chatImgPreviewName.textContent = file.name;
+  pendingChatFile = file;
+  pendingChatFileType = file.type.startsWith("video/") ? "video" : "image";
+
+  if (pendingChatFileType === "video") {
+    chatImgPreview.style.display = "none";
+    chatImgPreviewName.textContent = "Video: " + file.name;
+  } else {
+    chatImgPreview.src = URL.createObjectURL(file);
+    chatImgPreview.style.display = "block";
+    chatImgPreviewName.textContent = file.name;
+  }
   chatImgPreviewWrap.style.display = "flex";
 });
+
 document.getElementById("cancelImgBtn").addEventListener("click", () => {
-  pendingChatImageFile = null;
+  pendingChatFile = null;
+  pendingChatFileType = null;
   chatFileInput.value = "";
   chatImgPreviewWrap.style.display = "none";
   chatImgPreview.src = "";
+  chatImgPreview.style.display = "none";
 });
 
 function openLightbox(src) {
@@ -471,6 +522,7 @@ function openLightbox(src) {
   document.getElementById("lightbox").style.display = "flex";
 }
 
+// --- Service Worker ---
 async function registerSW() {
   if (!('serviceWorker' in navigator)) return null;
   try { const reg = await navigator.serviceWorker.register('/sw.js'); await navigator.serviceWorker.ready; return reg; }
@@ -517,6 +569,13 @@ function parseMentions(text, myName) {
 function isMentioned(text, myName) {
   const lower = text.toLowerCase();
   return lower.includes(`@${myName.toLowerCase()}`) || lower.includes("@everyone");
+}
+
+// --- Process message text (mentions + links) ---
+function processMessageText(text, myName) {
+  let processed = parseMentions(text, myName);
+  processed = processLinks(processed);
+  return processed;
 }
 
 messageInput.addEventListener("input", () => {
@@ -667,7 +726,7 @@ document.getElementById("btnChangePassword").addEventListener("click", async () 
 document.getElementById("btnSend").addEventListener("click", async () => {
   try {
     const text = messageInput.value.trim();
-    if (!text && !pendingChatImageFile) return;
+    if (!text && !pendingChatFile) return;
     const uid = auth.currentUser.uid;
     await reload(auth.currentUser);
     if (!auth.currentUser.emailVerified) { alert("Please verify your email first."); return; }
@@ -677,6 +736,13 @@ document.getElementById("btnSend").addEventListener("click", async () => {
     if (ud.muted) { alert("You are muted."); return; }
     if (text && containsBadWord(text)) { messageInput.value = ""; return; }
     if (text && text.includes("@everyone") && auth.currentUser.email !== ADMIN_EMAIL) { alert("Only the admin can use @everyone."); return; }
+
+    // Block videos in global chat
+    if (pendingChatFile && pendingChatFileType === "video" && currentChatId === "global") {
+      alert("Videos can only be sent in private chats.");
+      return;
+    }
+
     const now = Date.now();
     const hasMention = /@\w+/.test(text);
     if (hasMention) {
@@ -687,15 +753,25 @@ document.getElementById("btnSend").addEventListener("click", async () => {
       }
       lastMentionTime[uid] = now;
     }
+
     const col = currentChatId === "global" ? collection(db, "messages") : collection(db, "dms", currentChatId, "messages");
-    if (pendingChatImageFile) {
-      const imgUrl = await uploadToCloudinary(pendingChatImageFile, null);
-      if (!imgUrl) { alert("Image upload failed. Try again."); return; }
-      await addDoc(col, { type: "image", imageUrl: imgUrl, text: text || "", name: ud.name, pfp: ud.pfp, uid, time: Date.now() });
-      pendingChatImageFile = null;
+
+    if (pendingChatFile) {
+      const isVideo = pendingChatFileType === "video";
+      const fileUrl = await uploadToCloudinary(pendingChatFile, null, isVideo);
+      if (!fileUrl) { alert("Upload failed. Try again."); return; }
+      await addDoc(col, {
+        type: isVideo ? "video" : "image",
+        fileUrl,
+        text: text || "",
+        name: ud.name, pfp: ud.pfp, uid, time: Date.now()
+      });
+      pendingChatFile = null;
+      pendingChatFileType = null;
       chatFileInput.value = "";
       chatImgPreviewWrap.style.display = "none";
       chatImgPreview.src = "";
+      chatImgPreview.style.display = "none";
     } else {
       await addDoc(col, { type: "text", text, name: ud.name, pfp: ud.pfp, uid, time: Date.now() });
     }
@@ -721,6 +797,8 @@ function loadMessages() {
   messagesDiv.innerHTML = "";
   const col = currentChatId === "global" ? collection(db, "messages") : collection(db, "dms", currentChatId, "messages");
   const myUid = auth.currentUser.uid;
+  const isPrivate = currentChatId !== "global";
+
   currentChatUnsub = onSnapshot(col, async snap => {
     const mySnap = await getDoc(doc(db, "users", myUid));
     const myName = mySnap.exists() ? mySnap.data().name : "";
@@ -734,10 +812,11 @@ function loadMessages() {
         processedMsgIds.add(m.id);
         sendNotification(`${m.name} mentioned you in ByteChat`, m.text, m.pfp || DEFAULT_PFP);
       }
-      if (m.uid !== myUid && m.type === "image" && !processedMsgIds.has(m.id + "_img") && Date.now() - m.time < 10000 && currentChatId !== "global") {
-        processedMsgIds.add(m.id + "_img");
-        sendNotification(`${m.name} sent a photo`, "Tap to view", m.pfp || DEFAULT_PFP);
+      if (m.uid !== myUid && (m.type === "image" || m.type === "video") && !processedMsgIds.has(m.id + "_media") && Date.now() - m.time < 10000 && isPrivate) {
+        processedMsgIds.add(m.id + "_media");
+        sendNotification(`${m.name} sent a ${m.type}`, "Tap to view", m.pfp || DEFAULT_PFP);
       }
+
       const div = document.createElement("div");
       div.className = "msg";
       const avatar = document.createElement("img");
@@ -748,22 +827,43 @@ function loadMessages() {
       avatar.addEventListener("click", () => openUserModal(m.uid));
       const body = document.createElement("div");
       body.className = "msgbody";
-      if (m.type === "image" && m.imageUrl) {
+
+      if (m.type === "image" && m.fileUrl) {
         const nameLabel = document.createElement("span");
         nameLabel.style.cssText = "font-size:12px;color:#aaa;margin-bottom:2px;";
         nameLabel.textContent = m.name;
         body.appendChild(nameLabel);
         const img = document.createElement("img");
         img.className = "msgimg";
-        img.src = m.imageUrl;
+        img.src = m.fileUrl;
         img.alt = "Shared image";
-        img.addEventListener("click", () => openLightbox(m.imageUrl));
+        img.addEventListener("click", () => openLightbox(m.fileUrl));
         body.appendChild(img);
         if (m.text) {
           const caption = document.createElement("span");
           caption.className = "msgtext" + (m.uid === myUid ? " mine" : "");
-          caption.innerHTML = parseMentions(m.text, myName);
+          caption.innerHTML = processMessageText(m.text, myName);
           body.appendChild(caption);
+        }
+      } else if (m.type === "video" && m.fileUrl) {
+        // Videos only in private chats
+        if (isPrivate) {
+          const nameLabel = document.createElement("span");
+          nameLabel.style.cssText = "font-size:12px;color:#aaa;margin-bottom:2px;";
+          nameLabel.textContent = m.name;
+          body.appendChild(nameLabel);
+          const video = document.createElement("video");
+          video.className = "msgvideo";
+          video.src = m.fileUrl;
+          video.controls = true;
+          video.preload = "metadata";
+          body.appendChild(video);
+          if (m.text) {
+            const caption = document.createElement("span");
+            caption.className = "msgtext" + (m.uid === myUid ? " mine" : "");
+            caption.innerHTML = processMessageText(m.text, myName);
+            body.appendChild(caption);
+          }
         }
       } else {
         const text = document.createElement("span");
@@ -771,13 +871,18 @@ function loadMessages() {
         if (m.uid === myUid) cls += " mine";
         else if (mentioned) cls += " mentioned";
         text.className = cls;
-        text.innerHTML = `<b>${m.name}:</b> ${parseMentions(m.text || "", myName)}`;
+        // Links only clickable in private chats
+        if (isPrivate) {
+          text.innerHTML = `<b>${m.name}:</b> ${processMessageText(m.text || "", myName)}`;
+        } else {
+          text.innerHTML = `<b>${m.name}:</b> ${parseMentions(m.text || "", myName)}`;
+        }
         body.appendChild(text);
       }
+
       div.appendChild(avatar);
       div.appendChild(body);
 
-      // Admin can delete any message, users can delete their own
       if (isAdmin || m.uid === myUid) {
         const delBtn = document.createElement("button");
         delBtn.className = "delbtn";
@@ -812,7 +917,7 @@ function listenForDmNotifications() {
               const msgId = msgChange.doc.id;
               if (m.uid !== uid && !processedMsgIds.has(msgId) && Date.now() - m.time < 10000) {
                 processedMsgIds.add(msgId);
-                const body = m.type === "image" ? "Sent a photo" : m.text;
+                const body = m.type === "image" ? "Sent a photo" : m.type === "video" ? "Sent a video" : m.text;
                 sendNotification(`New message from ${m.name}`, body, m.pfp || DEFAULT_PFP);
               }
             }
