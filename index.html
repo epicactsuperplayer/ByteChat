@@ -44,7 +44,6 @@ h1 { background: #111; padding: 15px; font-size: clamp(18px, 4vw, 24px); }
 #login, #profile, #settings { display: none; padding: 15px; }
 input { padding: 10px; margin: 5px 0; border-radius: 6px; border: none; width: 100%; max-width: 320px; font-size: 16px; }
 
-/* Buttons — white and grey only */
 button { padding: 10px 18px; margin: 4px; border: 2px solid #333; border-radius: 6px; background: #ffffff; color: #111111; cursor: pointer; font-size: 14px; touch-action: manipulation; font-weight: bold; }
 button:hover { background: #333333; color: #ffffff; }
 button.red { background: #ffffff; color: #cc0000; border: 2px solid #cc0000; }
@@ -196,7 +195,7 @@ document.addEventListener('click', function(e) {
   <button id="sidebarToggle" onclick="document.getElementById('sidebar').classList.toggle('open')">Menu</button>
   <button id="btnOpenSettings">Settings</button>
   <button id="btnBackToChat" style="display:none">Back to Chat</button>
-  <button class="gray" id="btnLogout">Logout</button>
+  <button id="btnLogout">Logout</button>
 </div>
 
 <div id="verifyBanner">
@@ -1048,7 +1047,7 @@ async function loadAdminUsers() {
         <div class="info"><b>${u.name}</b>${u.banned ? '<span class="badge banned">Banned</span>' : ''}${u.muted ? '<span class="badge muted">Muted</span>' : ''}<span>${u.email}</span></div>
         <div class="btns">
           <button onclick="window._viewUser('${uid}')">View</button>
-          <button class="${u.banned ? '' : 'red'}" onclick="window._toggleBan('${uid}', ${u.banned})">${u.banned ? 'Unban' : 'Ban'}</button>
+          <button onclick="window._toggleBan('${uid}', ${u.banned})">${u.banned ? 'Unban' : 'Ban'}</button>
           <button onclick="window._toggleMute('${uid}', ${u.muted})">${u.muted ? 'Unmute' : 'Mute'}</button>
           <button class="red" onclick="window._deleteUserMsgs('${uid}')">Del Msgs</button>
         </div>`;
