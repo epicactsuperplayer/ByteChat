@@ -60,6 +60,7 @@ button.gray:hover { background: #333; color: #fff; }
 .convItem .removeBtn:hover { background: #cc0000; color: #fff; }
 .msg .delbtn { display: none; background: #fff; color: #cc0000; border: 2px solid #cc0000; border-radius: 4px; padding: 3px 7px; cursor: pointer; font-size: 11px; margin-left: 6px; flex-shrink: 0; align-self: flex-start; margin-top: 4px; font-weight: bold; }
 .msg .delbtn:hover { background: #cc0000; color: #fff; }
+.msg:hover .delbtn { display: inline-block; }
 #cancelImgBtn { background: #fff; color: #cc0000; border: 2px solid #cc0000; padding: 5px 10px; font-size: 12px; font-weight: bold; }
 #cancelImgBtn:hover { background: #cc0000; color: #fff; }
 
@@ -775,7 +776,9 @@ function loadMessages() {
       }
       div.appendChild(avatar);
       div.appendChild(body);
-      if (isAdmin || (currentChatId !== "global" && m.uid === myUid) || (m.type === "image" && m.uid === myUid)) {
+
+      // Admin can delete any message, users can delete their own
+      if (isAdmin || m.uid === myUid) {
         const delBtn = document.createElement("button");
         delBtn.className = "delbtn";
         delBtn.textContent = "X";
@@ -788,6 +791,7 @@ function loadMessages() {
         });
         div.appendChild(delBtn);
       }
+
       messagesDiv.appendChild(div);
     });
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
