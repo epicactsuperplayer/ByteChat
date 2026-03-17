@@ -44,23 +44,31 @@ h1 { background: #111; padding: 15px; font-size: clamp(18px, 4vw, 24px); }
 #login, #profile, #settings { display: none; padding: 15px; }
 input { padding: 10px; margin: 5px 0; border-radius: 6px; border: none; width: 100%; max-width: 320px; font-size: 16px; }
 
-/* All buttons white */
-button { padding: 10px 18px; margin: 4px; border: 2px solid transparent; border-radius: 6px; background: #ffffff; color: #000000; cursor: pointer; font-size: 14px; touch-action: manipulation; font-weight: bold; }
-button:hover { background: #dddddd; }
+/* Buttons — white and grey only */
+button { padding: 10px 18px; margin: 4px; border: 2px solid #333; border-radius: 6px; background: #ffffff; color: #111111; cursor: pointer; font-size: 14px; touch-action: manipulation; font-weight: bold; }
+button:hover { background: #333333; color: #ffffff; }
 button.red { background: #ffffff; color: #cc0000; border: 2px solid #cc0000; }
 button.red:hover { background: #cc0000; color: #fff; }
-button.orange { background: #ffffff; color: #e67e00; border: 2px solid #e67e00; }
-button.orange:hover { background: #e67e00; color: #fff; }
-button.green { background: #ffffff; color: #00aa44; border: 2px solid #00aa44; }
-button.green:hover { background: #00aa44; color: #fff; }
-button.gray { background: #ffffff; color: #444; border: 2px solid #444; }
-button.gray:hover { background: #444; color: #fff; }
+button.orange { background: #ffffff; color: #111; border: 2px solid #333; }
+button.orange:hover { background: #333; color: #fff; }
+button.green { background: #ffffff; color: #111; border: 2px solid #333; }
+button.green:hover { background: #333; color: #fff; }
+button.gray { background: #ffffff; color: #111; border: 2px solid #333; }
+button.gray:hover { background: #333; color: #fff; }
+#photoBtn { background: #ffffff; color: #111; border: 2px solid #333; padding: 10px 14px; font-size: 18px; font-weight: bold; border-radius: 6px; line-height: 1; }
+#photoBtn:hover { background: #333; color: #fff; }
+.convItem .removeBtn { display: none; position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: #fff; color: #cc0000; border: 2px solid #cc0000; border-radius: 4px; padding: 3px 7px; font-size: 11px; cursor: pointer; font-weight: bold; }
+.convItem .removeBtn:hover { background: #cc0000; color: #fff; }
+.msg .delbtn { display: none; background: #fff; color: #cc0000; border: 2px solid #cc0000; border-radius: 4px; padding: 3px 7px; cursor: pointer; font-size: 11px; margin-left: 6px; flex-shrink: 0; align-self: flex-start; margin-top: 4px; font-weight: bold; }
+.msg .delbtn:hover { background: #cc0000; color: #fff; }
+#cancelImgBtn { background: #fff; color: #cc0000; border: 2px solid #cc0000; padding: 5px 10px; font-size: 12px; font-weight: bold; }
+#cancelImgBtn:hover { background: #cc0000; color: #fff; }
 
 #topBar { display: none; background: #111; padding: 8px 12px; justify-content: flex-end; align-items: center; gap: 6px; flex-wrap: wrap; }
 #topBar button { padding: 7px 12px; font-size: 13px; }
 #verifyBanner { display: none; background: #7a4a00; padding: 10px; font-size: 13px; }
 #verifyBanner button { padding: 5px 10px; font-size: 12px; margin-left: 6px; }
-#notifBanner { display: none; padding: 10px; font-size: 13px; cursor: pointer; background: #004400; }
+#notifBanner { display: none; padding: 10px; font-size: 13px; cursor: pointer; background: #222; color: #fff; }
 #appLayout { display: none; flex-direction: row; height: calc(100vh - 100px); }
 #sidebar { width: 220px; min-width: 220px; background: #111; display: flex; flex-direction: column; border-right: 1px solid #333; overflow: hidden; }
 #sidebarHeader { padding: 10px; border-bottom: 1px solid #333; display: flex; flex-direction: column; gap: 6px; }
@@ -68,14 +76,11 @@ button.gray:hover { background: #444; color: #fff; }
 #convList { flex: 1; overflow-y: auto; }
 .convItem { display: flex; align-items: center; gap: 8px; padding: 10px; cursor: pointer; border-bottom: 1px solid #222; text-align: left; transition: background 0.1s; position: relative; }
 .convItem:hover { background: #1a1a1a; }
-.convItem.active { background: #003355; }
+.convItem.active { background: #222; }
 .convItem img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
 .convItem .convInfo { flex: 1; overflow: hidden; }
 .convItem .convName { font-size: 13px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .convItem .convPreview { font-size: 11px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.convItem .removeBtn { display: none; position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: #fff; color: #cc0000; border: 2px solid #cc0000; border-radius: 4px; padding: 3px 7px; font-size: 11px; cursor: pointer; font-weight: bold; }
-.convItem .removeBtn:hover { background: #cc0000; color: #fff; }
-.convItem:hover .removeBtn { display: inline-block; }
 #chatArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 #chatHeader { background: #111; padding: 10px 15px; border-bottom: 1px solid #333; text-align: left; font-weight: bold; font-size: 15px; display: flex; align-items: center; gap: 10px; }
 #chatHeader img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
@@ -84,43 +89,31 @@ button.gray:hover { background: #444; color: #fff; }
 .msg .avatar { width: 30px; height: 30px; border-radius: 50%; margin-right: 8px; cursor: pointer; object-fit: cover; flex-shrink: 0; }
 .msg .msgbody { flex: 1; display: flex; flex-direction: column; gap: 4px; }
 .msg .msgtext { font-size: 14px; word-break: break-word; background: #1a1a1a; padding: 7px 10px; border-radius: 8px; }
-.msg .msgtext.mine { background: #003355; }
-.msg .msgtext.mentioned { background: #2a1a00; border-left: 3px solid #e67e00; }
+.msg .msgtext.mine { background: #2a2a2a; }
+.msg .msgtext.mentioned { background: #2a1a00; border-left: 3px solid #888; }
 .msg .msgimg { max-width: 280px; max-height: 300px; border-radius: 8px; cursor: pointer; display: block; object-fit: cover; border: 1px solid #333; }
 .msg .msgimg:hover { opacity: 0.9; }
-.mention { color: #00aaff; font-weight: bold; }
-.mention.everyone { color: #ff4444; font-weight: bold; }
-.msg .delbtn { display: none; background: #fff; color: #cc0000; border: 2px solid #cc0000; border-radius: 4px; padding: 3px 7px; cursor: pointer; font-size: 11px; margin-left: 6px; flex-shrink: 0; align-self: flex-start; margin-top: 4px; font-weight: bold; }
-.msg .delbtn:hover { background: #cc0000; color: #fff; }
-.msg:hover .delbtn { display: inline-block; }
-
+.mention { color: #fff; font-weight: bold; text-decoration: underline; }
+.mention.everyone { color: #fff; font-weight: bold; text-decoration: underline; }
 #chatInputRow { display: flex; gap: 6px; padding: 8px; border-top: 1px solid #333; position: relative; align-items: center; }
 #chatInputRow input[type=text] { flex: 1; max-width: none; margin: 0; }
 #chatInputRow button { flex-shrink: 0; margin: 0; }
-#photoBtn { background: #ffffff; color: #000; border: 2px solid #333; padding: 10px 14px; font-size: 18px; font-weight: bold; border-radius: 6px; line-height: 1; }
-#photoBtn:hover { background: #dddddd; }
 #chatFileInput { display: none; }
 #mentionDropdown { display: none; position: absolute; bottom: 60px; left: 8px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; max-height: 180px; overflow-y: auto; z-index: 100; min-width: 200px; }
 .mentionOption { padding: 8px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; }
-.mentionOption:hover { background: #003355; }
+.mentionOption:hover { background: #333; }
 .mentionOption img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
-
 #chatImgPreviewWrap { display: none; padding: 6px 8px; border-top: 1px solid #222; background: #111; align-items: center; gap: 8px; }
 #chatImgPreview { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #333; }
 #chatImgPreviewWrap span { font-size: 13px; color: #aaa; flex: 1; }
-#cancelImgBtn { background: #fff; color: #cc0000; border: 2px solid #cc0000; padding: 5px 10px; font-size: 12px; font-weight: bold; }
-#cancelImgBtn:hover { background: #cc0000; color: #fff; }
-
 #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; justify-content: center; align-items: center; cursor: zoom-out; }
 #lightbox img { max-width: 95vw; max-height: 95vh; border-radius: 8px; object-fit: contain; }
-
 .dropzone { border: 2px dashed #444; border-radius: 10px; padding: 20px; margin: 8px auto; max-width: 320px; cursor: pointer; transition: border-color 0.2s; font-size: 13px; color: #888; }
-.dropzone.dragover { border-color: #00aaff; background: #001122; }
-.dropzone img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 8px auto; display: none; border: 2px solid #00aaff; }
+.dropzone.dragover { border-color: #888; background: #1a1a1a; }
+.dropzone img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 8px auto; display: none; border: 2px solid #555; }
 .dropzone .droptext { margin: 5px 0; }
 .dropzone input[type=file] { display: none; }
 .uploadProgress { display: none; font-size: 12px; color: #aaa; margin-top: 5px; }
-
 #settings { max-width: 460px; margin: 0 auto; text-align: left; padding: 15px; }
 #settings h2 { text-align: center; margin-bottom: 10px; }
 #settings label { display: block; margin: 12px 0 4px; color: #aaa; font-size: 13px; }
@@ -133,12 +126,12 @@ button.gray:hover { background: #444; color: #fff; }
 .adminUser .info span { display: block; color: #aaa; font-size: 11px; }
 .adminUser .btns { display: flex; flex-wrap: wrap; gap: 4px; }
 .adminUser .btns button { padding: 5px 8px; font-size: 11px; margin: 0; }
-.badge { font-size: 11px; padding: 2px 6px; border-radius: 10px; margin-left: 4px; }
-.badge.banned { background: #cc0000; color: white; }
-.badge.muted { background: #e67e00; color: white; }
+.badge { font-size: 11px; padding: 2px 6px; border-radius: 10px; margin-left: 4px; color: white; }
+.badge.banned { background: #cc0000; }
+.badge.muted { background: #555; }
 #modal, #dmModal, #requestModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
 .modalBox { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; width: 100%; max-width: 320px; text-align: center; }
-.modalBox img { width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 2px solid #00aaff; margin-bottom: 10px; }
+.modalBox img { width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 2px solid #555; margin-bottom: 10px; }
 .modalBox h3 { margin: 5px 0; }
 .modalBox p { color: #aaa; font-size: 13px; margin: 4px 0; }
 #adminActions { margin-top: 12px; display: none; }
@@ -254,17 +247,17 @@ document.addEventListener('click', function(e) {
     <div class="uploadProgress" id="settingsUploadProgress">Uploading...</div>
   </div>
   <br>
-  <button id="btnSaveSettings" class="green">Save Changes</button>
+  <button id="btnSaveSettings">Save Changes</button>
   <br><br>
   <hr style="border-color:#333; margin: 20px 0;">
   <h3>Change Password</h3>
-  <button id="btnChangePassword" class="orange">Send Password Reset Email</button>
+  <button id="btnChangePassword">Send Password Reset Email</button>
 </div>
 
 <div id="appLayout">
   <div id="sidebar">
     <div id="sidebarHeader">
-      <button onclick="openDmModal()" class="green">+ New Private Chat</button>
+      <button onclick="openDmModal()">+ New Private Chat</button>
     </div>
     <div id="convList"></div>
   </div>
@@ -292,7 +285,7 @@ document.addEventListener('click', function(e) {
 <div id="adminPanel">
   <h2>Admin Panel</h2>
   <button id="btnClearChat" class="red">Delete All Messages</button>
-  <button id="btnRefreshUsers" class="green">Refresh Users</button>
+  <button id="btnRefreshUsers">Refresh Users</button>
   <div id="adminUserList"></div>
 </div>
 
@@ -305,12 +298,12 @@ document.addEventListener('click', function(e) {
     <p id="modalStatus"></p>
     <div id="adminActions">
       <button id="btnModalBan" class="red">Ban User</button>
-      <button id="btnModalMute" class="orange">Mute User</button>
+      <button id="btnModalMute">Mute User</button>
       <button id="btnModalDeleteMsgs" class="red">Delete All Messages</button>
     </div>
     <br>
-    <button id="btnModalDM" class="green">Send Private Message</button>
-    <button id="modalClose" class="gray">Close</button>
+    <button id="btnModalDM">Send Private Message</button>
+    <button id="modalClose">Close</button>
   </div>
 </div>
 
@@ -320,8 +313,8 @@ document.addEventListener('click', function(e) {
     <p style="color:#aaa;font-size:13px;margin:10px 0">Enter the email of the user you want to chat with</p>
     <input id="dmEmail" placeholder="user@email.com" type="email">
     <br><br>
-    <button id="btnSendDmRequest" class="green">Send Request</button>
-    <button id="dmModalClose" class="gray">Cancel</button>
+    <button id="btnSendDmRequest">Send Request</button>
+    <button id="dmModalClose">Cancel</button>
   </div>
 </div>
 
@@ -331,7 +324,7 @@ document.addEventListener('click', function(e) {
     <h3 id="reqName"></h3>
     <p style="color:#aaa;font-size:13px;margin:8px 0">wants to start a private chat with you</p>
     <br>
-    <button id="btnAcceptReq" class="green">Accept</button>
+    <button id="btnAcceptReq">Accept</button>
     <button id="btnDenyReq" class="red">Deny</button>
   </div>
 </div>
@@ -495,9 +488,9 @@ async function checkNotifBanner() {
   if (Notification.permission === "default") {
     const perm = await Notification.requestPermission();
     if (perm === "granted") { notifBanner.style.display = "none"; await registerSW(); }
-    else { notifBanner.style.display = "block"; notifBanner.style.background = "#440000"; notifBanner.textContent = "Notifications blocked — allow them in browser settings."; notifBanner.onclick = null; }
+    else { notifBanner.style.display = "block"; notifBanner.textContent = "Notifications blocked — allow them in browser settings."; notifBanner.onclick = null; }
   } else if (Notification.permission === "denied") {
-    notifBanner.style.display = "block"; notifBanner.style.background = "#440000";
+    notifBanner.style.display = "block";
     notifBanner.textContent = "Notifications blocked — allow them in browser settings."; notifBanner.onclick = null;
   } else { notifBanner.style.display = "none"; await registerSW(); }
 }
@@ -890,7 +883,7 @@ function loadSidebar() {
   globalItem.className = "convItem active";
   globalItem.dataset.id = "global";
   globalItem.innerHTML = `
-    <div style="width:32px;height:32px;border-radius:50%;background:#00aaff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;font-weight:bold;">G</div>
+    <div style="width:32px;height:32px;border-radius:50%;background:#333;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;font-weight:bold;color:white;">G</div>
     <div class="convInfo"><div class="convName">Global Chat</div><div class="convPreview">Everyone</div></div>`;
   globalItem.addEventListener("click", showGlobalChat);
   convList.appendChild(globalItem);
@@ -1054,9 +1047,9 @@ async function loadAdminUsers() {
         <img src="${u.pfp || DEFAULT_PFP}" onerror="this.src='${DEFAULT_PFP}'">
         <div class="info"><b>${u.name}</b>${u.banned ? '<span class="badge banned">Banned</span>' : ''}${u.muted ? '<span class="badge muted">Muted</span>' : ''}<span>${u.email}</span></div>
         <div class="btns">
-          <button class="orange" onclick="window._viewUser('${uid}')">View</button>
-          <button class="${u.banned ? 'green' : 'red'}" onclick="window._toggleBan('${uid}', ${u.banned})">${u.banned ? 'Unban' : 'Ban'}</button>
-          <button class="${u.muted ? 'green' : 'orange'}" onclick="window._toggleMute('${uid}', ${u.muted})">${u.muted ? 'Unmute' : 'Mute'}</button>
+          <button onclick="window._viewUser('${uid}')">View</button>
+          <button class="${u.banned ? '' : 'red'}" onclick="window._toggleBan('${uid}', ${u.banned})">${u.banned ? 'Unban' : 'Ban'}</button>
+          <button onclick="window._toggleMute('${uid}', ${u.muted})">${u.muted ? 'Unmute' : 'Mute'}</button>
           <button class="red" onclick="window._deleteUserMsgs('${uid}')">Del Msgs</button>
         </div>`;
       list.appendChild(div);
