@@ -43,11 +43,19 @@ body { font-family: Arial; background: #0f0f0f; color: white; text-align: center
 h1 { background: #111; padding: 15px; font-size: clamp(18px, 4vw, 24px); }
 #login, #profile, #settings { display: none; padding: 15px; }
 input { padding: 10px; margin: 5px 0; border-radius: 6px; border: none; width: 100%; max-width: 320px; font-size: 16px; }
-button { padding: 10px 18px; margin: 4px; border: none; border-radius: 6px; background: #00aaff; color: white; cursor: pointer; font-size: 14px; touch-action: manipulation; }
-button.red { background: #cc0000; }
-button.orange { background: #e67e00; }
-button.green { background: #00aa44; }
-button.gray { background: #444; }
+
+/* All buttons white */
+button { padding: 10px 18px; margin: 4px; border: 2px solid transparent; border-radius: 6px; background: #ffffff; color: #000000; cursor: pointer; font-size: 14px; touch-action: manipulation; font-weight: bold; }
+button:hover { background: #dddddd; }
+button.red { background: #ffffff; color: #cc0000; border: 2px solid #cc0000; }
+button.red:hover { background: #cc0000; color: #fff; }
+button.orange { background: #ffffff; color: #e67e00; border: 2px solid #e67e00; }
+button.orange:hover { background: #e67e00; color: #fff; }
+button.green { background: #ffffff; color: #00aa44; border: 2px solid #00aa44; }
+button.green:hover { background: #00aa44; color: #fff; }
+button.gray { background: #ffffff; color: #444; border: 2px solid #444; }
+button.gray:hover { background: #444; color: #fff; }
+
 #topBar { display: none; background: #111; padding: 8px 12px; justify-content: flex-end; align-items: center; gap: 6px; flex-wrap: wrap; }
 #topBar button { padding: 7px 12px; font-size: 13px; }
 #verifyBanner { display: none; background: #7a4a00; padding: 10px; font-size: 13px; }
@@ -65,7 +73,8 @@ button.gray { background: #444; }
 .convItem .convInfo { flex: 1; overflow: hidden; }
 .convItem .convName { font-size: 13px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .convItem .convPreview { font-size: 11px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.convItem .removeBtn { display: none; position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: #cc0000; border: none; color: white; border-radius: 4px; padding: 3px 7px; font-size: 11px; cursor: pointer; }
+.convItem .removeBtn { display: none; position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: #fff; color: #cc0000; border: 2px solid #cc0000; border-radius: 4px; padding: 3px 7px; font-size: 11px; cursor: pointer; font-weight: bold; }
+.convItem .removeBtn:hover { background: #cc0000; color: #fff; }
 .convItem:hover .removeBtn { display: inline-block; }
 #chatArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 #chatHeader { background: #111; padding: 10px 15px; border-bottom: 1px solid #333; text-align: left; font-weight: bold; font-size: 15px; display: flex; align-items: center; gap: 10px; }
@@ -81,32 +90,30 @@ button.gray { background: #444; }
 .msg .msgimg:hover { opacity: 0.9; }
 .mention { color: #00aaff; font-weight: bold; }
 .mention.everyone { color: #ff4444; font-weight: bold; }
-.msg .delbtn { display: none; background: #cc0000; border: none; color: white; border-radius: 4px; padding: 3px 7px; cursor: pointer; font-size: 11px; margin-left: 6px; flex-shrink: 0; align-self: flex-start; margin-top: 4px; }
+.msg .delbtn { display: none; background: #fff; color: #cc0000; border: 2px solid #cc0000; border-radius: 4px; padding: 3px 7px; cursor: pointer; font-size: 11px; margin-left: 6px; flex-shrink: 0; align-self: flex-start; margin-top: 4px; font-weight: bold; }
+.msg .delbtn:hover { background: #cc0000; color: #fff; }
 .msg:hover .delbtn { display: inline-block; }
 
-/* Chat input row */
 #chatInputRow { display: flex; gap: 6px; padding: 8px; border-top: 1px solid #333; position: relative; align-items: center; }
 #chatInputRow input[type=text] { flex: 1; max-width: none; margin: 0; }
 #chatInputRow button { flex-shrink: 0; margin: 0; }
-#photoBtn { background: #333; padding: 10px 12px; font-size: 16px; }
-#photoBtn:hover { background: #444; }
+#photoBtn { background: #ffffff; color: #000; border: 2px solid #333; padding: 10px 14px; font-size: 18px; font-weight: bold; border-radius: 6px; line-height: 1; }
+#photoBtn:hover { background: #dddddd; }
 #chatFileInput { display: none; }
 #mentionDropdown { display: none; position: absolute; bottom: 60px; left: 8px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; max-height: 180px; overflow-y: auto; z-index: 100; min-width: 200px; }
 .mentionOption { padding: 8px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .mentionOption:hover { background: #003355; }
 .mentionOption img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
 
-/* Image upload preview in chat */
 #chatImgPreviewWrap { display: none; padding: 6px 8px; border-top: 1px solid #222; background: #111; align-items: center; gap: 8px; }
 #chatImgPreview { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #333; }
 #chatImgPreviewWrap span { font-size: 13px; color: #aaa; flex: 1; }
-#cancelImgBtn { background: #cc0000; padding: 5px 10px; font-size: 12px; }
+#cancelImgBtn { background: #fff; color: #cc0000; border: 2px solid #cc0000; padding: 5px 10px; font-size: 12px; font-weight: bold; }
+#cancelImgBtn:hover { background: #cc0000; color: #fff; }
 
-/* Image lightbox */
 #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; justify-content: center; align-items: center; cursor: zoom-out; }
 #lightbox img { max-width: 95vw; max-height: 95vh; border-radius: 8px; object-fit: contain; }
 
-/* Dropzone */
 .dropzone { border: 2px dashed #444; border-radius: 10px; padding: 20px; margin: 8px auto; max-width: 320px; cursor: pointer; transition: border-color 0.2s; font-size: 13px; color: #888; }
 .dropzone.dragover { border-color: #00aaff; background: #001122; }
 .dropzone img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 8px auto; display: none; border: 2px solid #00aaff; }
@@ -127,8 +134,8 @@ button.gray { background: #444; }
 .adminUser .btns { display: flex; flex-wrap: wrap; gap: 4px; }
 .adminUser .btns button { padding: 5px 8px; font-size: 11px; margin: 0; }
 .badge { font-size: 11px; padding: 2px 6px; border-radius: 10px; margin-left: 4px; }
-.badge.banned { background: #cc0000; }
-.badge.muted { background: #e67e00; }
+.badge.banned { background: #cc0000; color: white; }
+.badge.muted { background: #e67e00; color: white; }
 #modal, #dmModal, #requestModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
 .modalBox { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; width: 100%; max-width: 320px; text-align: center; }
 .modalBox img { width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 2px solid #00aaff; margin-bottom: 10px; }
@@ -267,7 +274,6 @@ document.addEventListener('click', function(e) {
       <span id="chatHeaderName">Global Chat</span>
     </div>
     <div id="messages"></div>
-    <!-- Image preview bar above input -->
     <div id="chatImgPreviewWrap">
       <img id="chatImgPreview" src="" alt="Preview">
       <span id="chatImgPreviewName"></span>
@@ -276,7 +282,7 @@ document.addEventListener('click', function(e) {
     <div id="chatInputRow">
       <div id="mentionDropdown"></div>
       <input type="file" id="chatFileInput" accept="image/*">
-      <button id="photoBtn" title="Send a photo">&#128247;</button>
+      <button id="photoBtn" title="Send a photo">+</button>
       <input type="text" id="messageInput" placeholder="Message — use @username to mention" autocomplete="off">
       <button id="btnSend">Send</button>
     </div>
@@ -330,7 +336,6 @@ document.addEventListener('click', function(e) {
   </div>
 </div>
 
-<!-- Lightbox for full image view -->
 <div id="lightbox" onclick="document.getElementById('lightbox').style.display='none'">
   <img id="lightboxImg" src="" alt="Full image">
 </div>
@@ -410,7 +415,6 @@ let pendingChatImageFile = null;
 function containsBadWord(t) { return BAD_WORDS.some(w => t.toLowerCase().includes(w)); }
 function getDmId(uid1, uid2) { return [uid1, uid2].sort().join("_"); }
 
-// --- Cloudinary Upload ---
 async function uploadToCloudinary(file, progressEl) {
   if (progressEl) { progressEl.style.display = "block"; progressEl.textContent = "Uploading..."; }
   const formData = new FormData();
@@ -427,7 +431,6 @@ async function uploadToCloudinary(file, progressEl) {
   }
 }
 
-// --- Setup Dropzone ---
 function setupDropzone(dropzoneId, fileInputId, previewId, progressId, onUpload) {
   const zone = document.getElementById(dropzoneId);
   const input = document.getElementById(fileInputId);
@@ -454,9 +457,7 @@ function setupDropzone(dropzoneId, fileInputId, previewId, progressId, onUpload)
 setupDropzone("profileDropzone", "profileFileInput", "profileDropPreview", "profileUploadProgress", url => { profilePfpUrl = url; });
 setupDropzone("settingsDropzone", "settingsFileInput", "settingsDropPreview", "settingsUploadProgress", url => { settingsPfpUrl = url; });
 
-// --- Chat photo button ---
 document.getElementById("photoBtn").addEventListener("click", () => chatFileInput.click());
-
 chatFileInput.addEventListener("change", () => {
   const file = chatFileInput.files[0];
   if (!file) return;
@@ -465,7 +466,6 @@ chatFileInput.addEventListener("change", () => {
   chatImgPreviewName.textContent = file.name;
   chatImgPreviewWrap.style.display = "flex";
 });
-
 document.getElementById("cancelImgBtn").addEventListener("click", () => {
   pendingChatImageFile = null;
   chatFileInput.value = "";
@@ -473,17 +473,15 @@ document.getElementById("cancelImgBtn").addEventListener("click", () => {
   chatImgPreview.src = "";
 });
 
-// --- Lightbox ---
 function openLightbox(src) {
   document.getElementById("lightboxImg").src = src;
   document.getElementById("lightbox").style.display = "flex";
 }
 
-// --- Service Worker ---
 async function registerSW() {
   if (!('serviceWorker' in navigator)) return null;
   try { const reg = await navigator.serviceWorker.register('/sw.js'); await navigator.serviceWorker.ready; return reg; }
-  catch(e) { console.log('SW failed:', e); return null; }
+  catch(e) { return null; }
 }
 
 window.requestNotifPermission = async function() {
@@ -673,7 +671,6 @@ document.getElementById("btnChangePassword").addEventListener("click", async () 
   catch(e) { alert(e.message); }
 });
 
-// --- Send message (text or image) ---
 document.getElementById("btnSend").addEventListener("click", async () => {
   try {
     const text = messageInput.value.trim();
@@ -687,7 +684,6 @@ document.getElementById("btnSend").addEventListener("click", async () => {
     if (ud.muted) { alert("You are muted."); return; }
     if (text && containsBadWord(text)) { messageInput.value = ""; return; }
     if (text && text.includes("@everyone") && auth.currentUser.email !== ADMIN_EMAIL) { alert("Only the admin can use @everyone."); return; }
-
     const now = Date.now();
     const hasMention = /@\w+/.test(text);
     if (hasMention) {
@@ -698,10 +694,7 @@ document.getElementById("btnSend").addEventListener("click", async () => {
       }
       lastMentionTime[uid] = now;
     }
-
     const col = currentChatId === "global" ? collection(db, "messages") : collection(db, "dms", currentChatId, "messages");
-
-    // Upload image if pending
     if (pendingChatImageFile) {
       const imgUrl = await uploadToCloudinary(pendingChatImageFile, null);
       if (!imgUrl) { alert("Image upload failed. Try again."); return; }
@@ -713,7 +706,6 @@ document.getElementById("btnSend").addEventListener("click", async () => {
     } else {
       await addDoc(col, { type: "text", text, name: ud.name, pfp: ud.pfp, uid, time: Date.now() });
     }
-
     messageInput.value = "";
     mentionDropdown.style.display = "none";
   } catch(e) { alert(e.message); }
@@ -736,7 +728,6 @@ function loadMessages() {
   messagesDiv.innerHTML = "";
   const col = currentChatId === "global" ? collection(db, "messages") : collection(db, "dms", currentChatId, "messages");
   const myUid = auth.currentUser.uid;
-
   currentChatUnsub = onSnapshot(col, async snap => {
     const mySnap = await getDoc(doc(db, "users", myUid));
     const myName = mySnap.exists() ? mySnap.data().name : "";
@@ -744,7 +735,6 @@ function loadMessages() {
     const sorted = [];
     snap.forEach(d => sorted.push({ id: d.id, ...d.data() }));
     sorted.sort((a, b) => a.time - b.time);
-
     sorted.forEach(m => {
       const mentioned = m.uid !== myUid && m.text && isMentioned(m.text, myName);
       if (m.uid !== myUid && !processedMsgIds.has(m.id) && mentioned && Date.now() - m.time < 10000) {
@@ -755,35 +745,27 @@ function loadMessages() {
         processedMsgIds.add(m.id + "_img");
         sendNotification(`${m.name} sent a photo`, "Tap to view", m.pfp || DEFAULT_PFP);
       }
-
       const div = document.createElement("div");
       div.className = "msg";
-
       const avatar = document.createElement("img");
       avatar.className = "avatar";
       avatar.src = m.pfp || DEFAULT_PFP;
       avatar.onerror = () => avatar.src = DEFAULT_PFP;
       avatar.title = m.name;
       avatar.addEventListener("click", () => openUserModal(m.uid));
-
       const body = document.createElement("div");
       body.className = "msgbody";
-
-      // Image message
       if (m.type === "image" && m.imageUrl) {
         const nameLabel = document.createElement("span");
         nameLabel.style.cssText = "font-size:12px;color:#aaa;margin-bottom:2px;";
         nameLabel.textContent = m.name;
         body.appendChild(nameLabel);
-
         const img = document.createElement("img");
         img.className = "msgimg";
         img.src = m.imageUrl;
         img.alt = "Shared image";
         img.addEventListener("click", () => openLightbox(m.imageUrl));
         body.appendChild(img);
-
-        // Caption if any
         if (m.text) {
           const caption = document.createElement("span");
           caption.className = "msgtext" + (m.uid === myUid ? " mine" : "");
@@ -791,7 +773,6 @@ function loadMessages() {
           body.appendChild(caption);
         }
       } else {
-        // Text message
         const text = document.createElement("span");
         let cls = "msgtext";
         if (m.uid === myUid) cls += " mine";
@@ -800,10 +781,8 @@ function loadMessages() {
         text.innerHTML = `<b>${m.name}:</b> ${parseMentions(m.text || "", myName)}`;
         body.appendChild(text);
       }
-
       div.appendChild(avatar);
       div.appendChild(body);
-
       if (isAdmin || (currentChatId !== "global" && m.uid === myUid) || (m.type === "image" && m.uid === myUid)) {
         const delBtn = document.createElement("button");
         delBtn.className = "delbtn";
@@ -817,7 +796,6 @@ function loadMessages() {
         });
         div.appendChild(delBtn);
       }
-
       messagesDiv.appendChild(div);
     });
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
