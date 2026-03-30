@@ -44,17 +44,15 @@ gtag('config', 'G-TKJ9JKK7ZF');
     await OneSignal.init({
       appId: "170c02fd-b728-4181-a84e-79094708c3df",
       safari_web_id: "web.onesignal.auto.477dedc8-8bcf-40fd-b64c-238033111672",
-      
-      // These lines stop the 404 error by pointing to your merged file
       serviceWorkerPath: "sw.js",
       serviceWorkerParam: { scope: "/" },
-      
       notifyButton: {
         enable: true,
       },
     });
   });
 </script>
+
   
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -439,8 +437,6 @@ const firebaseConfig = {
   measurementId: "G-TKJ9JKK7ZF"
 };
 
-
-
 const CLOUDINARY_CLOUD = "detawwram";
 const CLOUDINARY_PRESET = "BYTEPIC";
 
@@ -449,7 +445,6 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
-
 
 const ADMIN_EMAIL = "bytestorm.corp@gmail.com";
 const DEFAULT_PFP = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
@@ -521,10 +516,31 @@ function getNotifPref(type) {
 }
 
 // ============================================================
-// SW SESSION SYNC — sends uid/name/token/prefs to SW so it can poll
+// SERVICE WORKER REGISTRATION — FIXED
+// ============================================================
+async function registerSW() {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    swRegistration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+    // If the SW is still installing, wait for it to activate before messaging it
+    if (swRegistration.installing) {
+      await new Promise(resolve => {
+        swRegistration.installing.addEventListener('statechange', function() {
+          if (this.state === 'activated') resolve();
+        });
+      });
+    }
+  } catch(e) { console.log('SW registration failed:', e); }
+}
+
+// ============================================================
+// SW SESSION SYNC
 // ============================================================
 async function syncSessionToSW() {
-  if (!swRegistration || !auth.currentUser) return;
+  if (!auth.currentUser) return;
+  // Register SW first if not already done
+  if (!swRegistration) await registerSW();
+  if (!swRegistration) return;
   try {
     const idToken = await auth.currentUser.getIdToken(false);
     const uid = auth.currentUser.uid;
@@ -535,7 +551,7 @@ async function syncSessionToSW() {
     if (sw) {
       sw.postMessage({
         type: 'INIT_SESSION',
-        payload: { uid, name, idToken, prefs }
+        payload: { uid, name, idToken, prefs, startTime: Date.now() }
       });
     }
   } catch(e) { console.log("SW session sync failed:", e); }
@@ -558,6 +574,13 @@ setInterval(async () => {
   if (auth.currentUser && swRegistration) await syncSessionToSW();
 }, 50 * 60 * 1000);
 
+// Re-sync when user comes back to the tab (handles closed/reopened tabs)
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState === 'visible' && auth.currentUser && swRegistration) {
+    await syncSessionToSW();
+  }
+});
+
 // ============================================================
 // NOTIFICATION PERMISSION & BANNER
 // ============================================================
@@ -567,6 +590,7 @@ window.requestNotifPermission = async function() {
   if (perm === "granted") {
     notifBanner.style.display = "none";
     await registerSW();
+    await syncSessionToSW();
   }
   renderNotifSettings();
 };
@@ -576,8 +600,7 @@ async function checkNotifBanner() {
   if (Notification.permission === "granted") {
     notifBanner.style.display = "none";
     await registerSW();
-    setTimeout(syncSessionToSW, 500);
-    const prefs = loadNotifPrefs();
+    await syncSessionToSW();
   } else if (Notification.permission === "denied") {
     notifBanner.style.display = "block";
     notifBanner.textContent = "Notifications blocked — allow them in browser settings.";
@@ -612,7 +635,6 @@ function sendLocalNotification(title, body, icon, type = "mentions") {
   } catch(e) { console.log("Notification failed:", e); }
 }
 
-// Unified sendNotification — checks prefs then fires
 function sendNotification(title, body, icon, type = "mentions") {
   sendLocalNotification(title, body, icon, type);
 }
@@ -661,6 +683,7 @@ document.getElementById("btnEnableNotifs").addEventListener("click", async () =>
   if (perm === "granted") {
     notifBanner.style.display = "none";
     await registerSW();
+    await syncSessionToSW();
   }
   renderNotifSettings();
 });
@@ -675,7 +698,6 @@ document.getElementById("btnEnableNotifs").addEventListener("click", async () =>
     syncPrefsToSW();
   });
 });
-
 
 // ============================================================
 // HELPERS
@@ -1434,7 +1456,7 @@ window._deleteUserMsgs = async uid => {
 };
 
 // ============================================================
-// APP INIT
+// APP INIT — FIXED
 // ============================================================
 function loadApp() {
   if (auth.currentUser.email === ADMIN_EMAIL) isAdmin = true;
@@ -1446,8 +1468,8 @@ function loadApp() {
   listenForDmNotifications();
   checkNotifBanner();
   if (isAdmin) loadAdminUsers();
-  // Sync session to SW for background polling
-  setTimeout(syncSessionToSW, 1500);
+  // Register SW first, then sync session — no more raw setTimeout
+  registerSW().then(() => syncSessionToSW());
 }
 
 onAuthStateChanged(auth, async user => {
