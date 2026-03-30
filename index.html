@@ -37,6 +37,20 @@ gtag('config', 'G-TKJ9JKK7ZF');
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "a58de31f-4120-4583-98af-623e38d8b20d",
+      safari_web_id: "web.onesignal.auto.328b76bd-f95e-4ddf-b873-dc7d80d0ffe4",
+      notifyButton: {
+        enable: true,
+      },
+    });
+  });
+</script>
+
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: Arial; background: #0f0f0f; color: white; text-align: center; }
