@@ -121,7 +121,7 @@ button.gray:hover { background: #333; color: #fff; }
 #settings { max-width: 460px; margin: 0 auto; text-align: left; padding: 15px; }
 #settings h2 { text-align: center; margin-bottom: 10px; }
 #settings label { display: block; margin: 12px 0 4px; color: #aaa; font-size: 13px; }
-#settings input { max-width: 100%; }
+#settings input[type=text], #settings input[type=email] { max-width: 100%; }
 #adminPanel { display: none; max-width: 600px; margin: 0 auto; padding: 15px; text-align: left; }
 #adminPanel h2 { text-align: center; margin-bottom: 10px; }
 .adminUser { display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; border-radius: 8px; padding: 10px; margin: 6px 0; flex-wrap: wrap; gap: 6px; }
@@ -149,6 +149,23 @@ button.gray:hover { background: #333; color: #fff; }
 #profile, #login { max-width: 360px; margin: 0 auto; }
 #login h2, #profile h2 { margin-bottom: 12px; }
 #sidebarToggle { display: none; }
+
+/* Notification settings styles */
+.notif-toggle-row { display: flex; align-items: center; gap: 12px; margin: 10px 0; padding: 10px; background: #1a1a1a; border-radius: 8px; }
+.notif-toggle-row span { flex: 1; font-size: 14px; color: #ddd; }
+.notif-toggle-row small { display: block; font-size: 11px; color: #888; margin-top: 2px; }
+.toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #444; border-radius: 24px; transition: .2s; }
+.toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .2s; }
+.toggle-switch input:checked + .toggle-slider { background: #00aaff; }
+.toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); }
+#notifPermStatus { font-size: 13px; margin: 8px 0; padding: 8px 12px; border-radius: 6px; }
+#notifPermStatus.granted { background: #0a2a0a; color: #4caf50; border: 1px solid #1a4a1a; }
+#notifPermStatus.denied { background: #2a0a0a; color: #cc0000; border: 1px solid #4a1a1a; }
+#notifPermStatus.default { background: #1a1a2a; color: #aaa; border: 1px solid #333; }
+#notifVapidNote { font-size: 11px; color: #666; margin-top: 6px; line-height: 1.5; }
+
 @media (max-width: 600px) {
   #sidebar { position: fixed; left: -220px; top: 0; height: 100vh; z-index: 500; transition: left 0.2s; padding-top: 60px; }
   #sidebar.open { left: 0; }
@@ -240,9 +257,9 @@ document.addEventListener('click', function(e) {
 <div id="settings">
   <h2>Settings</h2>
   <label>Username</label>
-  <input id="settingsName" placeholder="Your Name">
+  <input id="settingsName" placeholder="Your Name" type="text">
   <label>About Me</label>
-  <input id="settingsAbout" placeholder="Tell us about yourself">
+  <input id="settingsAbout" placeholder="Tell us about yourself" type="text">
   <label>Profile Picture</label>
   <div class="dropzone" id="settingsDropzone">
     <img id="settingsDropPreview" src="" alt="Preview">
@@ -253,6 +270,57 @@ document.addEventListener('click', function(e) {
   <br>
   <button id="btnSaveSettings">Save Changes</button>
   <br><br>
+
+  <hr style="border-color:#333; margin: 20px 0;">
+  <h3 style="margin-bottom:10px;">Notifications</h3>
+
+  <div id="notifPermStatus" class="default">Checking notification permission...</div>
+  <button id="btnEnableNotifs" style="display:none; margin: 8px 0;">Enable Notifications</button>
+
+  <div id="notifToggles" style="display:none; margin-top:8px;">
+    <div class="notif-toggle-row">
+      <div style="flex:1">
+        <span>Mentions</span>
+        <small>When someone @mentions you</small>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="notifMentions">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="notif-toggle-row">
+      <div style="flex:1">
+        <span>Private messages</span>
+        <small>New messages in DMs</small>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="notifDMs">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="notif-toggle-row">
+      <div style="flex:1">
+        <span>Media in DMs</span>
+        <small>Images and videos sent to you</small>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="notifMedia">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="notif-toggle-row">
+      <div style="flex:1">
+        <span>Background push</span>
+        <small>Get notified even when app is closed</small>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="notifBackground">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <p id="notifVapidNote"></p>
+  </div>
+
   <hr style="border-color:#333; margin: 20px 0;">
   <h3>Change Password</h3>
   <button id="btnChangePassword">Send Password Reset Email</button>
@@ -349,6 +417,9 @@ import {
   getFirestore, doc, setDoc, getDoc, addDoc, updateDoc,
   collection, onSnapshot, getDocs, deleteDoc, query, where
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import {
+  getMessaging, getToken, deleteToken, onMessage
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-messaging.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAY49sWaN-DSKV10uyBB3CeOiABLCtFrSI",
@@ -361,6 +432,13 @@ const firebaseConfig = {
   measurementId: "G-TKJ9JKK7ZF"
 };
 
+// ============================================================
+// IMPORTANT: Replace this with your actual VAPID key from
+// Firebase Console → Project Settings → Cloud Messaging →
+// Web Push certificates → Generate key pair
+// ============================================================
+const VAPID_KEY = "BEAU2Nj3xIvaIUqJrj3vRAhEHio1znH51o-oirTeGmLHKws0sktRIjDcEWwx2D1MkDXgmW0xl8m0clnzWmvA2bs";
+
 const CLOUDINARY_CLOUD = "detawwram";
 const CLOUDINARY_PRESET = "BYTEPIC";
 
@@ -369,13 +447,15 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
+let messaging = null;
+try { messaging = getMessaging(app); } catch(e) { console.log("Messaging not supported:", e); }
 
 const ADMIN_EMAIL = "bytestorm.corp@gmail.com";
 const DEFAULT_PFP = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 const BAD_WORDS = ["fuck", "shit", "ass", "bitch", "bastard"];
 const MENTION_COOLDOWN = 60000;
+const NOTIF_PREFS_KEY = "bytechat_notif_prefs";
 
-// Blocked domains for link safety
 const BLOCKED_DOMAINS = [
   "bit.ly", "tinyurl.com", "goo.gl", "t.co", "ow.ly", "is.gd",
   "buff.ly", "adf.ly", "sh.st", "linkvertise.com",
@@ -419,11 +499,240 @@ let profilePfpUrl = "";
 let settingsPfpUrl = "";
 let pendingChatFile = null;
 let pendingChatFileType = null;
+let swRegistration = null;
+let fcmToken = null;
 
+// ============================================================
+// NOTIFICATION PREFERENCES
+// ============================================================
+function loadNotifPrefs() {
+  try {
+    const raw = localStorage.getItem(NOTIF_PREFS_KEY);
+    return raw ? JSON.parse(raw) : { mentions: true, dms: true, media: true, background: false };
+  } catch { return { mentions: true, dms: true, media: true, background: false }; }
+}
+
+function saveNotifPrefs(prefs) {
+  localStorage.setItem(NOTIF_PREFS_KEY, JSON.stringify(prefs));
+}
+
+function getNotifPref(type) {
+  return loadNotifPrefs()[type] !== false;
+}
+
+// ============================================================
+// SERVICE WORKER & FCM SETUP
+// ============================================================
+async function registerSW() {
+  if (!('serviceWorker' in navigator)) return null;
+  try {
+    swRegistration = await navigator.serviceWorker.register('/sw.js');
+    await navigator.serviceWorker.ready;
+    return swRegistration;
+  } catch(e) {
+    console.log("SW registration failed:", e);
+    return null;
+  }
+}
+
+async function subscribeFCM() {
+  if (!messaging || VAPID_KEY === "YOUR_VAPID_KEY_HERE") {
+    document.getElementById("notifVapidNote").textContent =
+      "⚠ Background push requires a VAPID key. Set it in Firebase Console → Project Settings → Cloud Messaging → Web Push certificates.";
+    return null;
+  }
+  try {
+    if (!swRegistration) await registerSW();
+    const token = await getToken(messaging, {
+      vapidKey: VAPID_KEY,
+      serviceWorkerRegistration: swRegistration
+    });
+    if (token) {
+      fcmToken = token;
+      const uid = auth.currentUser?.uid;
+      if (uid) {
+        await updateDoc(doc(db, "users", uid), { fcmToken: token }).catch(() =>
+          setDoc(doc(db, "users", uid), { fcmToken: token }, { merge: true })
+        );
+      }
+      document.getElementById("notifVapidNote").textContent = "✓ Background push is active. You'll receive messages even when the app is closed.";
+      return token;
+    }
+  } catch(e) {
+    console.log("FCM token failed:", e);
+    document.getElementById("notifVapidNote").textContent = "Background push unavailable: " + e.message;
+  }
+  return null;
+}
+
+async function unsubscribeFCM() {
+  if (!messaging || !fcmToken) return;
+  try {
+    await deleteToken(messaging);
+    fcmToken = null;
+    const uid = auth.currentUser?.uid;
+    if (uid) {
+      await updateDoc(doc(db, "users", uid), { fcmToken: null }).catch(() => {});
+    }
+    document.getElementById("notifVapidNote").textContent = "Background push disabled.";
+  } catch(e) { console.log("FCM unsubscribe failed:", e); }
+}
+
+// Foreground FCM message handler (app is open)
+function setupForegroundFCM() {
+  if (!messaging) return;
+  onMessage(messaging, payload => {
+    const prefs = loadNotifPrefs();
+    const data = payload.data || {};
+    const type = data.notifType || "mentions";
+    if (!prefs[type]) return;
+    const n = payload.notification || {};
+    sendLocalNotification(n.title || "ByteChat", n.body || data.body || "", n.icon || data.icon || DEFAULT_PFP, type);
+  });
+}
+
+// ============================================================
+// NOTIFICATION PERMISSION & BANNER
+// ============================================================
+window.requestNotifPermission = async function() {
+  if (!("Notification" in window)) return;
+  const perm = await Notification.requestPermission();
+  if (perm === "granted") {
+    notifBanner.style.display = "none";
+    await registerSW();
+    setupForegroundFCM();
+  }
+  renderNotifSettings();
+};
+
+async function checkNotifBanner() {
+  if (!("Notification" in window)) return;
+  if (Notification.permission === "granted") {
+    notifBanner.style.display = "none";
+    await registerSW();
+    setupForegroundFCM();
+    const prefs = loadNotifPrefs();
+    if (prefs.background) await subscribeFCM();
+  } else if (Notification.permission === "denied") {
+    notifBanner.style.display = "block";
+    notifBanner.textContent = "Notifications blocked — allow them in browser settings.";
+    notifBanner.onclick = null;
+  } else {
+    notifBanner.style.display = "block";
+  }
+}
+
+// ============================================================
+// SEND NOTIFICATION (local, foreground only)
+// ============================================================
+function sendLocalNotification(title, body, icon, type = "mentions") {
+  const prefs = loadNotifPrefs();
+  if (!prefs[type]) return;
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+  try {
+    if (swRegistration && navigator.serviceWorker.controller) {
+      swRegistration.showNotification(title, {
+        body,
+        icon: icon || DEFAULT_PFP,
+        badge: 'https://i.imgur.com/NLz6Jfd.png',
+        vibrate: [200, 100, 200],
+        tag: title + body,
+        renotify: true,
+        data: { url: 'https://bytestormchat.vercel.app' }
+      });
+    } else {
+      const n = new Notification(title, { body, icon: icon || DEFAULT_PFP, tag: title + body, renotify: true });
+      n.onclick = () => { window.focus(); n.close(); };
+    }
+  } catch(e) { console.log("Notification failed:", e); }
+}
+
+// Unified sendNotification — checks prefs then fires
+function sendNotification(title, body, icon, type = "mentions") {
+  sendLocalNotification(title, body, icon, type);
+}
+
+// ============================================================
+// NOTIFICATION SETTINGS PANEL
+// ============================================================
+function renderNotifSettings() {
+  const statusEl = document.getElementById("notifPermStatus");
+  const togglesDiv = document.getElementById("notifToggles");
+  const enableBtn = document.getElementById("btnEnableNotifs");
+
+  if (!("Notification" in window)) {
+    statusEl.className = "denied";
+    statusEl.textContent = "Notifications are not supported in this browser.";
+    enableBtn.style.display = "none";
+    togglesDiv.style.display = "none";
+    return;
+  }
+
+  const perm = Notification.permission;
+  if (perm === "granted") {
+    statusEl.className = "granted";
+    statusEl.textContent = "✓ Notifications are enabled.";
+    enableBtn.style.display = "none";
+    togglesDiv.style.display = "block";
+    const prefs = loadNotifPrefs();
+    document.getElementById("notifMentions").checked = prefs.mentions !== false;
+    document.getElementById("notifDMs").checked = prefs.dms !== false;
+    document.getElementById("notifMedia").checked = prefs.media !== false;
+    document.getElementById("notifBackground").checked = prefs.background === true;
+    if (VAPID_KEY === "YOUR_VAPID_KEY_HERE") {
+      document.getElementById("notifVapidNote").textContent =
+        "⚠ Background push requires a VAPID key from Firebase Console → Project Settings → Cloud Messaging.";
+    }
+  } else if (perm === "denied") {
+    statusEl.className = "denied";
+    statusEl.textContent = "✗ Notifications are blocked. Go to your browser settings and allow notifications for this site, then reload.";
+    enableBtn.style.display = "none";
+    togglesDiv.style.display = "none";
+  } else {
+    statusEl.className = "default";
+    statusEl.textContent = "Notifications are not yet enabled.";
+    enableBtn.style.display = "inline-block";
+    togglesDiv.style.display = "none";
+  }
+}
+
+document.getElementById("btnEnableNotifs").addEventListener("click", async () => {
+  const perm = await Notification.requestPermission();
+  if (perm === "granted") {
+    notifBanner.style.display = "none";
+    await registerSW();
+    setupForegroundFCM();
+  }
+  renderNotifSettings();
+});
+
+["notifMentions", "notifDMs", "notifMedia"].forEach(id => {
+  document.getElementById(id).addEventListener("change", () => {
+    const prefs = loadNotifPrefs();
+    prefs.mentions = document.getElementById("notifMentions").checked;
+    prefs.dms = document.getElementById("notifDMs").checked;
+    prefs.media = document.getElementById("notifMedia").checked;
+    saveNotifPrefs(prefs);
+  });
+});
+
+document.getElementById("notifBackground").addEventListener("change", async e => {
+  const prefs = loadNotifPrefs();
+  prefs.background = e.target.checked;
+  saveNotifPrefs(prefs);
+  if (e.target.checked) {
+    await subscribeFCM();
+  } else {
+    await unsubscribeFCM();
+  }
+});
+
+// ============================================================
+// HELPERS
+// ============================================================
 function containsBadWord(t) { return BAD_WORDS.some(w => t.toLowerCase().includes(w)); }
 function getDmId(uid1, uid2) { return [uid1, uid2].sort().join("_"); }
 
-// --- Link safety ---
 function isLinkSafe(url) {
   try {
     if (!url.startsWith("https://")) return false;
@@ -443,7 +752,9 @@ function processLinks(text) {
   });
 }
 
-// --- Cloudinary Upload ---
+// ============================================================
+// CLOUDINARY UPLOAD
+// ============================================================
 async function uploadToCloudinary(file, progressEl, isVideo) {
   if (progressEl) { progressEl.style.display = "block"; progressEl.textContent = isVideo ? "Uploading video..." : "Uploading..."; }
   const formData = new FormData();
@@ -489,14 +800,12 @@ function setupDropzone(dropzoneId, fileInputId, previewId, progressId, onUpload)
 setupDropzone("profileDropzone", "profileFileInput", "profileDropPreview", "profileUploadProgress", url => { profilePfpUrl = url; });
 setupDropzone("settingsDropzone", "settingsFileInput", "settingsDropPreview", "settingsUploadProgress", url => { settingsPfpUrl = url; });
 
-// --- Chat file button ---
 document.getElementById("photoBtn").addEventListener("click", () => chatFileInput.click());
 chatFileInput.addEventListener("change", () => {
   const file = chatFileInput.files[0];
   if (!file) return;
   pendingChatFile = file;
   pendingChatFileType = file.type.startsWith("video/") ? "video" : "image";
-
   if (pendingChatFileType === "video") {
     chatImgPreview.style.display = "none";
     chatImgPreviewName.textContent = "Video: " + file.name;
@@ -522,56 +831,20 @@ function openLightbox(src) {
   document.getElementById("lightbox").style.display = "flex";
 }
 
-// --- Service Worker ---
-async function registerSW() {
-  if (!('serviceWorker' in navigator)) return null;
-  try { const reg = await navigator.serviceWorker.register('/sw.js'); await navigator.serviceWorker.ready; return reg; }
-  catch(e) { return null; }
-}
-
-window.requestNotifPermission = async function() {
-  if (!("Notification" in window)) return;
-  const perm = await Notification.requestPermission();
-  if (perm === "granted") { notifBanner.style.display = "none"; await registerSW(); }
-};
-
-async function checkNotifBanner() {
-  if (!("Notification" in window)) return;
-  if (Notification.permission === "default") {
-    const perm = await Notification.requestPermission();
-    if (perm === "granted") { notifBanner.style.display = "none"; await registerSW(); }
-    else { notifBanner.style.display = "block"; notifBanner.textContent = "Notifications blocked — allow them in browser settings."; notifBanner.onclick = null; }
-  } else if (Notification.permission === "denied") {
-    notifBanner.style.display = "block";
-    notifBanner.textContent = "Notifications blocked — allow them in browser settings."; notifBanner.onclick = null;
-  } else { notifBanner.style.display = "none"; await registerSW(); }
-}
-
-function sendNotification(title, body, icon) {
-  if (!("Notification" in window) || Notification.permission !== "granted") return;
-  try {
-    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-      navigator.serviceWorker.ready.then(reg => {
-        reg.showNotification(title, { body, icon: icon || DEFAULT_PFP, badge: 'https://i.imgur.com/NLz6Jfd.png', vibrate: [200, 100, 200], tag: title + body, renotify: true, data: { url: 'https://bytestormchat.vercel.app' } });
-      });
-    } else {
-      const n = new Notification(title, { body, icon: icon || DEFAULT_PFP, tag: title + body, renotify: true });
-      n.onclick = () => { window.focus(); n.close(); };
-    }
-  } catch(e) { console.log("Notification failed:", e); }
-}
-
+// ============================================================
+// MENTIONS
+// ============================================================
 function parseMentions(text, myName) {
   let parsed = text.replace(/@everyone/g, '<span class="mention everyone">@everyone</span>');
   parsed = parsed.replace(/@([^\s@]+)/g, (match, name) => `<span class="mention">@${name}</span>`);
   return parsed;
 }
+
 function isMentioned(text, myName) {
   const lower = text.toLowerCase();
   return lower.includes(`@${myName.toLowerCase()}`) || lower.includes("@everyone");
 }
 
-// --- Process message text (mentions + links) ---
 function processMessageText(text, myName) {
   let processed = parseMentions(text, myName);
   processed = processLinks(processed);
@@ -610,6 +883,7 @@ messageInput.addEventListener("input", () => {
     } else mentionDropdown.style.display = "none";
   } else { mentionDropdown.style.display = "none"; mentionActive = false; }
 });
+
 document.addEventListener("click", e => { if (!mentionDropdown.contains(e.target) && e.target !== messageInput) mentionDropdown.style.display = "none"; });
 messageInput.addEventListener("keydown", e => { if (e.key === "Escape") { mentionDropdown.style.display = "none"; mentionActive = false; } });
 
@@ -619,6 +893,9 @@ async function loadAllUsers() {
   snap.forEach(d => allUsers.push({ uid: d.id, ...d.data() }));
 }
 
+// ============================================================
+// PAGE ROUTING
+// ============================================================
 function showPage(page) {
   loginDiv.style.display = "none"; profileDiv.style.display = "none"; settingsDiv.style.display = "none";
   appLayout.style.display = "none"; adminPanel.style.display = "none"; topBar.style.display = "none";
@@ -637,9 +914,13 @@ function showPage(page) {
     document.getElementById("btnBackToChat").style.display = "inline-block";
     document.getElementById("btnOpenSettings").style.display = "none";
     loadSettingsForm();
+    renderNotifSettings();
   }
 }
 
+// ============================================================
+// AUTH
+// ============================================================
 document.getElementById("btnLogin").addEventListener("click", async () => {
   try { await signInWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value); }
   catch(e) { alert(e.message); }
@@ -662,10 +943,16 @@ document.getElementById("btnResendVerify").addEventListener("click", async () =>
   try { await sendEmailVerification(auth.currentUser); alert("Verification email sent!"); }
   catch(e) { alert(e.message); }
 });
-document.getElementById("btnLogout").addEventListener("click", () => signOut(auth));
+document.getElementById("btnLogout").addEventListener("click", async () => {
+  await unsubscribeFCM();
+  signOut(auth);
+});
 document.getElementById("btnOpenSettings").addEventListener("click", () => showPage("settings"));
 document.getElementById("btnBackToChat").addEventListener("click", () => showPage("chat"));
 
+// ============================================================
+// PROFILE & SETTINGS
+// ============================================================
 async function updateAllMessages(uid, name, pfp) {
   try {
     const globalSnap = await getDocs(query(collection(db, "messages"), where("uid", "==", uid)));
@@ -723,6 +1010,9 @@ document.getElementById("btnChangePassword").addEventListener("click", async () 
   catch(e) { alert(e.message); }
 });
 
+// ============================================================
+// SEND MESSAGE
+// ============================================================
 document.getElementById("btnSend").addEventListener("click", async () => {
   try {
     const text = messageInput.value.trim();
@@ -737,7 +1027,6 @@ document.getElementById("btnSend").addEventListener("click", async () => {
     if (text && containsBadWord(text)) { messageInput.value = ""; return; }
     if (text && text.includes("@everyone") && auth.currentUser.email !== ADMIN_EMAIL) { alert("Only the admin can use @everyone."); return; }
 
-    // Block videos in global chat
     if (pendingChatFile && pendingChatFileType === "video" && currentChatId === "global") {
       alert("Videos can only be sent in private chats.");
       return;
@@ -782,6 +1071,9 @@ document.getElementById("btnSend").addEventListener("click", async () => {
 
 messageInput.addEventListener("keydown", e => { if (e.key === "Enter" && !mentionActive) document.getElementById("btnSend").click(); });
 
+// ============================================================
+// CHAT LOADING
+// ============================================================
 function showGlobalChat() {
   currentChatId = "global";
   document.getElementById("chatHeaderImg").style.display = "none";
@@ -810,11 +1102,11 @@ function loadMessages() {
       const mentioned = m.uid !== myUid && m.text && isMentioned(m.text, myName);
       if (m.uid !== myUid && !processedMsgIds.has(m.id) && mentioned && Date.now() - m.time < 10000) {
         processedMsgIds.add(m.id);
-        sendNotification(`${m.name} mentioned you in ByteChat`, m.text, m.pfp || DEFAULT_PFP);
+        sendNotification(`${m.name} mentioned you`, m.text, m.pfp || DEFAULT_PFP, "mentions");
       }
       if (m.uid !== myUid && (m.type === "image" || m.type === "video") && !processedMsgIds.has(m.id + "_media") && Date.now() - m.time < 10000 && isPrivate) {
         processedMsgIds.add(m.id + "_media");
-        sendNotification(`${m.name} sent a ${m.type}`, "Tap to view", m.pfp || DEFAULT_PFP);
+        sendNotification(`${m.name} sent a ${m.type}`, "Tap to view", m.pfp || DEFAULT_PFP, "media");
       }
 
       const div = document.createElement("div");
@@ -846,7 +1138,6 @@ function loadMessages() {
           body.appendChild(caption);
         }
       } else if (m.type === "video" && m.fileUrl) {
-        // Videos only in private chats
         if (isPrivate) {
           const nameLabel = document.createElement("span");
           nameLabel.style.cssText = "font-size:12px;color:#aaa;margin-bottom:2px;";
@@ -871,7 +1162,6 @@ function loadMessages() {
         if (m.uid === myUid) cls += " mine";
         else if (mentioned) cls += " mentioned";
         text.className = cls;
-        // Links only clickable in private chats
         if (isPrivate) {
           text.innerHTML = `<b>${m.name}:</b> ${processMessageText(m.text || "", myName)}`;
         } else {
@@ -903,6 +1193,9 @@ function loadMessages() {
   });
 }
 
+// ============================================================
+// DM NOTIFICATIONS (foreground listener for new DMs)
+// ============================================================
 function listenForDmNotifications() {
   const uid = auth.currentUser.uid;
   onSnapshot(query(collection(db, "dms"), where("users", "array-contains", uid)), async snap => {
@@ -918,7 +1211,8 @@ function listenForDmNotifications() {
               if (m.uid !== uid && !processedMsgIds.has(msgId) && Date.now() - m.time < 10000) {
                 processedMsgIds.add(msgId);
                 const body = m.type === "image" ? "Sent a photo" : m.type === "video" ? "Sent a video" : m.text;
-                sendNotification(`New message from ${m.name}`, body, m.pfp || DEFAULT_PFP);
+                const type = (m.type === "image" || m.type === "video") ? "media" : "dms";
+                sendNotification(`New message from ${m.name}`, body, m.pfp || DEFAULT_PFP, type);
               }
             }
           });
@@ -928,6 +1222,9 @@ function listenForDmNotifications() {
   });
 }
 
+// ============================================================
+// SIDEBAR & DMs
+// ============================================================
 window.openDmModal = function() { document.getElementById("dmEmail").value = ""; dmModal.style.display = "flex"; };
 document.getElementById("dmModalClose").addEventListener("click", () => dmModal.style.display = "none");
 dmModal.addEventListener("click", e => { if (e.target === dmModal) dmModal.style.display = "none"; });
@@ -1056,6 +1353,9 @@ document.getElementById("btnDenyReq").addEventListener("click", async () => {
   } catch(e) { alert(e.message); }
 });
 
+// ============================================================
+// USER MODAL
+// ============================================================
 document.getElementById("modalClose").addEventListener("click", () => { modal.style.display = "none"; currentModalUid = null; });
 modal.addEventListener("click", e => { if (e.target === modal) { modal.style.display = "none"; currentModalUid = null; } });
 
@@ -1134,6 +1434,9 @@ async function openUserModal(uid) {
   } catch(e) { alert(e.message); }
 }
 
+// ============================================================
+// ADMIN PANEL
+// ============================================================
 document.getElementById("btnClearChat").addEventListener("click", async () => {
   if (!confirm("Delete ALL global messages?")) return;
   try { const snap = await getDocs(collection(db, "messages")); snap.forEach(async d => await deleteDoc(d.ref)); }
@@ -1180,6 +1483,9 @@ window._deleteUserMsgs = async uid => {
   alert("Done.");
 };
 
+// ============================================================
+// APP INIT
+// ============================================================
 function loadApp() {
   if (auth.currentUser.email === ADMIN_EMAIL) isAdmin = true;
   showPage("chat");
@@ -1189,6 +1495,7 @@ function loadApp() {
   loadAllUsers();
   listenForDmNotifications();
   checkNotifBanner();
+  if (isAdmin) loadAdminUsers();
 }
 
 onAuthStateChanged(auth, async user => {
