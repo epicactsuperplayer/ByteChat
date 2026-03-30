@@ -11,15 +11,15 @@
 <meta name="robots" content="index, follow">
 <meta property="og:title" content="ByteChat">
 <meta property="og:description" content="Real time chat platform by Bytestorm Corporation.">
-<meta property="og:image" content="https://i.imgur.com/NLz6Jfd.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png">
 <meta property="og:url" content="https://bytestormchat.vercel.app">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ByteChat">
 <meta name="twitter:description" content="Real-time chat platform by Bytestorm Corporation.">
-<meta name="twitter:image" content="https://i.imgur.com/NLz6Jfd.png">
-<link rel="icon" type="image/png" href="https://i.imgur.com/NLz6Jfd.png">
-<link rel="apple-touch-icon" href="https://i.imgur.com/NLz6Jfd.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png">
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#00aaff">
 <meta name="mobile-web-app-capable" content="yes">
@@ -190,11 +190,11 @@ button.gray:hover { background: #333; color: #fff; }
       Bytestorm Esports
     </a>
     <a href="https://rodss.vercel.app" target="_blank">
-      <img src="https://i.imgur.com/NLz6Jfd.png" width="20" height="20" style="border-radius:3px;">
+      <img src="https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png" width="20" height="20" style="border-radius:3px;">
       RODSS Corporation
     </a>
     <a href="https://bytestormchat.vercel.app" target="_blank">
-      <img src="https://i.imgur.com/NLz6Jfd.png" width="20" height="20" style="border-radius:3px;">
+      <img src="https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png" width="20" height="20" style="border-radius:3px;">
       ByteChat
     </a>
   </div>
@@ -308,16 +308,6 @@ document.addEventListener('click', function(e) {
         <span class="toggle-slider"></span>
       </label>
     </div>
-    <div class="notif-toggle-row">
-      <div style="flex:1">
-        <span>Background push</span>
-        <small>Get notified even when app is closed</small>
-      </div>
-      <label class="toggle-switch">
-        <input type="checkbox" id="notifBackground">
-        <span class="toggle-slider"></span>
-      </label>
-    </div>
     <p id="notifVapidNote"></p>
   </div>
 
@@ -417,9 +407,7 @@ import {
   getFirestore, doc, setDoc, getDoc, addDoc, updateDoc,
   collection, onSnapshot, getDocs, deleteDoc, query, where
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
-import {
-  getMessaging, getToken, deleteToken, onMessage
-} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-messaging.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyAY49sWaN-DSKV10uyBB3CeOiABLCtFrSI",
@@ -432,12 +420,7 @@ const firebaseConfig = {
   measurementId: "G-TKJ9JKK7ZF"
 };
 
-// ============================================================
-// IMPORTANT: Replace this with your actual VAPID key from
-// Firebase Console → Project Settings → Cloud Messaging →
-// Web Push certificates → Generate key pair
-// ============================================================
-const VAPID_KEY = "BEUA2Nj3xIvaIUqJrj3vRAhEHio1znH51o-oirTeGmLHKws0sktRIjDcEWwx2D1MkDXgmW0xl8m0clnzWmvA2bs";
+
 
 const CLOUDINARY_CLOUD = "detawwram";
 const CLOUDINARY_PRESET = "BYTEPIC";
@@ -447,8 +430,7 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
-let messaging = null;
-try { messaging = getMessaging(app); } catch(e) { console.log("Messaging not supported:", e); }
+
 
 const ADMIN_EMAIL = "bytestorm.corp@gmail.com";
 const DEFAULT_PFP = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
@@ -500,7 +482,6 @@ let settingsPfpUrl = "";
 let pendingChatFile = null;
 let pendingChatFileType = null;
 let swRegistration = null;
-let fcmToken = null;
 
 // ============================================================
 // NOTIFICATION PREFERENCES
@@ -521,75 +502,42 @@ function getNotifPref(type) {
 }
 
 // ============================================================
-// SERVICE WORKER & FCM SETUP
+// SW SESSION SYNC — sends uid/name/token/prefs to SW so it can poll
 // ============================================================
-async function registerSW() {
-  if (!('serviceWorker' in navigator)) return null;
+async function syncSessionToSW() {
+  if (!swRegistration || !auth.currentUser) return;
   try {
-    swRegistration = await navigator.serviceWorker.register('/sw.js');
-    await navigator.serviceWorker.ready;
-    return swRegistration;
-  } catch(e) {
-    console.log("SW registration failed:", e);
-    return null;
-  }
-}
-
-async function subscribeFCM() {
-  if (!messaging || VAPID_KEY === "YOUR_VAPID_KEY_HERE") {
-    document.getElementById("notifVapidNote").textContent =
-      "⚠ Background push requires a VAPID key. Set it in Firebase Console → Project Settings → Cloud Messaging → Web Push certificates.";
-    return null;
-  }
-  try {
-    if (!swRegistration) await registerSW();
-    const token = await getToken(messaging, {
-      vapidKey: VAPID_KEY,
-      serviceWorkerRegistration: swRegistration
-    });
-    if (token) {
-      fcmToken = token;
-      const uid = auth.currentUser?.uid;
-      if (uid) {
-        await updateDoc(doc(db, "users", uid), { fcmToken: token }).catch(() =>
-          setDoc(doc(db, "users", uid), { fcmToken: token }, { merge: true })
-        );
-      }
-      document.getElementById("notifVapidNote").textContent = "✓ Background push is active. You'll receive messages even when the app is closed.";
-      return token;
-    }
-  } catch(e) {
-    console.log("FCM token failed:", e);
-    document.getElementById("notifVapidNote").textContent = "Background push unavailable: " + e.message;
-  }
-  return null;
-}
-
-async function unsubscribeFCM() {
-  if (!messaging || !fcmToken) return;
-  try {
-    await deleteToken(messaging);
-    fcmToken = null;
-    const uid = auth.currentUser?.uid;
-    if (uid) {
-      await updateDoc(doc(db, "users", uid), { fcmToken: null }).catch(() => {});
-    }
-    document.getElementById("notifVapidNote").textContent = "Background push disabled.";
-  } catch(e) { console.log("FCM unsubscribe failed:", e); }
-}
-
-// Foreground FCM message handler (app is open)
-function setupForegroundFCM() {
-  if (!messaging) return;
-  onMessage(messaging, payload => {
+    const idToken = await auth.currentUser.getIdToken(false);
+    const uid = auth.currentUser.uid;
+    const snap = await getDoc(doc(db, "users", uid));
+    const name = snap.exists() ? snap.data().name : "";
     const prefs = loadNotifPrefs();
-    const data = payload.data || {};
-    const type = data.notifType || "mentions";
-    if (!prefs[type]) return;
-    const n = payload.notification || {};
-    sendLocalNotification(n.title || "ByteChat", n.body || data.body || "", n.icon || data.icon || DEFAULT_PFP, type);
-  });
+    const sw = swRegistration.active;
+    if (sw) {
+      sw.postMessage({
+        type: 'INIT_SESSION',
+        payload: { uid, name, idToken, prefs }
+      });
+    }
+  } catch(e) { console.log("SW session sync failed:", e); }
 }
+
+function syncPrefsToSW() {
+  if (!swRegistration) return;
+  const sw = swRegistration.active;
+  if (sw) sw.postMessage({ type: 'UPDATE_PREFS', payload: loadNotifPrefs() });
+}
+
+function clearSWSession() {
+  if (!swRegistration) return;
+  const sw = swRegistration.active;
+  if (sw) sw.postMessage({ type: 'CLEAR_SESSION' });
+}
+
+// Refresh token every 50 minutes (tokens expire after 60min)
+setInterval(async () => {
+  if (auth.currentUser && swRegistration) await syncSessionToSW();
+}, 50 * 60 * 1000);
 
 // ============================================================
 // NOTIFICATION PERMISSION & BANNER
@@ -600,7 +548,6 @@ window.requestNotifPermission = async function() {
   if (perm === "granted") {
     notifBanner.style.display = "none";
     await registerSW();
-    setupForegroundFCM();
   }
   renderNotifSettings();
 };
@@ -610,9 +557,8 @@ async function checkNotifBanner() {
   if (Notification.permission === "granted") {
     notifBanner.style.display = "none";
     await registerSW();
-    setupForegroundFCM();
+    setTimeout(syncSessionToSW, 500);
     const prefs = loadNotifPrefs();
-    if (prefs.background) await subscribeFCM();
   } else if (Notification.permission === "denied") {
     notifBanner.style.display = "block";
     notifBanner.textContent = "Notifications blocked — allow them in browser settings.";
@@ -634,7 +580,7 @@ function sendLocalNotification(title, body, icon, type = "mentions") {
       swRegistration.showNotification(title, {
         body,
         icon: icon || DEFAULT_PFP,
-        badge: 'https://i.imgur.com/NLz6Jfd.png',
+        badge: 'https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png',
         vibrate: [200, 100, 200],
         tag: title + body,
         renotify: true,
@@ -678,11 +624,6 @@ function renderNotifSettings() {
     document.getElementById("notifMentions").checked = prefs.mentions !== false;
     document.getElementById("notifDMs").checked = prefs.dms !== false;
     document.getElementById("notifMedia").checked = prefs.media !== false;
-    document.getElementById("notifBackground").checked = prefs.background === true;
-    if (VAPID_KEY === "YOUR_VAPID_KEY_HERE") {
-      document.getElementById("notifVapidNote").textContent =
-        "⚠ Background push requires a VAPID key from Firebase Console → Project Settings → Cloud Messaging.";
-    }
   } else if (perm === "denied") {
     statusEl.className = "denied";
     statusEl.textContent = "✗ Notifications are blocked. Go to your browser settings and allow notifications for this site, then reload.";
@@ -701,7 +642,6 @@ document.getElementById("btnEnableNotifs").addEventListener("click", async () =>
   if (perm === "granted") {
     notifBanner.style.display = "none";
     await registerSW();
-    setupForegroundFCM();
   }
   renderNotifSettings();
 });
@@ -713,19 +653,10 @@ document.getElementById("btnEnableNotifs").addEventListener("click", async () =>
     prefs.dms = document.getElementById("notifDMs").checked;
     prefs.media = document.getElementById("notifMedia").checked;
     saveNotifPrefs(prefs);
+    syncPrefsToSW();
   });
 });
 
-document.getElementById("notifBackground").addEventListener("change", async e => {
-  const prefs = loadNotifPrefs();
-  prefs.background = e.target.checked;
-  saveNotifPrefs(prefs);
-  if (e.target.checked) {
-    await subscribeFCM();
-  } else {
-    await unsubscribeFCM();
-  }
-});
 
 // ============================================================
 // HELPERS
@@ -943,8 +874,8 @@ document.getElementById("btnResendVerify").addEventListener("click", async () =>
   try { await sendEmailVerification(auth.currentUser); alert("Verification email sent!"); }
   catch(e) { alert(e.message); }
 });
-document.getElementById("btnLogout").addEventListener("click", async () => {
-  await unsubscribeFCM();
+document.getElementById("btnLogout").addEventListener("click", () => {
+  clearSWSession();
   signOut(auth);
 });
 document.getElementById("btnOpenSettings").addEventListener("click", () => showPage("settings"));
@@ -1496,6 +1427,8 @@ function loadApp() {
   listenForDmNotifications();
   checkNotifBanner();
   if (isAdmin) loadAdminUsers();
+  // Sync session to SW for background polling
+  setTimeout(syncSessionToSW, 1500);
 }
 
 onAuthStateChanged(auth, async user => {
