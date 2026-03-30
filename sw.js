@@ -21,8 +21,8 @@ messaging.onBackgroundMessage(payload => {
 
   self.registration.showNotification(title || 'ByteChat', {
     body: body || data.body || '',
-    icon: icon || data.icon || 'https://i.imgur.com/NLz6Jfd.png',
-    badge: badge || 'https://i.imgur.com/NLz6Jfd.png',
+    icon: icon || data.icon || 'https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png',
+    badge: badge || 'https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png',
     tag: tag || data.tag || 'bytechat-msg',
     renotify: true,
     vibrate: [200, 100, 200],
