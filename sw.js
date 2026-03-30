@@ -1,20 +1,18 @@
-self.addEventListener('install', e => self.skipWaiting());
-self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+self.addEventListener('push', function(event) {
+  const options = {
+    body: 'You got an SMS from a Bytestorm Website',
+    icon: '/icon.png', // Make sure you have an icon file in GitHub!
+    vibrate: [200, 100, 200],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: '1'
+    },
+    actions: [
+      {action: 'explore', title: 'View Message'}
+    ]
+  };
 
-self.addEventListener('push', e => {
-  const data = e.data ? e.data.json() : {};
-  e.waitUntil(
-    self.registration.showNotification(data.title || 'ByteChat', {
-      body: data.body || '',
-      icon: data.icon || 'https://i.imgur.com/NLz6Jfd.png',
-      badge: 'https://i.imgur.com/NLz6Jfd.png',
-      vibrate: [200, 100, 200],
-      data: { url: 'https://bytestormchat.vercel.app' }
-    })
+  event.waitUntil(
+    self.registration.showNotification('Bytestorm ByteChat', options)
   );
-});
-
-self.addEventListener('notificationclick', e => {
-  e.notification.close();
-  e.waitUntil(clients.openWindow(e.notification.data.url));
 });
