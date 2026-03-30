@@ -44,6 +44,11 @@ gtag('config', 'G-TKJ9JKK7ZF');
     await OneSignal.init({
       appId: "170c02fd-b728-4181-a84e-79094708c3df",
       safari_web_id: "web.onesignal.auto.477dedc8-8bcf-40fd-b64c-238033111672",
+      
+      // These lines stop the 404 error by pointing to your merged file
+      serviceWorkerPath: "sw.js",
+      serviceWorkerParam: { scope: "/" },
+      
       notifyButton: {
         enable: true,
       },
