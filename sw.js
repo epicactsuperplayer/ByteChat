@@ -1,3 +1,4 @@
+importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
 const LOGO = 'https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png';
 const APP_URL = 'https://bytestormchat.vercel.app';
 const FIREBASE_PROJECT = 'bytestorm-friebase-server';
