@@ -46,21 +46,32 @@ gtag('config', 'G-TKJ9JKK7ZF');
       safari_web_id: "web.onesignal.auto.477dedc8-8bcf-40fd-b64c-238033111672",
       serviceWorkerPath: "sw.js",
       serviceWorkerParam: { scope: "/" },
-      notifyButton: {
-        enable: true,
-      },
+      notifyButton: { enable: true },
     });
+
+    // Save Player ID whenever subscription changes
+    OneSignal.User.PushSubscription.addEventListener('change', async (e) => {
+      const playerId = e.current?.id;
+      if (!playerId) return;
+      if (window._saveOneSignalId) window._saveOneSignalId(playerId);
+      else window._pendingOneSignalId = playerId;
+    });
+
+    // Also try immediately in case already subscribed
+    const playerId = OneSignal.User.PushSubscription.id;
+    if (playerId) {
+      if (window._saveOneSignalId) window._saveOneSignalId(playerId);
+      else window._pendingOneSignalId = playerId;
+    }
   });
 </script>
 
-  
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: Arial; background: #0f0f0f; color: white; text-align: center; }
 h1 { background: #111; padding: 15px; font-size: clamp(18px, 4vw, 24px); }
 #login, #profile, #settings { display: none; padding: 15px; }
 input { padding: 10px; margin: 5px 0; border-radius: 6px; border: none; width: 100%; max-width: 320px; font-size: 16px; }
-
 button { padding: 10px 18px; margin: 4px; border: 2px solid #333; border-radius: 6px; background: #ffffff; color: #111111; cursor: pointer; font-size: 14px; touch-action: manipulation; font-weight: bold; }
 button:hover { background: #333333; color: #ffffff; }
 button.red { background: #ffffff; color: #cc0000; border: 2px solid #cc0000; }
@@ -80,7 +91,6 @@ button.gray:hover { background: #333; color: #fff; }
 .msg:hover .delbtn { display: inline-block; }
 #cancelImgBtn { background: #fff; color: #cc0000; border: 2px solid #cc0000; padding: 5px 10px; font-size: 12px; font-weight: bold; }
 #cancelImgBtn:hover { background: #cc0000; color: #fff; }
-
 #topBar { display: none; background: #111; padding: 8px 12px; justify-content: flex-end; align-items: center; gap: 6px; flex-wrap: wrap; }
 #topBar button { padding: 7px 12px; font-size: 13px; }
 #verifyBanner { display: none; background: #7a4a00; padding: 10px; font-size: 13px; }
@@ -166,8 +176,6 @@ button.gray:hover { background: #333; color: #fff; }
 #profile, #login { max-width: 360px; margin: 0 auto; }
 #login h2, #profile h2 { margin-bottom: 12px; }
 #sidebarToggle { display: none; }
-
-/* Notification settings styles */
 .notif-toggle-row { display: flex; align-items: center; gap: 12px; margin: 10px 0; padding: 10px; background: #1a1a1a; border-radius: 8px; }
 .notif-toggle-row span { flex: 1; font-size: 14px; color: #ddd; }
 .notif-toggle-row small { display: block; font-size: 11px; color: #888; margin-top: 2px; }
@@ -182,7 +190,6 @@ button.gray:hover { background: #333; color: #fff; }
 #notifPermStatus.denied { background: #2a0a0a; color: #cc0000; border: 1px solid #4a1a1a; }
 #notifPermStatus.default { background: #1a1a2a; color: #aaa; border: 1px solid #333; }
 #notifVapidNote { font-size: 11px; color: #666; margin-top: 6px; line-height: 1.5; }
-
 @media (max-width: 600px) {
   #sidebar { position: fixed; left: -220px; top: 0; height: 100vh; z-index: 500; transition: left 0.2s; padding-top: 60px; }
   #sidebar.open { left: 0; }
@@ -287,47 +294,25 @@ document.addEventListener('click', function(e) {
   <br>
   <button id="btnSaveSettings">Save Changes</button>
   <br><br>
-
   <hr style="border-color:#333; margin: 20px 0;">
   <h3 style="margin-bottom:10px;">Notifications</h3>
-
   <div id="notifPermStatus" class="default">Checking notification permission...</div>
   <button id="btnEnableNotifs" style="display:none; margin: 8px 0;">Enable Notifications</button>
-
   <div id="notifToggles" style="display:none; margin-top:8px;">
     <div class="notif-toggle-row">
-      <div style="flex:1">
-        <span>Mentions</span>
-        <small>When someone @mentions you</small>
-      </div>
-      <label class="toggle-switch">
-        <input type="checkbox" id="notifMentions">
-        <span class="toggle-slider"></span>
-      </label>
+      <div style="flex:1"><span>Mentions</span><small>When someone @mentions you</small></div>
+      <label class="toggle-switch"><input type="checkbox" id="notifMentions"><span class="toggle-slider"></span></label>
     </div>
     <div class="notif-toggle-row">
-      <div style="flex:1">
-        <span>Private messages</span>
-        <small>New messages in DMs</small>
-      </div>
-      <label class="toggle-switch">
-        <input type="checkbox" id="notifDMs">
-        <span class="toggle-slider"></span>
-      </label>
+      <div style="flex:1"><span>Private messages</span><small>New messages in DMs</small></div>
+      <label class="toggle-switch"><input type="checkbox" id="notifDMs"><span class="toggle-slider"></span></label>
     </div>
     <div class="notif-toggle-row">
-      <div style="flex:1">
-        <span>Media in DMs</span>
-        <small>Images and videos sent to you</small>
-      </div>
-      <label class="toggle-switch">
-        <input type="checkbox" id="notifMedia">
-        <span class="toggle-slider"></span>
-      </label>
+      <div style="flex:1"><span>Media in DMs</span><small>Images and videos sent to you</small></div>
+      <label class="toggle-switch"><input type="checkbox" id="notifMedia"><span class="toggle-slider"></span></label>
     </div>
     <p id="notifVapidNote"></p>
   </div>
-
   <hr style="border-color:#333; margin: 20px 0;">
   <h3>Change Password</h3>
   <button id="btnChangePassword">Send Password Reset Email</button>
@@ -425,7 +410,6 @@ import {
   collection, onSnapshot, getDocs, deleteDoc, query, where
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-
 const firebaseConfig = {
   apiKey: "AIzaSyAY49sWaN-DSKV10uyBB3CeOiABLCtFrSI",
   authDomain: "bytestorm-friebase-server.firebaseapp.com",
@@ -451,14 +435,11 @@ const DEFAULT_PFP = "https://www.gravatar.com/avatar/000000000000000000000000000
 const BAD_WORDS = ["fuck", "shit", "ass", "bitch", "bastard"];
 const MENTION_COOLDOWN = 60000;
 const NOTIF_PREFS_KEY = "bytechat_notif_prefs";
-
 const BLOCKED_DOMAINS = [
-  "bit.ly", "tinyurl.com", "goo.gl", "t.co", "ow.ly", "is.gd",
-  "buff.ly", "adf.ly", "sh.st", "linkvertise.com",
-  "pastebin.com", "hastebin.com",
-  "grabify.link", "iplogger.org", "2no.co", "yip.su",
-  "blasze.com", "ipgrabber.ru", "ezstat.ru",
-  "malware.com", "virus.com", "phishing.com"
+  "bit.ly","tinyurl.com","goo.gl","t.co","ow.ly","is.gd","buff.ly","adf.ly",
+  "sh.st","linkvertise.com","pastebin.com","hastebin.com","grabify.link",
+  "iplogger.org","2no.co","yip.su","blasze.com","ipgrabber.ru","ezstat.ru",
+  "malware.com","virus.com","phishing.com"
 ];
 
 const loginDiv = document.getElementById("login");
@@ -498,31 +479,61 @@ let pendingChatFileType = null;
 let swRegistration = null;
 
 // ============================================================
+// ONESIGNAL — save Player ID to Firestore
+// ============================================================
+window._saveOneSignalId = async function(playerId) {
+  if (!auth.currentUser) return;
+  try {
+    await updateDoc(doc(db, "users", auth.currentUser.uid), { oneSignalId: playerId });
+    console.log('[OneSignal] Player ID saved:', playerId);
+  } catch(e) { console.log('[OneSignal] Failed to save player ID:', e); }
+};
+
+function flushPendingOneSignalId() {
+  if (window._pendingOneSignalId) {
+    window._saveOneSignalId(window._pendingOneSignalId);
+    window._pendingOneSignalId = null;
+  }
+}
+
+// ============================================================
+// ONESIGNAL — send push via /api/notify
+// ============================================================
+async function pushNotify(recipientUid, title, message, icon) {
+  try {
+    const recipSnap = await getDoc(doc(db, "users", recipientUid));
+    if (!recipSnap.exists()) return;
+    const playerId = recipSnap.data()?.oneSignalId;
+    if (!playerId) return;
+    await fetch('/api/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ playerIds: [playerId], title, message, icon })
+    });
+  } catch(e) { console.log('Push notify failed:', e); }
+}
+
+// ============================================================
 // NOTIFICATION PREFERENCES
 // ============================================================
 function loadNotifPrefs() {
   try {
     const raw = localStorage.getItem(NOTIF_PREFS_KEY);
-    return raw ? JSON.parse(raw) : { mentions: true, dms: true, media: true, background: false };
-  } catch { return { mentions: true, dms: true, media: true, background: false }; }
+    return raw ? JSON.parse(raw) : { mentions: true, dms: true, media: true };
+  } catch { return { mentions: true, dms: true, media: true }; }
 }
 
 function saveNotifPrefs(prefs) {
   localStorage.setItem(NOTIF_PREFS_KEY, JSON.stringify(prefs));
 }
 
-function getNotifPref(type) {
-  return loadNotifPrefs()[type] !== false;
-}
-
 // ============================================================
-// SERVICE WORKER REGISTRATION — FIXED
+// SERVICE WORKER
 // ============================================================
 async function registerSW() {
   if (!('serviceWorker' in navigator)) return;
   try {
     swRegistration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
-    // If the SW is still installing, wait for it to activate before messaging it
     if (swRegistration.installing) {
       await new Promise(resolve => {
         swRegistration.installing.addEventListener('statechange', function() {
@@ -533,12 +544,8 @@ async function registerSW() {
   } catch(e) { console.log('SW registration failed:', e); }
 }
 
-// ============================================================
-// SW SESSION SYNC
-// ============================================================
 async function syncSessionToSW() {
   if (!auth.currentUser) return;
-  // Register SW first if not already done
   if (!swRegistration) await registerSW();
   if (!swRegistration) return;
   try {
@@ -548,37 +555,26 @@ async function syncSessionToSW() {
     const name = snap.exists() ? snap.data().name : "";
     const prefs = loadNotifPrefs();
     const sw = swRegistration.active;
-    if (sw) {
-      sw.postMessage({
-        type: 'INIT_SESSION',
-        payload: { uid, name, idToken, prefs, startTime: Date.now() }
-      });
-    }
+    if (sw) sw.postMessage({ type: 'INIT_SESSION', payload: { uid, name, idToken, prefs, startTime: Date.now() } });
   } catch(e) { console.log("SW session sync failed:", e); }
 }
 
 function syncPrefsToSW() {
-  if (!swRegistration) return;
-  const sw = swRegistration.active;
-  if (sw) sw.postMessage({ type: 'UPDATE_PREFS', payload: loadNotifPrefs() });
+  if (!swRegistration?.active) return;
+  swRegistration.active.postMessage({ type: 'UPDATE_PREFS', payload: loadNotifPrefs() });
 }
 
 function clearSWSession() {
-  if (!swRegistration) return;
-  const sw = swRegistration.active;
-  if (sw) sw.postMessage({ type: 'CLEAR_SESSION' });
+  if (!swRegistration?.active) return;
+  swRegistration.active.postMessage({ type: 'CLEAR_SESSION' });
 }
 
-// Refresh token every 50 minutes (tokens expire after 60min)
 setInterval(async () => {
   if (auth.currentUser && swRegistration) await syncSessionToSW();
 }, 50 * 60 * 1000);
 
-// Re-sync when user comes back to the tab (handles closed/reopened tabs)
 document.addEventListener('visibilitychange', async () => {
-  if (document.visibilityState === 'visible' && auth.currentUser && swRegistration) {
-    await syncSessionToSW();
-  }
+  if (document.visibilityState === 'visible' && auth.currentUser && swRegistration) await syncSessionToSW();
 });
 
 // ============================================================
@@ -611,7 +607,7 @@ async function checkNotifBanner() {
 }
 
 // ============================================================
-// SEND NOTIFICATION (local, foreground only)
+// FOREGROUND NOTIFICATIONS
 // ============================================================
 function sendLocalNotification(title, body, icon, type = "mentions") {
   const prefs = loadNotifPrefs();
@@ -620,12 +616,9 @@ function sendLocalNotification(title, body, icon, type = "mentions") {
   try {
     if (swRegistration && navigator.serviceWorker.controller) {
       swRegistration.showNotification(title, {
-        body,
-        icon: icon || DEFAULT_PFP,
+        body, icon: icon || DEFAULT_PFP,
         badge: 'https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png',
-        vibrate: [200, 100, 200],
-        tag: title + body,
-        renotify: true,
+        vibrate: [200, 100, 200], tag: title + body, renotify: true,
         data: { url: 'https://bytestormchat.vercel.app' }
       });
     } else {
@@ -646,21 +639,14 @@ function renderNotifSettings() {
   const statusEl = document.getElementById("notifPermStatus");
   const togglesDiv = document.getElementById("notifToggles");
   const enableBtn = document.getElementById("btnEnableNotifs");
-
   if (!("Notification" in window)) {
-    statusEl.className = "denied";
-    statusEl.textContent = "Notifications are not supported in this browser.";
-    enableBtn.style.display = "none";
-    togglesDiv.style.display = "none";
-    return;
+    statusEl.className = "denied"; statusEl.textContent = "Notifications are not supported in this browser.";
+    enableBtn.style.display = "none"; togglesDiv.style.display = "none"; return;
   }
-
   const perm = Notification.permission;
   if (perm === "granted") {
-    statusEl.className = "granted";
-    statusEl.textContent = "✓ Notifications are enabled.";
-    enableBtn.style.display = "none";
-    togglesDiv.style.display = "block";
+    statusEl.className = "granted"; statusEl.textContent = "✓ Notifications are enabled.";
+    enableBtn.style.display = "none"; togglesDiv.style.display = "block";
     const prefs = loadNotifPrefs();
     document.getElementById("notifMentions").checked = prefs.mentions !== false;
     document.getElementById("notifDMs").checked = prefs.dms !== false;
@@ -668,13 +654,10 @@ function renderNotifSettings() {
   } else if (perm === "denied") {
     statusEl.className = "denied";
     statusEl.textContent = "✗ Notifications are blocked. Go to your browser settings and allow notifications for this site, then reload.";
-    enableBtn.style.display = "none";
-    togglesDiv.style.display = "none";
+    enableBtn.style.display = "none"; togglesDiv.style.display = "none";
   } else {
-    statusEl.className = "default";
-    statusEl.textContent = "Notifications are not yet enabled.";
-    enableBtn.style.display = "inline-block";
-    togglesDiv.style.display = "none";
+    statusEl.className = "default"; statusEl.textContent = "Notifications are not yet enabled.";
+    enableBtn.style.display = "inline-block"; togglesDiv.style.display = "none";
   }
 }
 
@@ -694,8 +677,7 @@ document.getElementById("btnEnableNotifs").addEventListener("click", async () =>
     prefs.mentions = document.getElementById("notifMentions").checked;
     prefs.dms = document.getElementById("notifDMs").checked;
     prefs.media = document.getElementById("notifMedia").checked;
-    saveNotifPrefs(prefs);
-    syncPrefsToSW();
+    saveNotifPrefs(prefs); syncPrefsToSW();
   });
 });
 
@@ -716,11 +698,8 @@ function isLinkSafe(url) {
 function processLinks(text) {
   const urlRegex = /(https?:\/\/[^\s<>"]+)/g;
   return text.replace(urlRegex, (url) => {
-    if (isLinkSafe(url)) {
-      return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="safelink">${url}</a>`;
-    } else {
-      return `<span class="unsafelink" title="Blocked: unsafe or shortener link">${url}</span>`;
-    }
+    if (isLinkSafe(url)) return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="safelink">${url}</a>`;
+    else return `<span class="unsafelink" title="Blocked: unsafe or shortener link">${url}</span>`;
   });
 }
 
@@ -762,46 +741,31 @@ function setupDropzone(dropzoneId, fileInputId, previewId, progressId, onUpload)
     if (url) { preview.src = url; preview.style.display = "block"; onUpload(url); }
   });
   input.addEventListener("change", async () => {
-    const file = input.files[0];
-    if (!file) return;
+    const file = input.files[0]; if (!file) return;
     const url = await uploadToCloudinary(file, progress, false);
     if (url) { preview.src = url; preview.style.display = "block"; onUpload(url); }
   });
 }
 
-setupDropzone("profileDropzone", "profileFileInput", "profileDropPreview", "profileUploadProgress", url => { profilePfpUrl = url; });
-setupDropzone("settingsDropzone", "settingsFileInput", "settingsDropPreview", "settingsUploadProgress", url => { settingsPfpUrl = url; });
+setupDropzone("profileDropzone","profileFileInput","profileDropPreview","profileUploadProgress", url => { profilePfpUrl = url; });
+setupDropzone("settingsDropzone","settingsFileInput","settingsDropPreview","settingsUploadProgress", url => { settingsPfpUrl = url; });
 
 document.getElementById("photoBtn").addEventListener("click", () => chatFileInput.click());
 chatFileInput.addEventListener("change", () => {
-  const file = chatFileInput.files[0];
-  if (!file) return;
+  const file = chatFileInput.files[0]; if (!file) return;
   pendingChatFile = file;
   pendingChatFileType = file.type.startsWith("video/") ? "video" : "image";
-  if (pendingChatFileType === "video") {
-    chatImgPreview.style.display = "none";
-    chatImgPreviewName.textContent = "Video: " + file.name;
-  } else {
-    chatImgPreview.src = URL.createObjectURL(file);
-    chatImgPreview.style.display = "block";
-    chatImgPreviewName.textContent = file.name;
-  }
+  if (pendingChatFileType === "video") { chatImgPreview.style.display = "none"; chatImgPreviewName.textContent = "Video: " + file.name; }
+  else { chatImgPreview.src = URL.createObjectURL(file); chatImgPreview.style.display = "block"; chatImgPreviewName.textContent = file.name; }
   chatImgPreviewWrap.style.display = "flex";
 });
 
 document.getElementById("cancelImgBtn").addEventListener("click", () => {
-  pendingChatFile = null;
-  pendingChatFileType = null;
-  chatFileInput.value = "";
-  chatImgPreviewWrap.style.display = "none";
-  chatImgPreview.src = "";
-  chatImgPreview.style.display = "none";
+  pendingChatFile = null; pendingChatFileType = null; chatFileInput.value = "";
+  chatImgPreviewWrap.style.display = "none"; chatImgPreview.src = ""; chatImgPreview.style.display = "none";
 });
 
-function openLightbox(src) {
-  document.getElementById("lightboxImg").src = src;
-  document.getElementById("lightbox").style.display = "flex";
-}
+function openLightbox(src) { document.getElementById("lightboxImg").src = src; document.getElementById("lightbox").style.display = "flex"; }
 
 // ============================================================
 // MENTIONS
@@ -818,9 +782,7 @@ function isMentioned(text, myName) {
 }
 
 function processMessageText(text, myName) {
-  let processed = parseMentions(text, myName);
-  processed = processLinks(processed);
-  return processed;
+  return processLinks(parseMentions(text, myName));
 }
 
 messageInput.addEventListener("input", () => {
@@ -837,8 +799,7 @@ messageInput.addEventListener("input", () => {
     if (filtered.length > 0) {
       mentionDropdown.innerHTML = "";
       filtered.forEach(u => {
-        const div = document.createElement("div");
-        div.className = "mentionOption";
+        const div = document.createElement("div"); div.className = "mentionOption";
         if (!u.isEveryone) { const img = document.createElement("img"); img.src = u.pfp || DEFAULT_PFP; img.onerror = () => img.src = DEFAULT_PFP; div.appendChild(img); }
         const span = document.createElement("span");
         span.textContent = u.isEveryone ? "@everyone (Admin only)" : "@" + u.name;
@@ -885,8 +846,7 @@ function showPage(page) {
     topBar.style.display = "flex"; settingsDiv.style.display = "block";
     document.getElementById("btnBackToChat").style.display = "inline-block";
     document.getElementById("btnOpenSettings").style.display = "none";
-    loadSettingsForm();
-    renderNotifSettings();
+    loadSettingsForm(); renderNotifSettings();
   }
 }
 
@@ -915,10 +875,7 @@ document.getElementById("btnResendVerify").addEventListener("click", async () =>
   try { await sendEmailVerification(auth.currentUser); alert("Verification email sent!"); }
   catch(e) { alert(e.message); }
 });
-document.getElementById("btnLogout").addEventListener("click", () => {
-  clearSWSession();
-  signOut(auth);
-});
+document.getElementById("btnLogout").addEventListener("click", () => { clearSWSession(); signOut(auth); });
 document.getElementById("btnOpenSettings").addEventListener("click", () => showPage("settings"));
 document.getElementById("btnBackToChat").addEventListener("click", () => showPage("chat"));
 
@@ -972,8 +929,7 @@ document.getElementById("btnSaveSettings").addEventListener("click", async () =>
     const uid = auth.currentUser.uid;
     await updateDoc(doc(db, "users", uid), { name, pfp, about });
     await updateAllMessages(uid, name, pfp);
-    alert("Profile updated!");
-    showPage("chat");
+    alert("Profile updated!"); showPage("chat");
   } catch(e) { alert(e.message); }
 });
 
@@ -998,19 +954,14 @@ document.getElementById("btnSend").addEventListener("click", async () => {
     if (ud.muted) { alert("You are muted."); return; }
     if (text && containsBadWord(text)) { messageInput.value = ""; return; }
     if (text && text.includes("@everyone") && auth.currentUser.email !== ADMIN_EMAIL) { alert("Only the admin can use @everyone."); return; }
-
-    if (pendingChatFile && pendingChatFileType === "video" && currentChatId === "global") {
-      alert("Videos can only be sent in private chats.");
-      return;
-    }
+    if (pendingChatFile && pendingChatFileType === "video" && currentChatId === "global") { alert("Videos can only be sent in private chats."); return; }
 
     const now = Date.now();
     const hasMention = /@\w+/.test(text);
     if (hasMention) {
       if (lastMentionTime[uid] && now - lastMentionTime[uid] < MENTION_COOLDOWN) {
         const remaining = Math.ceil((MENTION_COOLDOWN - (now - lastMentionTime[uid])) / 1000);
-        alert(`Please wait ${remaining} seconds before mentioning again.`);
-        return;
+        alert(`Please wait ${remaining} seconds before mentioning again.`); return;
       }
       lastMentionTime[uid] = now;
     }
@@ -1021,21 +972,42 @@ document.getElementById("btnSend").addEventListener("click", async () => {
       const isVideo = pendingChatFileType === "video";
       const fileUrl = await uploadToCloudinary(pendingChatFile, null, isVideo);
       if (!fileUrl) { alert("Upload failed. Try again."); return; }
-      await addDoc(col, {
-        type: isVideo ? "video" : "image",
-        fileUrl,
-        text: text || "",
-        name: ud.name, pfp: ud.pfp, uid, time: Date.now()
-      });
-      pendingChatFile = null;
-      pendingChatFileType = null;
-      chatFileInput.value = "";
-      chatImgPreviewWrap.style.display = "none";
-      chatImgPreview.src = "";
-      chatImgPreview.style.display = "none";
+      await addDoc(col, { type: isVideo ? "video" : "image", fileUrl, text: text || "", name: ud.name, pfp: ud.pfp, uid, time: Date.now() });
+      // Push notify DM recipient about media
+      if (currentChatId !== "global") {
+        const dmSnap = await getDoc(doc(db, "dms", currentChatId));
+        if (dmSnap.exists()) {
+          const otherUid = dmSnap.data().users.find(u => u !== uid);
+          if (otherUid) await pushNotify(otherUid, ud.name, isVideo ? '🎥 Sent a video' : '📷 Sent a photo', ud.pfp);
+        }
+      }
+      pendingChatFile = null; pendingChatFileType = null; chatFileInput.value = "";
+      chatImgPreviewWrap.style.display = "none"; chatImgPreview.src = ""; chatImgPreview.style.display = "none";
     } else {
       await addDoc(col, { type: "text", text, name: ud.name, pfp: ud.pfp, uid, time: Date.now() });
+
+      // Push notify DM recipient
+      if (currentChatId !== "global") {
+        const dmSnap = await getDoc(doc(db, "dms", currentChatId));
+        if (dmSnap.exists()) {
+          const otherUid = dmSnap.data().users.find(u => u !== uid);
+          if (otherUid) await pushNotify(otherUid, ud.name, text, ud.pfp);
+        }
+      }
+
+      // Push notify mentioned users in global chat
+      if (currentChatId === "global" && hasMention) {
+        const mentionedNames = [...text.matchAll(/@(\w+)/g)].map(m => m[1].toLowerCase());
+        const isEveryone = text.toLowerCase().includes('@everyone');
+        for (const u of allUsers) {
+          if (u.uid === uid) continue;
+          if (isEveryone || mentionedNames.includes(u.name.toLowerCase())) {
+            await pushNotify(u.uid, `${ud.name} mentioned you`, text, ud.pfp);
+          }
+        }
+      }
     }
+
     messageInput.value = "";
     mentionDropdown.style.display = "none";
   } catch(e) { alert(e.message); }
@@ -1081,74 +1053,34 @@ function loadMessages() {
         sendNotification(`${m.name} sent a ${m.type}`, "Tap to view", m.pfp || DEFAULT_PFP, "media");
       }
 
-      const div = document.createElement("div");
-      div.className = "msg";
+      const div = document.createElement("div"); div.className = "msg";
       const avatar = document.createElement("img");
-      avatar.className = "avatar";
-      avatar.src = m.pfp || DEFAULT_PFP;
-      avatar.onerror = () => avatar.src = DEFAULT_PFP;
-      avatar.title = m.name;
+      avatar.className = "avatar"; avatar.src = m.pfp || DEFAULT_PFP;
+      avatar.onerror = () => avatar.src = DEFAULT_PFP; avatar.title = m.name;
       avatar.addEventListener("click", () => openUserModal(m.uid));
-      const body = document.createElement("div");
-      body.className = "msgbody";
+      const body = document.createElement("div"); body.className = "msgbody";
 
       if (m.type === "image" && m.fileUrl) {
-        const nameLabel = document.createElement("span");
-        nameLabel.style.cssText = "font-size:12px;color:#aaa;margin-bottom:2px;";
-        nameLabel.textContent = m.name;
-        body.appendChild(nameLabel);
-        const img = document.createElement("img");
-        img.className = "msgimg";
-        img.src = m.fileUrl;
-        img.alt = "Shared image";
-        img.addEventListener("click", () => openLightbox(m.fileUrl));
-        body.appendChild(img);
-        if (m.text) {
-          const caption = document.createElement("span");
-          caption.className = "msgtext" + (m.uid === myUid ? " mine" : "");
-          caption.innerHTML = processMessageText(m.text, myName);
-          body.appendChild(caption);
-        }
-      } else if (m.type === "video" && m.fileUrl) {
-        if (isPrivate) {
-          const nameLabel = document.createElement("span");
-          nameLabel.style.cssText = "font-size:12px;color:#aaa;margin-bottom:2px;";
-          nameLabel.textContent = m.name;
-          body.appendChild(nameLabel);
-          const video = document.createElement("video");
-          video.className = "msgvideo";
-          video.src = m.fileUrl;
-          video.controls = true;
-          video.preload = "metadata";
-          body.appendChild(video);
-          if (m.text) {
-            const caption = document.createElement("span");
-            caption.className = "msgtext" + (m.uid === myUid ? " mine" : "");
-            caption.innerHTML = processMessageText(m.text, myName);
-            body.appendChild(caption);
-          }
-        }
+        const nameLabel = document.createElement("span"); nameLabel.style.cssText = "font-size:12px;color:#aaa;margin-bottom:2px;"; nameLabel.textContent = m.name; body.appendChild(nameLabel);
+        const img = document.createElement("img"); img.className = "msgimg"; img.src = m.fileUrl; img.alt = "Shared image"; img.addEventListener("click", () => openLightbox(m.fileUrl)); body.appendChild(img);
+        if (m.text) { const caption = document.createElement("span"); caption.className = "msgtext" + (m.uid === myUid ? " mine" : ""); caption.innerHTML = processMessageText(m.text, myName); body.appendChild(caption); }
+      } else if (m.type === "video" && m.fileUrl && isPrivate) {
+        const nameLabel = document.createElement("span"); nameLabel.style.cssText = "font-size:12px;color:#aaa;margin-bottom:2px;"; nameLabel.textContent = m.name; body.appendChild(nameLabel);
+        const video = document.createElement("video"); video.className = "msgvideo"; video.src = m.fileUrl; video.controls = true; video.preload = "metadata"; body.appendChild(video);
+        if (m.text) { const caption = document.createElement("span"); caption.className = "msgtext" + (m.uid === myUid ? " mine" : ""); caption.innerHTML = processMessageText(m.text, myName); body.appendChild(caption); }
       } else {
         const text = document.createElement("span");
         let cls = "msgtext";
-        if (m.uid === myUid) cls += " mine";
-        else if (mentioned) cls += " mentioned";
+        if (m.uid === myUid) cls += " mine"; else if (mentioned) cls += " mentioned";
         text.className = cls;
-        if (isPrivate) {
-          text.innerHTML = `<b>${m.name}:</b> ${processMessageText(m.text || "", myName)}`;
-        } else {
-          text.innerHTML = `<b>${m.name}:</b> ${parseMentions(m.text || "", myName)}`;
-        }
+        text.innerHTML = isPrivate ? `<b>${m.name}:</b> ${processMessageText(m.text || "", myName)}` : `<b>${m.name}:</b> ${parseMentions(m.text || "", myName)}`;
         body.appendChild(text);
       }
 
-      div.appendChild(avatar);
-      div.appendChild(body);
+      div.appendChild(avatar); div.appendChild(body);
 
       if (isAdmin || m.uid === myUid) {
-        const delBtn = document.createElement("button");
-        delBtn.className = "delbtn";
-        delBtn.textContent = "X";
+        const delBtn = document.createElement("button"); delBtn.className = "delbtn"; delBtn.textContent = "X";
         delBtn.addEventListener("click", async () => {
           if (!confirm("Delete this message?")) return;
           try {
@@ -1158,7 +1090,6 @@ function loadMessages() {
         });
         div.appendChild(delBtn);
       }
-
       messagesDiv.appendChild(div);
     });
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -1166,7 +1097,7 @@ function loadMessages() {
 }
 
 // ============================================================
-// DM NOTIFICATIONS (foreground listener for new DMs)
+// DM NOTIFICATIONS (foreground)
 // ============================================================
 function listenForDmNotifications() {
   const uid = auth.currentUser.uid;
@@ -1178,8 +1109,7 @@ function listenForDmNotifications() {
         onSnapshot(collection(db, "dms", dmId, "messages"), msgSnap => {
           msgSnap.docChanges().forEach(async msgChange => {
             if (msgChange.type === "added") {
-              const m = msgChange.doc.data();
-              const msgId = msgChange.doc.id;
+              const m = msgChange.doc.data(); const msgId = msgChange.doc.id;
               if (m.uid !== uid && !processedMsgIds.has(msgId) && Date.now() - m.time < 10000) {
                 processedMsgIds.add(msgId);
                 const body = m.type === "image" ? "Sent a photo" : m.type === "video" ? "Sent a video" : m.text;
@@ -1208,16 +1138,11 @@ document.getElementById("btnSendDmRequest").addEventListener("click", async () =
     if (email === auth.currentUser.email.toLowerCase()) { alert("You can't chat with yourself!"); return; }
     const usersSnap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
     if (usersSnap.empty) { alert("No user found with that email."); return; }
-    const targetDoc = usersSnap.docs[0];
-    const targetUid = targetDoc.id;
-    const myUid = auth.currentUser.uid;
-    const dmId = getDmId(myUid, targetUid);
+    const targetDoc = usersSnap.docs[0]; const targetUid = targetDoc.id;
+    const myUid = auth.currentUser.uid; const dmId = getDmId(myUid, targetUid);
     const dmSnap = await getDoc(doc(db, "dms", dmId));
     if (dmSnap.exists() && dmSnap.data().status === "accepted") {
-      alert("You already have a chat with this user!");
-      dmModal.style.display = "none";
-      openDmChat(dmId, targetDoc.data());
-      return;
+      alert("You already have a chat with this user!"); dmModal.style.display = "none"; openDmChat(dmId, targetDoc.data()); return;
     }
     const mySnap = await getDoc(doc(db, "users", myUid));
     await setDoc(doc(db, "dms", dmId), {
@@ -1226,16 +1151,16 @@ document.getElementById("btnSendDmRequest").addEventListener("click", async () =
       requestFromPfp: mySnap.data().pfp, requestFromEmail: auth.currentUser.email,
       createdAt: Date.now()
     });
-    alert("Chat request sent!");
-    dmModal.style.display = "none";
+    // Push notify target about DM request
+    await pushNotify(targetUid, mySnap.data().name, 'Wants to start a private chat with you', mySnap.data().pfp);
+    alert("Chat request sent!"); dmModal.style.display = "none";
   } catch(e) { alert(e.message); }
 });
 
 function openDmChat(dmId, otherUser) {
   currentChatId = dmId;
   const headerImg = document.getElementById("chatHeaderImg");
-  headerImg.src = otherUser.pfp || DEFAULT_PFP;
-  headerImg.style.display = "inline-block";
+  headerImg.src = otherUser.pfp || DEFAULT_PFP; headerImg.style.display = "inline-block";
   document.getElementById("chatHeaderName").textContent = otherUser.name;
   loadMessages();
   document.querySelectorAll(".convItem").forEach(el => el.classList.remove("active"));
@@ -1257,8 +1182,7 @@ function loadSidebar() {
   const uid = auth.currentUser.uid;
   convList.innerHTML = "";
   const globalItem = document.createElement("div");
-  globalItem.className = "convItem active";
-  globalItem.dataset.id = "global";
+  globalItem.className = "convItem active"; globalItem.dataset.id = "global";
   globalItem.innerHTML = `
     <div style="width:32px;height:32px;border-radius:50%;background:#333;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;font-weight:bold;color:white;">G</div>
     <div class="convInfo"><div class="convName">Global Chat</div><div class="convPreview">Everyone</div></div>`;
@@ -1267,16 +1191,12 @@ function loadSidebar() {
   onSnapshot(query(collection(db, "dms"), where("users", "array-contains", uid)), async snap => {
     convList.querySelectorAll(".convItem:not([data-id='global'])").forEach(el => el.remove());
     for (const d of snap.docs) {
-      const dm = d.data();
-      if (dm.status !== "accepted") continue;
+      const dm = d.data(); if (dm.status !== "accepted") continue;
       const otherUid = dm.users.find(u => u !== uid);
       const otherSnap = await getDoc(doc(db, "users", otherUid));
       if (!otherSnap.exists()) continue;
-      const other = otherSnap.data();
-      const dmId = d.id;
-      const item = document.createElement("div");
-      item.className = "convItem";
-      item.dataset.id = dmId;
+      const other = otherSnap.data(); const dmId = d.id;
+      const item = document.createElement("div"); item.className = "convItem"; item.dataset.id = dmId;
       item.innerHTML = `
         <img src="${other.pfp || DEFAULT_PFP}" onerror="this.src='${DEFAULT_PFP}'">
         <div class="convInfo"><div class="convName">${other.name}</div><div class="convPreview">${other.email}</div></div>
@@ -1293,8 +1213,7 @@ async function checkPendingRequests() {
   const snap = await getDocs(query(collection(db, "dms"), where("users", "array-contains", uid), where("status", "==", "pending")));
   pendingRequests = [];
   snap.forEach(d => { const dm = d.data(); if (dm.requestFrom !== uid) pendingRequests.push({ id: d.id, ...dm }); });
-  currentRequestIndex = 0;
-  showNextRequest();
+  currentRequestIndex = 0; showNextRequest();
 }
 
 function showNextRequest() {
@@ -1309,9 +1228,7 @@ document.getElementById("btnAcceptReq").addEventListener("click", async () => {
   try {
     const req = pendingRequests[currentRequestIndex];
     await updateDoc(doc(db, "dms", req.id), { status: "accepted" });
-    requestModal.style.display = "none";
-    currentRequestIndex++;
-    showNextRequest();
+    requestModal.style.display = "none"; currentRequestIndex++; showNextRequest();
   } catch(e) { alert(e.message); }
 });
 
@@ -1319,9 +1236,7 @@ document.getElementById("btnDenyReq").addEventListener("click", async () => {
   try {
     const req = pendingRequests[currentRequestIndex];
     await deleteDoc(doc(db, "dms", req.id));
-    requestModal.style.display = "none";
-    currentRequestIndex++;
-    showNextRequest();
+    requestModal.style.display = "none"; currentRequestIndex++; showNextRequest();
   } catch(e) { alert(e.message); }
 });
 
@@ -1334,62 +1249,43 @@ modal.addEventListener("click", e => { if (e.target === modal) { modal.style.dis
 document.getElementById("btnModalDM").addEventListener("click", async () => {
   if (!currentModalUid) return;
   modal.style.display = "none";
-  const uid = auth.currentUser.uid;
-  const dmId = getDmId(uid, currentModalUid);
+  const uid = auth.currentUser.uid; const dmId = getDmId(uid, currentModalUid);
   const dmSnap = await getDoc(doc(db, "dms", dmId));
   if (dmSnap.exists() && dmSnap.data().status === "accepted") {
-    const otherSnap = await getDoc(doc(db, "users", currentModalUid));
-    openDmChat(dmId, otherSnap.data());
+    const otherSnap = await getDoc(doc(db, "users", currentModalUid)); openDmChat(dmId, otherSnap.data());
   } else {
     const otherSnap = await getDoc(doc(db, "users", currentModalUid));
-    document.getElementById("dmEmail").value = otherSnap.exists() ? otherSnap.data().email : "";
-    dmModal.style.display = "flex";
+    document.getElementById("dmEmail").value = otherSnap.exists() ? otherSnap.data().email : ""; dmModal.style.display = "flex";
   }
 });
 
 document.getElementById("btnModalBan").addEventListener("click", async () => {
   if (!currentModalUid) return;
-  const userRef = doc(db, "users", currentModalUid);
-  const snap = await getDoc(userRef);
-  const banned = snap.data().banned;
+  const userRef = doc(db, "users", currentModalUid); const snap = await getDoc(userRef); const banned = snap.data().banned;
   await updateDoc(userRef, { banned: !banned });
-  if (!banned) {
-    const q = query(collection(db, "messages"), where("uid", "==", currentModalUid));
-    const msgSnap = await getDocs(q);
-    msgSnap.forEach(async d => await deleteDoc(d.ref));
-  }
-  alert(banned ? "User unbanned." : "User banned and messages deleted.");
-  modal.style.display = "none";
-  loadAdminUsers();
+  if (!banned) { const q = query(collection(db, "messages"), where("uid", "==", currentModalUid)); const msgSnap = await getDocs(q); msgSnap.forEach(async d => await deleteDoc(d.ref)); }
+  alert(banned ? "User unbanned." : "User banned and messages deleted."); modal.style.display = "none"; loadAdminUsers();
 });
 
 document.getElementById("btnModalMute").addEventListener("click", async () => {
   if (!currentModalUid) return;
-  const userRef = doc(db, "users", currentModalUid);
-  const snap = await getDoc(userRef);
-  const muted = snap.data().muted;
+  const userRef = doc(db, "users", currentModalUid); const snap = await getDoc(userRef); const muted = snap.data().muted;
   await updateDoc(userRef, { muted: !muted });
-  alert(muted ? "User unmuted." : "User muted.");
-  modal.style.display = "none";
-  loadAdminUsers();
+  alert(muted ? "User unmuted." : "User muted."); modal.style.display = "none"; loadAdminUsers();
 });
 
 document.getElementById("btnModalDeleteMsgs").addEventListener("click", async () => {
   if (!currentModalUid) return;
   if (!confirm("Delete all messages from this user?")) return;
   const q = query(collection(db, "messages"), where("uid", "==", currentModalUid));
-  const snap = await getDocs(q);
-  snap.forEach(async d => await deleteDoc(d.ref));
-  alert("Messages deleted.");
-  modal.style.display = "none";
+  const snap = await getDocs(q); snap.forEach(async d => await deleteDoc(d.ref));
+  alert("Messages deleted."); modal.style.display = "none";
 });
 
 async function openUserModal(uid) {
   try {
-    const snap = await getDoc(doc(db, "users", uid));
-    if (!snap.exists()) return;
-    const u = snap.data();
-    currentModalUid = uid;
+    const snap = await getDoc(doc(db, "users", uid)); if (!snap.exists()) return;
+    const u = snap.data(); currentModalUid = uid;
     document.getElementById("modalPfp").src = u.pfp || DEFAULT_PFP;
     document.getElementById("modalName").textContent = u.name;
     document.getElementById("modalEmail").textContent = "Email: " + (u.email || "Unknown");
@@ -1417,15 +1313,12 @@ document.getElementById("btnClearChat").addEventListener("click", async () => {
 document.getElementById("btnRefreshUsers").addEventListener("click", loadAdminUsers);
 
 async function loadAdminUsers() {
-  const list = document.getElementById("adminUserList");
-  list.innerHTML = "<p>Loading...</p>";
+  const list = document.getElementById("adminUserList"); list.innerHTML = "<p>Loading...</p>";
   try {
-    const snap = await getDocs(collection(db, "users"));
-    list.innerHTML = "";
+    const snap = await getDocs(collection(db, "users")); list.innerHTML = "";
     snap.forEach(d => {
       const u = d.data(); const uid = d.id;
-      const div = document.createElement("div");
-      div.className = "adminUser";
+      const div = document.createElement("div"); div.className = "adminUser";
       div.innerHTML = `
         <img src="${u.pfp || DEFAULT_PFP}" onerror="this.src='${DEFAULT_PFP}'">
         <div class="info"><b>${u.name}</b>${u.banned ? '<span class="badge banned">Banned</span>' : ''}${u.muted ? '<span class="badge muted">Muted</span>' : ''}<span>${u.email}</span></div>
@@ -1450,13 +1343,11 @@ window._toggleMute = async (uid, muted) => { await updateDoc(doc(db, "users", ui
 window._deleteUserMsgs = async uid => {
   if (!confirm("Delete all messages from this user?")) return;
   const q = query(collection(db, "messages"), where("uid", "==", uid));
-  const snap = await getDocs(q);
-  snap.forEach(async d => await deleteDoc(d.ref));
-  alert("Done.");
+  const snap = await getDocs(q); snap.forEach(async d => await deleteDoc(d.ref)); alert("Done.");
 };
 
 // ============================================================
-// APP INIT — FIXED
+// APP INIT
 // ============================================================
 function loadApp() {
   if (auth.currentUser.email === ADMIN_EMAIL) isAdmin = true;
@@ -1468,7 +1359,7 @@ function loadApp() {
   listenForDmNotifications();
   checkNotifBanner();
   if (isAdmin) loadAdminUsers();
-  // Register SW first, then sync session — no more raw setTimeout
+  flushPendingOneSignalId();
   registerSW().then(() => syncSessionToSW());
 }
 
