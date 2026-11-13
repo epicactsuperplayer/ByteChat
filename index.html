@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ByteChat</title>
 
-<meta name="description" content="ByteChat - A realtime chat platform by Bytestorm Corporation. Chat globally or privately with other users.">
+<meta name="description" content="ByteChat - A realtime chat platform by Bytestorm Technologies. Chat globally or privately with other users.">
 <meta name="keywords" content="ByteChat, Bytestorm, chat, messaging, realtime chat, private chat">
-<meta name="author" content="Bytestorm Corporation">
+<meta name="author" content="Bytestorm Technologies">
 <meta name="robots" content="index, follow">
 <meta property="og:title" content="ByteChat">
-<meta property="og:description" content="Real time chat platform by Bytestorm Corporation.">
+<meta property="og:description" content="Real time chat platform by Bytestorm Technologies.">
 <meta property="og:image" content="https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png">
 <meta property="og:url" content="https://bytestormchat.vercel.app">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ByteChat">
-<meta name="twitter:description" content="Real-time chat platform by Bytestorm Corporation.">
+<meta name="twitter:description" content="Real-time chat platform by Bytestorm Technologies.">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png">
 <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png">
 <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png">
@@ -198,6 +198,20 @@ button.gray:hover { background: #333; color: #fff; }
   .convItem .removeBtn { display: inline-block; }
   .msg .msgimg, .msg .msgvideo { max-width: 200px; }
 }
+#legalModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; padding: 15px; }
+#legalModal.open { display: flex; }
+#legalBox { position: relative; background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 24px; width: 100%; max-width: 560px; max-height: 85vh; overflow-y: auto; text-align: left; }
+#legalBox h2 { font-size: 24px; margin-bottom: 4px; padding-right: 30px; }
+#legalBox .legalSub { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #888; margin-bottom: 22px; }
+#legalBox h4 { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #888; margin-bottom: 6px; }
+#legalBox .legalSec { margin-bottom: 20px; }
+#legalBox p { font-size: 14px; color: #ccc; line-height: 1.7; }
+#legalBox a { color: #00aaff; }
+#legalBox .legalFoot { font-size: 12px; color: #888; line-height: 1.6; border-top: 1px solid #333; padding-top: 16px; }
+#legalClose { position: absolute; top: 10px; right: 10px; margin: 0; padding: 2px 10px; font-size: 22px; line-height: 1.2; background: transparent; color: #aaa; border: none; }
+#legalClose:hover { color: #fff; background: transparent; }
+.legalLink { color: #888; font-size: 12px; text-decoration: underline; cursor: pointer; }
+.legalLink:hover { color: #00aaff; }
 </style>
 </head>
 <body>
@@ -205,9 +219,9 @@ button.gray:hover { background: #333; color: #fff; }
 <div id="hamburgerWrap">
   <div id="hamburgerBtn" onclick="toggleNav()">&#9776;</div>
   <div id="byteNav">
-    <a href="https://bytestormcorp.vercel.app" target="_blank">
+    <a href="https://bytestormtech.vercel.app" target="_blank">
       <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width="20" height="20"><text y='.9em' font-size='90' font-family='sans-serif' fill='white'>B</text></svg>
-      Bytestorm Corporation
+      Bytestorm Technologies
     </a>
     <a href="https://bytestorm-esports.vercel.app" target="_blank">
       <img src="https://raw.githubusercontent.com/epicactsuperplayer/Bytestorm-Esports/main/ByteEsportLogo.png" width="20" height="20" style="border-radius:3px;">
@@ -221,6 +235,10 @@ button.gray:hover { background: #333; color: #fff; }
       <img src="https://raw.githubusercontent.com/epicactsuperplayer/ByteChat/main/Bytestorm%20Logo.png" width="20" height="20" style="border-radius:3px;">
       ByteChat
     </a>
+    <a href="#" id="legalMenuLink" onclick="openLegal(); return false;">
+      <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width="20" height="20"><text x='50' y='.9em' text-anchor='middle' font-size='90' font-family='sans-serif' fill='white'>&#167;</text></svg>
+      Legal Notice
+    </a>
   </div>
 </div>
 
@@ -232,6 +250,75 @@ function toggleNav() {
 document.addEventListener('click', function(e) {
   const wrap = document.getElementById('hamburgerWrap');
   if (!wrap.contains(e.target)) document.getElementById('byteNav').style.display = 'none';
+});
+</script>
+
+<div id="legalModal" onclick="if(event.target===this)closeLegal()" role="dialog" aria-modal="true" aria-labelledby="legalTitle">
+  <div id="legalBox">
+    <button id="legalClose" onclick="closeLegal()" aria-label="Close">&times;</button>
+    <h2 id="legalTitle">Legal Notice</h2>
+    <p class="legalSub">Impressum gem&auml;&szlig; &sect; 5 ECG &amp; &sect; 25 MedienG</p>
+
+    <div class="legalSec">
+      <h4>Operator &amp; Media Owner</h4>
+      <p>Bytestorm Technologies<br>ByteChat<br>Austria</p>
+    </div>
+
+    <div class="legalSec">
+      <h4>Contact</h4>
+      <p><a href="mailto:bytestorm.corp@gmail.com">bytestorm.corp@gmail.com</a></p>
+    </div>
+
+    <div class="legalSec">
+      <h4>Purpose of this Website</h4>
+      <p>ByteChat is a real-time chat platform operated by Bytestorm Technologies. Registered users can chat in a global chat or privately with other users. No goods or services are sold on this website.</p>
+    </div>
+
+    <div class="legalSec">
+      <h4>User Content</h4>
+      <p>Messages, images, videos and profile information are posted by users, who are solely responsible for their own content. Content that is unlawful or violates the rights of others may be removed and the responsible accounts muted or banned. To report content or an account, please contact us by e-mail.</p>
+    </div>
+
+    <div class="legalSec">
+      <h4>Data &amp; Third-Party Services</h4>
+      <p>To provide the service, ByteChat stores account data (e-mail address, display name, profile picture and messages) using Google Firebase, and stores uploaded media with Cloudinary. Push notifications are delivered via OneSignal, and usage statistics are collected with Google Analytics and Vercel Analytics. Notifications are optional and can be switched off in Settings.</p>
+    </div>
+
+    <div class="legalSec">
+      <h4>Content Responsibility</h4>
+      <p>Responsible for the content provided by the operator pursuant to &sect; 18 ECG: Bytestorm Technologies, Austria.</p>
+    </div>
+
+    <div class="legalSec">
+      <h4>Liability Disclaimer</h4>
+      <p>Despite careful content control, we assume no liability for the content of external links or for content posted by users. The operators of linked pages are solely responsible for their content.</p>
+    </div>
+
+    <div class="legalSec">
+      <h4>Copyright</h4>
+      <p>The design, logos and software of ByteChat are the property of Bytestorm Technologies unless otherwise stated. Content uploaded by users remains the responsibility of the respective user. Reproduction or distribution without prior written consent is prohibited.</p>
+    </div>
+
+    <div class="legalSec">
+      <h4>Online Dispute Resolution</h4>
+      <p>The European Commission provides a platform for online dispute resolution (ODR): <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr</a></p>
+    </div>
+
+    <p class="legalFoot">Last updated: November 2026. Bytestorm Technologies is a private, non-commercial organization based in Austria.</p>
+  </div>
+</div>
+
+<script>
+function openLegal() {
+  document.getElementById('byteNav').style.display = 'none';
+  document.getElementById('legalModal').classList.add('open');
+  document.getElementById('legalBox').scrollTop = 0;
+}
+function closeLegal() {
+  document.getElementById('legalModal').classList.remove('open');
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeLegal();
 });
 </script>
 
@@ -263,6 +350,8 @@ document.addEventListener('click', function(e) {
   <br><br>
   <input id="resetEmail" placeholder="Email for reset" type="email">
   <button id="btnReset">Forgot Password</button>
+  <br><br>
+  <a class="legalLink" href="#" onclick="openLegal(); return false;">Legal Notice</a>
 </div>
 
 <div id="profile">
