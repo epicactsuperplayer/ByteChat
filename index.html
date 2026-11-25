@@ -66,22 +66,23 @@ gtag('config', 'G-TKJ9JKK7ZF');
   });
 </script>
 
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("bytechat_theme")||"dark"}catch(e){}</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-:root{--bg-primary:#121212;--bg-secondary:#1e1e1e;--bg-tertiary:#2d2d2d;--text-primary:#e0e0e0;--muted:rgba(255,255,255,.6);--line:rgba(255,255,255,.06);--accent:#ffffff;--accent-hover:#d4d4d4;--danger:#ffffff;--warning:#ffffff;--info:#ffffff}
+:root{--bg-primary:#121212;--bg-secondary:#1e1e1e;--bg-tertiary:#2d2d2d;--text-primary:#e0e0e0;--muted:rgba(var(--tint),.6);--line:rgba(var(--tint),.06);--tint:255,255,255;--strong:#fff;--on-accent:#111;--bg-hover:#3a3a3a;--track:#555;--accent:#fff;--accent-hover:#d4d4d4;--danger:var(--accent);--warning:var(--accent);--info:var(--accent);color-scheme:dark}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
 body{background:var(--bg-primary);color:var(--text-primary);font-family:'Segoe UI',system-ui,Arial,sans-serif;overflow:hidden}
 button,input{font:inherit;color:inherit}
-button{cursor:pointer;border:none;border-radius:8px;padding:10px 16px;background:var(--accent);color:#111;font-weight:600;transition:background-color .2s,transform .1s}
+button{cursor:pointer;border:none;border-radius:8px;padding:10px 16px;background:var(--accent);color:var(--on-accent);font-weight:600;transition:background-color .2s,transform .1s}
 button:hover{background:var(--accent-hover)}
 button:active{transform:scale(.97)}
 button.ghost{background:var(--bg-tertiary);color:var(--text-primary)}
-button.ghost:hover{background:#3a3a3a}
-button.red{background:transparent;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.5)}
-button.red:hover{background:#fff;color:#111}
+button.ghost:hover{background:var(--bg-hover)}
+button.red{background:transparent;color:var(--strong);box-shadow:inset 0 0 0 1px rgba(var(--tint),.5)}
+button.red:hover{background:var(--accent);color:var(--on-accent)}
 input[type=text],input[type=email],input[type=password]{width:100%;margin:6px 0;padding:12px 15px;border:none;border-radius:8px;background:var(--bg-tertiary);color:var(--text-primary);font-size:1em}
-input::placeholder{color:rgba(255,255,255,.4)}
+input::placeholder{color:rgba(var(--tint),.4)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 input:focus{outline:2px solid var(--accent)}
 .muted{color:var(--muted)}
@@ -102,14 +103,14 @@ input:focus{outline:2px solid var(--accent)}
 /* shell */
 #shell{display:none;height:100vh;height:100dvh}
 #sidebar{width:270px;flex-shrink:0;background:var(--bg-secondary);display:flex;flex-direction:column;padding:20px 14px;box-shadow:2px 0 10px rgba(0,0,0,.2);z-index:20}
-.userCard{display:flex;align-items:center;gap:10px;padding:12px;border-radius:8px;background:rgba(255,255,255,.05);margin-bottom:14px}
+.userCard{display:flex;align-items:center;gap:10px;padding:12px;border-radius:8px;background:rgba(var(--tint),.05);margin-bottom:14px}
 .userCard img{width:42px;height:42px;border-radius:50%;object-fit:cover;flex-shrink:0;background:var(--bg-tertiary)}
 .userInfo{flex:1;min-width:0}
 #sbName{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .userStatus{font-size:.8em;color:var(--muted);display:flex;align-items:center;gap:6px}
 .userStatus i{width:7px;height:7px;border-radius:50%;background:var(--accent)}
 .iconBtn{background:transparent;color:var(--danger);padding:8px;width:auto;font-size:1.1em}
-.iconBtn:hover{background:rgba(255,255,255,0.08)}
+.iconBtn:hover{background:rgba(var(--tint),0.08)}
 #sidebarToggle{display:none;color:var(--text-primary)}
 #sidebarToggle:hover{background:var(--bg-tertiary)}
 .newChat{width:100%;margin-bottom:6px}
@@ -117,29 +118,29 @@ input:focus{outline:2px solid var(--accent)}
 #convList{flex:1;min-height:0;overflow-y:auto}
 .navItem,.convItem{display:flex;align-items:center;gap:10px;width:100%;padding:11px 14px;margin:3px 0;border-radius:8px;background:none;color:var(--text-primary);font-weight:500;text-align:left;cursor:pointer;position:relative;border:none}
 .navItem::before,.convItem::before{content:'';position:absolute;left:0;top:0;height:100%;width:3px;border-radius:3px;background:var(--accent);transform:scaleY(0);transition:transform .2s}
-.navItem:hover,.navItem.active,.convItem:hover,.convItem.active{background:rgba(255,255,255,0.07);color:var(--accent)}
+.navItem:hover,.navItem.active,.convItem:hover,.convItem.active{background:rgba(var(--tint),0.07);color:var(--accent)}
 .navItem.active::before,.convItem.active::before,.navItem:hover::before,.convItem:hover::before{transform:scaleY(1)}
 .navItem i{width:18px;text-align:center}
 .convItem img,.globalIcon{width:34px;height:34px;border-radius:50%;object-fit:cover;flex-shrink:0}
-.globalIcon{background:rgba(255,255,255,0.14);color:var(--accent);display:flex;align-items:center;justify-content:center}
+.globalIcon{background:rgba(var(--tint),0.14);color:var(--accent);display:flex;align-items:center;justify-content:center}
 .convInfo{flex:1;min-width:0}
 .convName{font-size:.95em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .convPreview{font-size:.75em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.convItem .removeBtn{display:none;background:rgba(255,255,255,0.10);color:var(--danger);padding:4px 8px;font-size:.7em}
+.convItem .removeBtn{display:none;background:rgba(var(--tint),0.10);color:var(--danger);padding:4px 8px;font-size:.7em}
 .convItem:hover .removeBtn{display:inline-block}
 .sbLinks{border-top:1px solid var(--line);padding-top:10px;margin-top:8px}
 .sbLinks a{display:flex;align-items:center;gap:10px;padding:6px 12px;border-radius:6px;color:var(--muted);font-size:.82em;text-decoration:none}
-.sbLinks a:hover{color:var(--accent);background:rgba(255,255,255,0.06)}
+.sbLinks a:hover{color:var(--accent);background:rgba(var(--tint),0.06)}
 .sbLinks img{width:16px;height:16px;border-radius:3px}
 .sbLinks i{width:16px;text-align:center}
 
 #main{flex:1;min-width:0;display:flex;flex-direction:column;height:100%}
 #topBar{display:flex;align-items:center;gap:10px;padding:20px 24px 16px}
 .searchBar{position:relative;flex:1}
-.searchBar i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.5)}
+.searchBar i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:rgba(var(--tint),.5)}
 .searchBar input{margin:0;padding-left:44px;background:var(--bg-secondary);border-radius:10px}
-#verifyBanner,#notifBanner{display:none;margin:0 24px 12px;padding:11px 16px;border-radius:10px;font-size:.88em;background:rgba(255,255,255,0.08);color:var(--warning)}
-#notifBanner{cursor:pointer;background:rgba(255,255,255,0.08);color:var(--info)}
+#verifyBanner,#notifBanner{display:none;margin:0 24px 12px;padding:11px 16px;border-radius:10px;font-size:.88em;background:rgba(var(--tint),0.08);color:var(--warning)}
+#notifBanner{cursor:pointer;background:rgba(var(--tint),0.08);color:var(--info)}
 #verifyBanner button{width:auto;padding:4px 12px;margin-left:8px;font-size:.9em}
 #content{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 24px 24px}
 #appLayout{flex:1;min-height:0;display:none}
@@ -156,15 +157,15 @@ input:focus{outline:2px solid var(--accent)}
 .msgmeta{display:flex;gap:8px;align-items:baseline;font-size:.78em;color:var(--muted)}
 .msgmeta b{color:var(--text-primary);font-size:1.08em}
 .msgtext{background:var(--bg-tertiary);padding:9px 13px;border-radius:4px 14px 14px 14px;line-height:1.45;word-break:break-word;text-align:left;max-width:100%}
-.msgtext.mine{background:rgba(255,255,255,0.14);border-radius:14px 4px 14px 14px}
-.msgtext.mentioned{background:rgba(255,255,255,0.10);box-shadow:inset 3px 0 0 var(--warning)}
+.msgtext.mine{background:rgba(var(--tint),0.14);border-radius:14px 4px 14px 14px}
+.msgtext.mentioned{background:rgba(var(--tint),0.10);box-shadow:inset 3px 0 0 var(--warning)}
 .msgimg,.msgvideo{max-width:280px;max-height:300px;border-radius:12px;display:block;object-fit:cover;cursor:pointer;background:#000}
 .msgvideo{cursor:auto}
-.msg .safelink{color:#fff;text-decoration:underline;word-break:break-all}
+.msg .safelink{color:var(--strong);text-decoration:underline;word-break:break-all}
 .msg .unsafelink{color:var(--muted);text-decoration:line-through;font-size:.85em}
 .mention{color:var(--accent);font-weight:600}
 .msg .delbtn{display:none;background:transparent;color:var(--danger);padding:6px 8px;font-size:.8em;align-self:center}
-.msg .delbtn:hover{background:rgba(255,255,255,0.10)}
+.msg .delbtn:hover{background:rgba(var(--tint),0.10)}
 .msg:hover .delbtn{display:inline-block}
 #chatImgPreviewWrap{display:none;align-items:center;gap:10px;padding:8px 16px;border-top:1px solid var(--line)}
 #chatImgPreview{width:56px;height:56px;object-fit:cover;border-radius:8px}
@@ -173,12 +174,12 @@ input:focus{outline:2px solid var(--accent)}
 #chatInputRow{display:flex;gap:10px;align-items:center;padding:14px 16px;border-top:1px solid var(--line);position:relative}
 #chatInputRow input[type=text]{flex:1;margin:0;border-radius:24px;padding:12px 18px}
 #chatFileInput{display:none}
-#photoBtn{width:44px;height:44px;border-radius:50%;padding:0;background:var(--bg-tertiary);color:#fff;font-size:1.05em;flex-shrink:0}
-#photoBtn:hover{background:#3a3a3a}
+#photoBtn{width:44px;height:44px;border-radius:50%;padding:0;background:var(--bg-tertiary);color:var(--strong);font-size:1.05em;flex-shrink:0}
+#photoBtn:hover{background:var(--bg-hover)}
 #btnSend{border-radius:24px;padding:12px 20px;flex-shrink:0}
 #mentionDropdown{display:none;position:absolute;bottom:72px;left:60px;background:var(--bg-tertiary);border-radius:10px;max-height:200px;overflow-y:auto;z-index:100;min-width:220px;box-shadow:0 8px 20px rgba(0,0,0,.4)}
 .mentionOption{padding:9px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:.9em}
-.mentionOption:hover{background:rgba(255,255,255,0.10);color:var(--accent)}
+.mentionOption:hover{background:rgba(var(--tint),0.10);color:var(--accent)}
 .mentionOption img{width:24px;height:24px;border-radius:50%;object-fit:cover}
 
 /* settings + admin */
@@ -187,8 +188,8 @@ input:focus{outline:2px solid var(--accent)}
 .panel h2,.panel h3{margin-bottom:14px}
 .panel label.fl{display:block;margin:14px 0 4px;color:var(--muted);font-size:.85em}
 .panel>button{margin-top:12px}
-.dropzone{border:2px dashed #444;border-radius:12px;padding:20px;text-align:center;cursor:pointer;color:var(--muted);font-size:.88em;transition:border-color .2s,background .2s}
-.dropzone:hover,.dropzone.dragover{border-color:var(--accent);background:rgba(255,255,255,0.04)}
+.dropzone{border:2px dashed rgba(var(--tint),.25);border-radius:12px;padding:20px;text-align:center;cursor:pointer;color:var(--muted);font-size:.88em;transition:border-color .2s,background .2s}
+.dropzone:hover,.dropzone.dragover{border-color:var(--accent);background:rgba(var(--tint),0.04)}
 .dropzone img{width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 8px;display:none;border:2px solid var(--accent)}
 .dropzone input[type=file]{display:none}
 .uploadProgress{display:none;font-size:.8em;color:var(--accent);margin-top:6px}
@@ -196,14 +197,14 @@ input:focus{outline:2px solid var(--accent)}
 .notif-toggle-row small{display:block;font-size:.78em;color:var(--muted);margin-top:2px}
 .toggle-switch{position:relative;width:44px;height:24px;flex-shrink:0}
 .toggle-switch input{opacity:0;width:0;height:0}
-.toggle-slider{position:absolute;inset:0;background:#555;border-radius:24px;cursor:pointer;transition:.2s}
+.toggle-slider{position:absolute;inset:0;background:var(--track);border-radius:24px;cursor:pointer;transition:.2s}
 .toggle-slider:before{content:"";position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
 .toggle-switch input:checked+.toggle-slider{background:var(--accent)}
-.toggle-switch input:checked+.toggle-slider:before{transform:translateX(20px);background:#111}
+.toggle-switch input:checked+.toggle-slider:before{transform:translateX(20px);background:var(--on-accent)}
 .toggle-switch input:focus-visible+.toggle-slider{outline:2px solid var(--accent);outline-offset:2px}
 #notifPermStatus{font-size:.88em;margin:8px 0;padding:10px 14px;border-radius:8px}
-#notifPermStatus.granted{background:rgba(255,255,255,0.08);color:var(--accent)}
-#notifPermStatus.denied{box-shadow:inset 3px 0 0 #fff;background:rgba(255,255,255,0.08);color:var(--danger)}
+#notifPermStatus.granted{background:rgba(var(--tint),0.08);color:var(--accent)}
+#notifPermStatus.denied{box-shadow:inset 3px 0 0 var(--accent);background:rgba(var(--tint),0.08);color:var(--danger)}
 #notifPermStatus.default{background:var(--bg-tertiary);color:var(--muted)}
 #notifVapidNote{font-size:.75em;color:var(--muted)}
 .adminBar{display:flex;gap:8px;margin-bottom:14px}
@@ -211,14 +212,14 @@ input:focus{outline:2px solid var(--accent)}
 .adminUser img{width:36px;height:36px;border-radius:50%;object-fit:cover}
 .adminUser .info{flex:1;min-width:120px;font-size:.9em}
 .adminUser .info span{display:block;color:var(--muted);font-size:.8em}
-.adminUser .info .badge{display:inline-block;margin-left:6px;color:#fff}
+.adminUser .info .badge{display:inline-block;margin-left:6px;color:var(--strong)}
 .adminUser .btns{display:flex;flex-wrap:wrap;gap:6px}
 .adminUser .btns button{padding:6px 10px;font-size:.8em;background:var(--bg-tertiary);color:var(--text-primary)}
-.adminUser .btns button:hover{background:#3a3a3a}
-.adminUser .btns button.red{background:transparent;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.5)}
-.adminUser .btns button.red:hover{background:#fff;color:#111}
+.adminUser .btns button:hover{background:var(--bg-hover)}
+.adminUser .btns button.red{background:transparent;color:var(--strong);box-shadow:inset 0 0 0 1px rgba(var(--tint),.5)}
+.adminUser .btns button.red:hover{background:var(--accent);color:var(--on-accent)}
 .badge{font-size:.7em;padding:2px 8px;border-radius:10px}
-.badge.banned{background:#fff;color:#111!important}
+.badge.banned{background:var(--accent);color:var(--on-accent)!important}
 .badge.muted{background:#666}
 
 /* modals */
@@ -237,11 +238,11 @@ input:focus{outline:2px solid var(--accent)}
 #legalBox .legalSub{font-size:.8em;color:var(--muted);margin-bottom:20px}
 #legalBox h4{font-size:.85em;color:var(--accent);margin-bottom:4px}
 #legalBox .legalSec{margin-bottom:18px}
-#legalBox p{font-size:.9em;color:#ccc;line-height:1.7}
-#legalBox a{color:#fff}
+#legalBox p{font-size:.9em;color:rgba(var(--tint),.8);line-height:1.7}
+#legalBox a{color:var(--strong)}
 #legalBox .legalFoot{font-size:.8em;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
 #legalClose{position:absolute;top:10px;right:10px;padding:2px 12px;font-size:1.5em;line-height:1.2;background:transparent;color:var(--muted)}
-#legalClose:hover{background:transparent;color:#fff}
+#legalClose:hover{background:transparent;color:var(--strong)}
 
 @media(max-width:760px){
   #sidebar{position:fixed;left:-290px;top:0;bottom:0;width:280px;transition:left .25s}
@@ -267,15 +268,15 @@ input:focus{outline:2px solid var(--accent)}
 .card{background:var(--bg-secondary);border-radius:12px;padding:20px;box-shadow:0 4px 12px rgba(0,0,0,.1);transition:transform .3s,box-shadow .3s}
 .card:hover{transform:translateY(-4px);box-shadow:0 8px 16px rgba(0,0,0,.2)}
 .cardHead{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:1.1em}
-.cardIcon{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center}
+.cardIcon{width:40px;height:40px;border-radius:10px;background:rgba(var(--tint),.1);display:flex;align-items:center;justify-content:center}
 .stat{font-size:1.9em;font-weight:700;margin:10px 0 2px}
 .small{font-size:.85em}
 .activityHead{display:flex;justify-content:space-between;align-items:center;margin:34px 0 14px}
-.activityHead a{color:#fff;font-size:.9em}
+.activityHead a{color:var(--strong);font-size:.9em}
 .activityList{background:var(--bg-secondary);border-radius:12px;overflow:hidden}
 .activityItem{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);cursor:pointer}
 .activityItem:last-child{border-bottom:none}
-.activityItem:hover{background:rgba(255,255,255,.04)}
+.activityItem:hover{background:rgba(var(--tint),.04)}
 .activityItem img{width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0}
 .activityItem .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .activityItem .time{font-size:.8em;color:var(--muted);flex-shrink:0}
@@ -283,10 +284,10 @@ input:focus{outline:2px solid var(--accent)}
 
 /* settings tabs */
 .settingsTitle{display:inline-block;font-size:1.6em;font-weight:700;border-bottom:3px solid var(--accent);padding-bottom:4px;margin-bottom:22px}
-.tabs{display:flex;gap:6px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:22px;overflow-x:auto}
-.tabBtn{background:none;color:rgba(255,255,255,.65);border-radius:0;padding:12px 20px;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;white-space:nowrap}
-.tabBtn:hover{background:none;color:#fff}
-.tabBtn.active{color:#fff;border-bottom-color:#fff}
+.tabs{display:flex;gap:6px;border-bottom:1px solid rgba(var(--tint),.1);margin-bottom:22px;overflow-x:auto}
+.tabBtn{background:none;color:rgba(var(--tint),.65);border-radius:0;padding:12px 20px;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;white-space:nowrap}
+.tabBtn:hover{background:none;color:var(--strong)}
+.tabBtn.active{color:var(--strong);border-bottom-color:var(--accent)}
 .tabPane{display:none}.tabPane.active{display:block}
 .twoCol{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:30px;align-items:start}
 .sPanel{background:var(--bg-secondary);border-left:4px solid var(--accent);border-radius:12px;padding:24px;margin-bottom:20px}
@@ -299,9 +300,21 @@ input:focus{outline:2px solid var(--accent)}
 .setRow small{display:block;color:var(--muted);font-size:.78em;margin-top:2px}
 .pfpZone{border:2px dashed transparent;background:none;padding:10px}
 .pfpZone:hover{border-color:transparent;background:none}
-.pfpZone.dragover{border-color:#fff;background:rgba(255,255,255,.05)}
+.pfpZone.dragover{border-color:var(--accent);background:rgba(var(--tint),.05)}
 .pfpZone img{width:100px;height:100px}
 .pfpZone button{margin-top:6px}
+
+[data-theme=light]{--bg-primary:#f2f2f2;--bg-secondary:#ffffff;--bg-tertiary:#ebebeb;--text-primary:#1a1a1a;--tint:0,0,0;--strong:#000;--accent:#111;--accent-hover:#333;--on-accent:#fff;--bg-hover:#dcdcdc;--track:#bdbdbd;color-scheme:light}
+[data-theme=midnight]{--bg-primary:#080d1a;--bg-secondary:#0f1729;--bg-tertiary:#1a2440;--bg-hover:#243155}
+[data-theme=light] .card,[data-theme=light] #chatArea,[data-theme=light] .sPanel{box-shadow:0 1px 4px rgba(0,0,0,.08)}
+[data-theme=light] #sidebar{box-shadow:2px 0 10px rgba(0,0,0,.06)}
+.themeOpt,.langBtn{background:var(--bg-tertiary);color:var(--text-primary);border:2px solid transparent}
+.themeOpt:hover,.langBtn:hover{background:var(--bg-hover)}
+.themeOpt.active,.langBtn.active{border-color:var(--accent)}
+.themeOpt{display:block;width:100%;text-align:left;padding:12px 14px;margin:0 0 10px;border-radius:10px}
+.themePrev{display:block;height:30px;border-radius:6px;margin-bottom:8px;background:linear-gradient(90deg,var(--a) 30%,var(--b) 30%);border:1px solid rgba(var(--tint),.15)}
+.langList{display:flex;flex-wrap:wrap;gap:10px}
+.langBtn{padding:10px 20px}
 </style>
 </head>
 <body>
@@ -408,7 +421,9 @@ input:focus{outline:2px solid var(--accent)}
         <h1 class="settingsTitle">Settings</h1>
         <div class="tabs" role="tablist">
           <button class="tabBtn active" data-tab="tabProfile" role="tab">Profile</button>
+          <button class="tabBtn" data-tab="tabAppearance" role="tab">Appearance</button>
           <button class="tabBtn" data-tab="tabNotif" role="tab">Notifications</button>
+          <button class="tabBtn" data-tab="tabLang" role="tab">Language</button>
           <button class="tabBtn" data-tab="tabAccount" role="tab">Account</button>
         </div>
 
@@ -445,6 +460,29 @@ input:focus{outline:2px solid var(--accent)}
               <div class="setRow"><span>Private messages<small>New messages in DMs</small></span><label class="toggle-switch"><input type="checkbox" id="notifDMs"><span class="toggle-slider"></span></label></div>
               <div class="setRow"><span>Media in DMs<small>Images and videos sent to you</small></span><label class="toggle-switch"><input type="checkbox" id="notifMedia"><span class="toggle-slider"></span></label></div>
               <p id="notifVapidNote"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabPane" id="tabAppearance">
+          <div class="sPanel">
+            <h3><i class="fas fa-paint-brush"></i> Themes</h3>
+            <button class="themeOpt" data-theme="dark"><span class="themePrev" style="--a:#1e1e1e;--b:#121212"></span><b>Dark (default)</b></button>
+            <button class="themeOpt" data-theme="light"><span class="themePrev" style="--a:#ebebeb;--b:#ffffff"></span><b>Light</b></button>
+            <button class="themeOpt" data-theme="midnight"><span class="themePrev" style="--a:#0f1729;--b:#080d1a"></span><b>Midnight</b></button>
+          </div>
+        </div>
+
+        <div class="tabPane" id="tabLang">
+          <div class="sPanel">
+            <h3><i class="fas fa-language"></i> Language</h3>
+            <p class="muted small" style="margin-bottom:14px">Choose the language of the interface.</p>
+            <div class="langList">
+              <button class="langBtn" data-lang="de">Deutsch</button>
+              <button class="langBtn" data-lang="en">English</button>
+              <button class="langBtn" data-lang="fr">Français</button>
+              <button class="langBtn" data-lang="es">Español</button>
+              <button class="langBtn" data-lang="zh">中文</button>
             </div>
           </div>
         </div>
@@ -558,7 +596,7 @@ document.addEventListener('keydown', function(e) {
 <div id="dmModal">
   <div class="modalBox">
     <h3>New Private Chat</h3>
-    <p style="color:#aaa;font-size:13px;margin:10px 0">Enter the email of the user you want to chat with</p>
+    <p style="color:var(--muted);font-size:13px;margin:10px 0">Enter the email of the user you want to chat with</p>
     <input id="dmEmail" placeholder="user@email.com" type="email">
     <br><br>
     <button id="btnSendDmRequest">Send Request</button>
@@ -570,7 +608,7 @@ document.addEventListener('keydown', function(e) {
   <div class="modalBox">
     <img id="reqPfp" src="">
     <h3 id="reqName"></h3>
-    <p style="color:#aaa;font-size:13px;margin:8px 0">wants to start a private chat with you</p>
+    <p style="color:var(--muted);font-size:13px;margin:8px 0">wants to start a private chat with you</p>
     <br>
     <button id="btnAcceptReq">Accept</button>
     <button id="btnDenyReq" class="red">Deny</button>
@@ -661,6 +699,63 @@ let settingsPfpUrl = "";
 let pendingChatFile = null;
 let pendingChatFileType = null;
 let swRegistration = null;
+const I18N = {"de": {"Sign in to join the conversation": "Melde dich an, um mitzuchatten", "Login": "Anmelden", "Signup": "Registrieren", "Continue with Google": "Weiter mit Google", "Forgot Password": "Passwort vergessen", "Legal Notice": "Impressum", "Create your profile": "Erstelle dein Profil", "Pick a name and a picture so people know who you are": "Wähle einen Namen und ein Bild, damit dich andere erkennen", "Drag & drop a profile picture": "Profilbild hierher ziehen", "or click to choose a file": "oder klicke, um eine Datei zu wählen", "Save Profile": "Profil speichern", "Email": "E-Mail", "Password": "Passwort", "Email for password reset": "E-Mail zum Zurücksetzen", "Your name": "Dein Name", "About me (optional)": "Über mich (optional)", "Tell us about yourself…": "Erzähle etwas über dich…", "Search chats…": "Chats durchsuchen…", "Message — use @username to mention": "Nachricht — mit @Name erwähnen", "Online": "Online", "New Private Chat": "Neuer privater Chat", "Home": "Startseite", "Chats": "Chats", "Settings": "Einstellungen", "Mod Tools": "Mod-Tools", "Global Chat": "Globaler Chat", "Everyone": "Alle", "Private chat": "Privater Chat", "Remove": "Entfernen", "Logout": "Abmelden", "Send photo or video": "Foto oder Video senden", "Delete message": "Nachricht löschen", "Please verify your email to chat.": "Bitte bestätige deine E-Mail, um zu chatten.", "Resend": "Erneut senden", "Click here to enable notifications for mentions and private messages.": "Klicke hier, um Benachrichtigungen für Erwähnungen und private Nachrichten zu aktivieren.", "Notifications blocked — allow them in browser settings.": "Benachrichtigungen blockiert — erlaube sie in den Browsereinstellungen.", "Notifications": "Benachrichtigungen", "Members": "Mitglieder", "registered on ByteChat": "bei ByteChat registriert", "Private Chats": "Private Chats", "accepted conversations": "akzeptierte Unterhaltungen", "Chat Requests": "Chat-Anfragen", "waiting for you": "warten auf dich", "Recent Activity": "Letzte Aktivitäten", "Open Global Chat": "Globalen Chat öffnen", "No messages yet. Start the conversation in Global Chat.": "Noch keine Nachrichten. Starte die Unterhaltung im globalen Chat.", "Recent activity is unavailable right now.": "Letzte Aktivitäten sind gerade nicht verfügbar.", "Welcome back, {name}!": "Willkommen zurück, {name}!", "sent a photo": "hat ein Foto gesendet", "sent a video": "hat ein Video gesendet", "No messages yet. Say hi!": "Noch keine Nachrichten. Sag Hallo!", "Send": "Senden", "Cancel": "Abbrechen", "Profile": "Profil", "Account": "Konto", "Profile settings": "Profileinstellungen", "Username": "Benutzername", "Bio": "Biografie", "Save": "Speichern", "Profile picture": "Profilbild", "Change picture": "Profilbild ändern", "You can also drag & drop an image here.": "Du kannst ein Bild auch hierher ziehen.", "Notification settings": "Benachrichtigungseinstellungen", "Checking notification permission...": "Berechtigung wird geprüft...", "Enable notifications": "Benachrichtigungen aktivieren", "Mentions": "Erwähnungen", "When someone @mentions you": "Wenn dich jemand @erwähnt", "Private messages": "Private Nachrichten", "New messages in DMs": "Neue Nachrichten in privaten Chats", "Media in DMs": "Medien in privaten Chats", "Images and videos sent to you": "Bilder und Videos, die dir gesendet werden", "We'll send a reset link to the email you signed up with.": "Wir senden einen Link zum Zurücksetzen an deine Registrierungs-E-Mail.", "Send password reset email": "Passwort-Reset-E-Mail senden", "✓ Notifications are enabled.": "✓ Benachrichtigungen sind aktiviert.", "Notifications are not supported in this browser.": "Dieser Browser unterstützt keine Benachrichtigungen.", "✗ Notifications are blocked. Go to your browser settings and allow notifications for this site, then reload.": "✗ Benachrichtigungen sind blockiert. Erlaube sie in den Browsereinstellungen für diese Seite und lade neu.", "Notifications are not yet enabled.": "Benachrichtigungen sind noch nicht aktiviert.", "Uploading...": "Wird hochgeladen...", "Upload complete!": "Upload abgeschlossen!", "Appearance": "Aussehen", "Themes": "Themen", "Dark (default)": "Dunkel (Standard)", "Light": "Hell", "Midnight": "Mitternacht", "Language": "Sprache", "Choose the language of the interface.": "Wähle die Sprache der Oberfläche.", "Delete All Messages": "Alle Nachrichten löschen", "Refresh Users": "Nutzer aktualisieren", "Send Private Message": "Private Nachricht senden", "Close": "Schließen", "Enter the email of the user you want to chat with": "Gib die E-Mail des Nutzers ein, mit dem du chatten möchtest", "Send Request": "Anfrage senden", "wants to start a private chat with you": "möchte einen privaten Chat mit dir starten", "Accept": "Annehmen", "Deny": "Ablehnen", "About": "Info", "Banned": "Gesperrt", "Muted": "Stumm"}, "fr": {"Sign in to join the conversation": "Connecte-toi pour rejoindre la conversation", "Login": "Connexion", "Signup": "Inscription", "Continue with Google": "Continuer avec Google", "Forgot Password": "Mot de passe oublié", "Legal Notice": "Mentions légales", "Create your profile": "Crée ton profil", "Pick a name and a picture so people know who you are": "Choisis un nom et une photo pour que les autres te reconnaissent", "Drag & drop a profile picture": "Glisse une photo de profil ici", "or click to choose a file": "ou clique pour choisir un fichier", "Save Profile": "Enregistrer le profil", "Email": "E-mail", "Password": "Mot de passe", "Email for password reset": "E-mail pour réinitialiser", "Your name": "Ton nom", "About me (optional)": "À propos de moi (facultatif)", "Tell us about yourself…": "Parle-nous de toi…", "Search chats…": "Rechercher des chats…", "Message — use @username to mention": "Message — utilise @nom pour mentionner", "Online": "En ligne", "New Private Chat": "Nouveau chat privé", "Home": "Accueil", "Chats": "Discussions", "Settings": "Paramètres", "Mod Tools": "Outils de modération", "Global Chat": "Chat global", "Everyone": "Tout le monde", "Private chat": "Chat privé", "Remove": "Supprimer", "Logout": "Déconnexion", "Send photo or video": "Envoyer une photo ou vidéo", "Delete message": "Supprimer le message", "Please verify your email to chat.": "Vérifie ton e-mail pour discuter.", "Resend": "Renvoyer", "Click here to enable notifications for mentions and private messages.": "Clique ici pour activer les notifications des mentions et messages privés.", "Notifications blocked — allow them in browser settings.": "Notifications bloquées — autorise-les dans les paramètres du navigateur.", "Notifications": "Notifications", "Members": "Membres", "registered on ByteChat": "inscrits sur ByteChat", "Private Chats": "Chats privés", "accepted conversations": "conversations acceptées", "Chat Requests": "Demandes de chat", "waiting for you": "en attente", "Recent Activity": "Activité récente", "Open Global Chat": "Ouvrir le chat global", "No messages yet. Start the conversation in Global Chat.": "Aucun message. Lance la conversation dans le chat global.", "Recent activity is unavailable right now.": "L'activité récente est indisponible.", "Welcome back, {name}!": "Content de te revoir, {name} !", "sent a photo": "a envoyé une photo", "sent a video": "a envoyé une vidéo", "No messages yet. Say hi!": "Aucun message. Dis bonjour !", "Send": "Envoyer", "Cancel": "Annuler", "Profile": "Profil", "Account": "Compte", "Profile settings": "Paramètres du profil", "Username": "Nom d'utilisateur", "Bio": "Bio", "Save": "Enregistrer", "Profile picture": "Photo de profil", "Change picture": "Changer la photo", "You can also drag & drop an image here.": "Tu peux aussi glisser une image ici.", "Notification settings": "Paramètres de notification", "Checking notification permission...": "Vérification de l'autorisation...", "Enable notifications": "Activer les notifications", "Mentions": "Mentions", "When someone @mentions you": "Quand quelqu'un te @mentionne", "Private messages": "Messages privés", "New messages in DMs": "Nouveaux messages privés", "Media in DMs": "Médias en privé", "Images and videos sent to you": "Images et vidéos envoyées", "We'll send a reset link to the email you signed up with.": "Nous enverrons un lien de réinitialisation à l'e-mail d'inscription.", "Send password reset email": "Envoyer l'e-mail de réinitialisation", "✓ Notifications are enabled.": "✓ Les notifications sont activées.", "Notifications are not supported in this browser.": "Ce navigateur ne prend pas en charge les notifications.", "✗ Notifications are blocked. Go to your browser settings and allow notifications for this site, then reload.": "✗ Les notifications sont bloquées. Autorise-les pour ce site dans les paramètres du navigateur, puis recharge.", "Notifications are not yet enabled.": "Les notifications ne sont pas encore activées.", "Uploading...": "Envoi en cours...", "Upload complete!": "Envoi terminé !", "Appearance": "Apparence", "Themes": "Thèmes", "Dark (default)": "Sombre (par défaut)", "Light": "Clair", "Midnight": "Minuit", "Language": "Langue", "Choose the language of the interface.": "Choisis la langue de l'interface.", "Delete All Messages": "Supprimer tous les messages", "Refresh Users": "Actualiser les utilisateurs", "Send Private Message": "Envoyer un message privé", "Close": "Fermer", "Enter the email of the user you want to chat with": "Saisis l'e-mail de la personne avec qui discuter", "Send Request": "Envoyer la demande", "wants to start a private chat with you": "veut démarrer un chat privé avec toi", "Accept": "Accepter", "Deny": "Refuser", "About": "À propos", "Banned": "Banni", "Muted": "Muet"}, "es": {"Sign in to join the conversation": "Inicia sesión para unirte a la conversación", "Login": "Iniciar sesión", "Signup": "Registrarse", "Continue with Google": "Continuar con Google", "Forgot Password": "Olvidé mi contraseña", "Legal Notice": "Aviso legal", "Create your profile": "Crea tu perfil", "Pick a name and a picture so people know who you are": "Elige un nombre y una foto para que te reconozcan", "Drag & drop a profile picture": "Arrastra una foto de perfil", "or click to choose a file": "o haz clic para elegir un archivo", "Save Profile": "Guardar perfil", "Email": "Correo electrónico", "Password": "Contraseña", "Email for password reset": "Correo para restablecer", "Your name": "Tu nombre", "About me (optional)": "Sobre mí (opcional)", "Tell us about yourself…": "Cuéntanos sobre ti…", "Search chats…": "Buscar chats…", "Message — use @username to mention": "Mensaje — usa @usuario para mencionar", "Online": "En línea", "New Private Chat": "Nuevo chat privado", "Home": "Inicio", "Chats": "Chats", "Settings": "Ajustes", "Mod Tools": "Herramientas de moderación", "Global Chat": "Chat global", "Everyone": "Todos", "Private chat": "Chat privado", "Remove": "Quitar", "Logout": "Cerrar sesión", "Send photo or video": "Enviar foto o vídeo", "Delete message": "Eliminar mensaje", "Please verify your email to chat.": "Verifica tu correo para chatear.", "Resend": "Reenviar", "Click here to enable notifications for mentions and private messages.": "Haz clic aquí para activar las notificaciones de menciones y mensajes privados.", "Notifications blocked — allow them in browser settings.": "Notificaciones bloqueadas: permítelas en los ajustes del navegador.", "Notifications": "Notificaciones", "Members": "Miembros", "registered on ByteChat": "registrados en ByteChat", "Private Chats": "Chats privados", "accepted conversations": "conversaciones aceptadas", "Chat Requests": "Solicitudes de chat", "waiting for you": "esperándote", "Recent Activity": "Actividad reciente", "Open Global Chat": "Abrir el chat global", "No messages yet. Start the conversation in Global Chat.": "Aún no hay mensajes. Inicia la conversación en el chat global.", "Recent activity is unavailable right now.": "La actividad reciente no está disponible ahora.", "Welcome back, {name}!": "¡Bienvenido de nuevo, {name}!", "sent a photo": "envió una foto", "sent a video": "envió un vídeo", "No messages yet. Say hi!": "Aún no hay mensajes. ¡Saluda!", "Send": "Enviar", "Cancel": "Cancelar", "Profile": "Perfil", "Account": "Cuenta", "Profile settings": "Ajustes del perfil", "Username": "Nombre de usuario", "Bio": "Biografía", "Save": "Guardar", "Profile picture": "Foto de perfil", "Change picture": "Cambiar foto", "You can also drag & drop an image here.": "También puedes arrastrar una imagen aquí.", "Notification settings": "Ajustes de notificaciones", "Checking notification permission...": "Comprobando permiso...", "Enable notifications": "Activar notificaciones", "Mentions": "Menciones", "When someone @mentions you": "Cuando alguien te @menciona", "Private messages": "Mensajes privados", "New messages in DMs": "Mensajes nuevos en chats privados", "Media in DMs": "Multimedia en chats privados", "Images and videos sent to you": "Imágenes y vídeos que te envían", "We'll send a reset link to the email you signed up with.": "Enviaremos un enlace de restablecimiento al correo con el que te registraste.", "Send password reset email": "Enviar correo de restablecimiento", "✓ Notifications are enabled.": "✓ Las notificaciones están activadas.", "Notifications are not supported in this browser.": "Este navegador no admite notificaciones.", "✗ Notifications are blocked. Go to your browser settings and allow notifications for this site, then reload.": "✗ Las notificaciones están bloqueadas. Permítelas para este sitio en los ajustes del navegador y recarga.", "Notifications are not yet enabled.": "Las notificaciones aún no están activadas.", "Uploading...": "Subiendo...", "Upload complete!": "¡Subida completada!", "Appearance": "Apariencia", "Themes": "Temas", "Dark (default)": "Oscuro (predeterminado)", "Light": "Claro", "Midnight": "Medianoche", "Language": "Idioma", "Choose the language of the interface.": "Elige el idioma de la interfaz.", "Delete All Messages": "Eliminar todos los mensajes", "Refresh Users": "Actualizar usuarios", "Send Private Message": "Enviar mensaje privado", "Close": "Cerrar", "Enter the email of the user you want to chat with": "Introduce el correo de la persona con quien quieres chatear", "Send Request": "Enviar solicitud", "wants to start a private chat with you": "quiere iniciar un chat privado contigo", "Accept": "Aceptar", "Deny": "Rechazar", "About": "Acerca de", "Banned": "Baneado", "Muted": "Silenciado"}, "zh": {"Sign in to join the conversation": "登录以加入对话", "Login": "登录", "Signup": "注册", "Continue with Google": "使用 Google 继续", "Forgot Password": "忘记密码", "Legal Notice": "法律声明", "Create your profile": "创建你的个人资料", "Pick a name and a picture so people know who you are": "选择名称和头像，让大家认识你", "Drag & drop a profile picture": "拖放头像到此处", "or click to choose a file": "或点击选择文件", "Save Profile": "保存资料", "Email": "邮箱", "Password": "密码", "Email for password reset": "用于重置密码的邮箱", "Your name": "你的名字", "About me (optional)": "关于我（可选）", "Tell us about yourself…": "介绍一下你自己…", "Search chats…": "搜索聊天…", "Message — use @username to mention": "消息 — 使用 @用户名 提及", "Online": "在线", "New Private Chat": "新建私聊", "Home": "主页", "Chats": "聊天", "Settings": "设置", "Mod Tools": "管理工具", "Global Chat": "全球聊天", "Everyone": "所有人", "Private chat": "私聊", "Remove": "移除", "Logout": "退出登录", "Send photo or video": "发送照片或视频", "Delete message": "删除消息", "Please verify your email to chat.": "请验证邮箱后再聊天。", "Resend": "重新发送", "Click here to enable notifications for mentions and private messages.": "点击此处开启提及和私信通知。", "Notifications blocked — allow them in browser settings.": "通知已被屏蔽——请在浏览器设置中允许。", "Notifications": "通知", "Members": "成员", "registered on ByteChat": "已注册 ByteChat", "Private Chats": "私聊", "accepted conversations": "已接受的对话", "Chat Requests": "聊天请求", "waiting for you": "等待你处理", "Recent Activity": "最近动态", "Open Global Chat": "打开全球聊天", "No messages yet. Start the conversation in Global Chat.": "还没有消息。去全球聊天开启对话吧。", "Recent activity is unavailable right now.": "暂时无法显示最近动态。", "Welcome back, {name}!": "欢迎回来，{name}！", "sent a photo": "发送了一张照片", "sent a video": "发送了一段视频", "No messages yet. Say hi!": "还没有消息，打个招呼吧！", "Send": "发送", "Cancel": "取消", "Profile": "资料", "Account": "账户", "Profile settings": "资料设置", "Username": "用户名", "Bio": "简介", "Save": "保存", "Profile picture": "头像", "Change picture": "更换头像", "You can also drag & drop an image here.": "也可以把图片拖放到这里。", "Notification settings": "通知设置", "Checking notification permission...": "正在检查通知权限...", "Enable notifications": "开启通知", "Mentions": "提及", "When someone @mentions you": "有人 @你 时", "Private messages": "私信", "New messages in DMs": "私聊中的新消息", "Media in DMs": "私聊中的媒体", "Images and videos sent to you": "发给你的图片和视频", "We'll send a reset link to the email you signed up with.": "我们会向你注册时使用的邮箱发送重置链接。", "Send password reset email": "发送密码重置邮件", "✓ Notifications are enabled.": "✓ 通知已开启。", "Notifications are not supported in this browser.": "此浏览器不支持通知。", "✗ Notifications are blocked. Go to your browser settings and allow notifications for this site, then reload.": "✗ 通知已被屏蔽。请在浏览器设置中为本站允许通知，然后刷新。", "Notifications are not yet enabled.": "通知尚未开启。", "Uploading...": "上传中...", "Upload complete!": "上传完成！", "Appearance": "外观", "Themes": "主题", "Dark (default)": "深色（默认）", "Light": "浅色", "Midnight": "午夜", "Language": "语言", "Choose the language of the interface.": "选择界面语言。", "Delete All Messages": "删除所有消息", "Refresh Users": "刷新用户", "Send Private Message": "发送私信", "Close": "关闭", "Enter the email of the user you want to chat with": "输入你想聊天的用户的邮箱", "Send Request": "发送请求", "wants to start a private chat with you": "想与你开始私聊", "Accept": "接受", "Deny": "拒绝", "About": "简介", "Banned": "已封禁", "Muted": "已禁言"}};
+let curLang = "en";
+try { curLang = localStorage.getItem("bytechat_lang") || ""; } catch(e) {}
+if (curLang !== "en" && !I18N[curLang]) { const b = (navigator.language || "en").slice(0, 2).toLowerCase(); curLang = I18N[b] ? b : "en"; }
+function T(s) { return (curLang !== "en" && I18N[curLang] && I18N[curLang][s]) || s; }
+function LOC() { return { en: "en-GB", de: "de", fr: "fr", es: "es", zh: "zh-CN" }[curLang]; }
+const origText = new WeakMap(), origAttr = new WeakMap();
+const I18N_SKIP = ".msgbody,.activityItem,.adminUser,#sbName,#modalName,#reqName,#legalBox,script,style";
+function trNode(n) {
+  if (n.parentElement && n.parentElement.closest(I18N_SKIP)) return;
+  let o = origText.get(n);
+  if (o === undefined) { o = n.nodeValue; origText.set(n, o); }
+  const t = o.trim(); if (!t) return;
+  const tr = T(t), v = tr === t ? o : o.replace(t, tr);
+  if (n.nodeValue !== v) n.nodeValue = v;
+}
+function trAttrs(el) {
+  if (el.closest(I18N_SKIP)) return;
+  for (const a of ["placeholder", "title"]) {
+    if (!el.hasAttribute(a)) continue;
+    let m = origAttr.get(el); if (!m) { m = {}; origAttr.set(el, m); }
+    if (m[a] === undefined) m[a] = el.getAttribute(a);
+    const v = T(m[a]); if (el.getAttribute(a) !== v) el.setAttribute(a, v);
+  }
+}
+function trTree(root) {
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let n; while ((n = w.nextNode())) trNode(n);
+  root.querySelectorAll("[placeholder],[title]").forEach(trAttrs);
+  trAttrs(root);
+}
+new MutationObserver(muts => muts.forEach(m => m.addedNodes.forEach(n => {
+  if (n.nodeType === 3) trNode(n); else if (n.nodeType === 1) trTree(n);
+}))).observe(document.body, { childList: true, subtree: true });
+
+function setLang(l, rerender) {
+  curLang = l; document.documentElement.lang = l;
+  try { localStorage.setItem("bytechat_lang", l); } catch(e) {}
+  document.querySelectorAll(".langBtn").forEach(b => b.classList.toggle("active", b.dataset.lang === l));
+  trTree(document.body);
+  if (rerender) {
+    tickClock();
+    if (document.getElementById("homeView").style.display === "block") renderHome();
+    if (document.getElementById("settings").style.display === "block") renderNotifSettings();
+  }
+}
+function setTheme(t) {
+  document.documentElement.dataset.theme = t;
+  try { localStorage.setItem("bytechat_theme", t); } catch(e) {}
+  document.querySelectorAll(".themeOpt").forEach(b => b.classList.toggle("active", b.dataset.theme === t));
+  const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = { light: "#f2f2f2", midnight: "#080d1a" }[t] || "#121212";
+}
+document.querySelectorAll(".langBtn").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang, true)));
+document.querySelectorAll(".themeOpt").forEach(b => b.addEventListener("click", () => setTheme(b.dataset.theme)));
+setTheme(document.documentElement.dataset.theme || "dark");
+setLang(curLang, false);
+
 
 // ============================================================
 // ONESIGNAL — save Player ID to Firestore
@@ -972,8 +1067,8 @@ function renderText(text, withLinks) {
 function formatTime(t) {
   if (!t) return "";
   const d = new Date(t), now = new Date();
-  const time = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  return d.toDateString() === now.toDateString() ? time : d.toLocaleDateString([], { day: "numeric", month: "short" }) + ", " + time;
+  const time = d.toLocaleTimeString(LOC(), { hour: "2-digit", minute: "2-digit" });
+  return d.toDateString() === now.toDateString() ? time : d.toLocaleDateString(LOC(), { day: "numeric", month: "short" }) + ", " + time;
 }
 
 function isMentioned(text, myName) {
@@ -1499,10 +1594,10 @@ async function openUserModal(uid) {
     document.getElementById("modalPfp").src = u.pfp || DEFAULT_PFP;
     document.getElementById("modalName").textContent = u.name;
     const emailEl = document.getElementById("modalEmail");
-    emailEl.textContent = "Email: " + (u.email || "Unknown");
+    emailEl.textContent = T("Email") + ": " + (u.email || "Unknown");
     emailEl.style.display = (isAdmin || uid === auth.currentUser.uid) ? "block" : "none";
-    document.getElementById("modalAbout").textContent = "About: " + (u.about || "No bio yet.");
-    document.getElementById("modalStatus").textContent = u.banned ? "Banned" : u.muted ? "Muted" : "";
+    document.getElementById("modalAbout").textContent = T("About") + ": " + (u.about || "No bio yet.");
+    document.getElementById("modalStatus").textContent = u.banned ? T("Banned") : u.muted ? T("Muted") : "";
     const adminActions = document.getElementById("adminActions");
     if (isAdmin && uid !== auth.currentUser.uid) {
       adminActions.style.display = "block";
@@ -1565,11 +1660,11 @@ let clockTimer = null;
 function tickClock() {
   const el = document.getElementById("homeDate"); if (!el) return;
   const d = new Date();
-  el.textContent = d.toLocaleDateString([], { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " · " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  el.textContent = d.toLocaleDateString(LOC(), { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " · " + d.toLocaleTimeString(LOC(), { hour: "2-digit", minute: "2-digit" });
 }
 async function renderHome() {
   tickClock(); clearInterval(clockTimer); clockTimer = setInterval(tickClock, 30000);
-  document.getElementById("homeWelcome").textContent = "Welcome back, " + (document.getElementById("sbName").textContent || "User") + "!";
+  document.getElementById("homeWelcome").textContent = T("Welcome back, {name}!").replace("{name}", document.getElementById("sbName").textContent || "User");
   document.getElementById("statDms").textContent = convList.querySelectorAll(".convItem:not([data-id='global'])").length;
   document.getElementById("statReqs").textContent = Math.max(0, pendingRequests.length - currentRequestIndex);
   try { if (!allUsers.length) await loadAllUsers(); } catch(e) {}
@@ -1581,7 +1676,7 @@ async function renderHome() {
     if (snap.empty) { list.innerHTML = '<div class="activityEmpty">No messages yet. Start the conversation in Global Chat.</div>'; return; }
     snap.forEach(d => {
       const m = d.data();
-      const preview = m.type === "image" ? "sent a photo" : m.type === "video" ? "sent a video" : (m.text || "");
+      const preview = m.type === "image" ? T("sent a photo") : m.type === "video" ? T("sent a video") : (m.text || "");
       const row = document.createElement("div"); row.className = "activityItem";
       row.innerHTML = `<img src="${escapeHtml(m.pfp || DEFAULT_PFP)}" alt="" onerror="this.src='${DEFAULT_PFP}'"><div class="t"><b>${escapeHtml(m.name)}</b> ${escapeHtml(preview)}</div><div class="time">${formatTime(m.time)}</div>`;
       row.addEventListener("click", () => showGlobalChat());
