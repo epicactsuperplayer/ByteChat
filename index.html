@@ -259,6 +259,30 @@ input:focus{outline:2px solid var(--accent)}
   #mentionDropdown{left:14px}
   #btnSend span{display:none}
 }
+
+/* home / dashboard */
+#homeView{display:none;flex:1;min-height:0;overflow-y:auto}
+.greeting h1{font-size:2.1em;margin-bottom:6px}
+.quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;margin:22px 0}
+.actionCard{background:var(--bg-secondary);color:var(--text-primary);padding:18px;display:flex;flex-direction:column;align-items:center;gap:8px;border-radius:12px;font-weight:500}
+.actionCard:hover{background:var(--bg-tertiary)}
+.statGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.card{background:var(--bg-secondary);border-radius:12px;padding:20px;box-shadow:0 4px 12px rgba(0,0,0,.1);transition:transform .3s,box-shadow .3s}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 16px rgba(0,0,0,.2)}
+.cardHead{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:1.1em}
+.cardIcon{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center}
+.stat{font-size:1.9em;font-weight:700;margin:10px 0 2px}
+.small{font-size:.85em}
+.activityHead{display:flex;justify-content:space-between;align-items:center;margin:34px 0 14px}
+.activityHead a{color:#fff;font-size:.9em}
+.activityList{background:var(--bg-secondary);border-radius:12px;overflow:hidden}
+.activityItem{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);cursor:pointer}
+.activityItem:last-child{border-bottom:none}
+.activityItem:hover{background:rgba(255,255,255,.04)}
+.activityItem img{width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0}
+.activityItem .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.activityItem .time{font-size:.8em;color:var(--muted);flex-shrink:0}
+.activityEmpty{padding:20px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -301,6 +325,7 @@ input:focus{outline:2px solid var(--accent)}
       <button id="btnLogout" class="iconBtn" title="Logout" aria-label="Logout"><i class="fas fa-sign-out-alt"></i></button>
     </div>
     <button class="newChat" onclick="openDmModal()"><i class="fas fa-plus"></i> New Private Chat</button>
+    <button class="navItem" id="navHome" data-view="home"><i class="fas fa-home"></i> Home</button>
     <div class="navLabel">Chats</div>
     <div id="convList"></div>
     <button class="navItem" id="navSettings" data-view="settings"><i class="fas fa-cog"></i> Settings</button>
@@ -322,6 +347,22 @@ input:focus{outline:2px solid var(--accent)}
     <div id="notifBanner" onclick="requestNotifPermission()">Click here to enable notifications for mentions and private messages.</div>
 
     <div id="content">
+      <section id="homeView">
+        <div class="greeting"><h1 id="homeWelcome">Welcome back!</h1><div class="muted" id="homeDate"></div></div>
+        <div class="quick">
+          <button class="actionCard" id="qaNew"><i class="fas fa-plus"></i><span>New Private Chat</span></button>
+          <button class="actionCard" id="qaGlobal"><i class="fas fa-globe"></i><span>Global Chat</span></button>
+          <button class="actionCard" id="qaNotif"><i class="fas fa-bell"></i><span>Notifications</span></button>
+        </div>
+        <div class="statGrid">
+          <div class="card"><div class="cardHead"><span>Members</span><div class="cardIcon"><i class="fas fa-users"></i></div></div><div class="stat" id="statMembers">–</div><div class="muted small">registered on ByteChat</div></div>
+          <div class="card"><div class="cardHead"><span>Private Chats</span><div class="cardIcon"><i class="fas fa-comment"></i></div></div><div class="stat" id="statDms">–</div><div class="muted small">accepted conversations</div></div>
+          <div class="card"><div class="cardHead"><span>Chat Requests</span><div class="cardIcon"><i class="fas fa-envelope"></i></div></div><div class="stat" id="statReqs">–</div><div class="muted small">waiting for you</div></div>
+        </div>
+        <div class="activityHead"><h2>Recent Activity</h2><a href="#" id="seeAll">Open Global Chat</a></div>
+        <div class="activityList" id="homeActivity"></div>
+      </section>
+
       <section id="appLayout">
         <div id="chatArea">
           <div id="chatHeader">
@@ -510,7 +551,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 import {
   getFirestore, doc, setDoc, getDoc, addDoc, updateDoc,
-  collection, onSnapshot, getDocs, deleteDoc, query, where
+  collection, onSnapshot, getDocs, deleteDoc, query, where, orderBy, limit
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -947,7 +988,7 @@ async function loadAllUsers() {
 // PAGE ROUTING
 // ============================================================
 function showPage(page) {
-  const inShell = ["chat", "settings", "admin"].includes(page);
+  const inShell = ["chat", "home", "settings", "admin"].includes(page);
   document.getElementById("authScreen").style.display = inShell ? "none" : "flex";
   document.getElementById("shell").style.display = inShell ? "flex" : "none";
   loginDiv.style.display = page === "login" ? "block" : "none";
@@ -955,6 +996,9 @@ function showPage(page) {
   settingsDiv.style.display = page === "settings" ? "block" : "none";
   appLayout.style.display = page === "chat" ? "flex" : "none";
   adminPanel.style.display = page === "admin" ? "block" : "none";
+  document.getElementById("homeView").style.display = page === "home" ? "block" : "none";
+  if (page !== "chat") document.querySelectorAll(".convItem").forEach(el => el.classList.remove("active"));
+  if (page !== "home") clearInterval(clockTimer);
   verifyBanner.style.display = "none";
   if (!inShell) notifBanner.style.display = "none";
   document.querySelectorAll("#sidebar .navItem").forEach(el => el.classList.toggle("active", el.dataset.view === page));
@@ -964,6 +1008,7 @@ function showPage(page) {
   const user = auth.currentUser;
   if (user && !user.emailVerified && user.providerData[0]?.providerId === "password") verifyBanner.style.display = "block";
   if (page === "settings") { loadSettingsForm(); renderNotifSettings(); }
+  if (page === "home") renderHome();
 }
 
 // ============================================================
@@ -992,6 +1037,11 @@ document.getElementById("btnResendVerify").addEventListener("click", async () =>
   catch(e) { alert(e.message); }
 });
 document.getElementById("btnLogout").addEventListener("click", () => { clearSWSession(); signOut(auth); });
+document.getElementById("navHome").addEventListener("click", () => showPage("home"));
+document.getElementById("qaNew").addEventListener("click", () => openDmModal());
+document.getElementById("qaGlobal").addEventListener("click", () => showGlobalChat());
+document.getElementById("seeAll").addEventListener("click", e => { e.preventDefault(); showGlobalChat(); });
+document.getElementById("qaNotif").addEventListener("click", () => showPage("settings"));
 document.getElementById("navSettings").addEventListener("click", () => showPage("settings"));
 document.getElementById("navAdmin").addEventListener("click", () => { showPage("admin"); loadAdminUsers(); });
 
@@ -1134,14 +1184,14 @@ messageInput.addEventListener("keydown", e => { if (e.key === "Enter" && !mentio
 // ============================================================
 // CHAT LOADING
 // ============================================================
-function showGlobalChat() {
-  showPage("chat");
+function showGlobalChat(initial) {
+  if (!initial) showPage("chat");
   currentChatId = "global";
   document.getElementById("chatHeaderImg").style.display = "none";
   document.getElementById("chatHeaderName").textContent = "Global Chat";
   loadMessages();
   document.querySelectorAll(".convItem").forEach(el => el.classList.remove("active"));
-  document.querySelector(".convItem[data-id='global']")?.classList.add("active");
+  if (!initial) document.querySelector(".convItem[data-id='global']")?.classList.add("active");
   document.getElementById("sidebar").classList.remove("open");
 }
 
@@ -1302,11 +1352,11 @@ function loadSidebar() {
   const uid = auth.currentUser.uid;
   convList.innerHTML = "";
   const globalItem = document.createElement("div");
-  globalItem.className = "convItem active"; globalItem.dataset.id = "global";
+  globalItem.className = "convItem"; globalItem.dataset.id = "global";
   globalItem.innerHTML = `
     <div class="globalIcon"><i class="fas fa-globe"></i></div>
     <div class="convInfo"><div class="convName">Global Chat</div><div class="convPreview">Everyone</div></div>`;
-  globalItem.addEventListener("click", showGlobalChat);
+  globalItem.addEventListener("click", () => showGlobalChat());
   convList.appendChild(globalItem);
   onSnapshot(query(collection(db, "dms"), where("users", "array-contains", uid)), async snap => {
     convList.querySelectorAll(".convItem:not([data-id='global'])").forEach(el => el.remove());
@@ -1471,6 +1521,35 @@ window._deleteUserMsgs = async uid => {
 // ============================================================
 // APP INIT
 // ============================================================
+let clockTimer = null;
+function tickClock() {
+  const el = document.getElementById("homeDate"); if (!el) return;
+  const d = new Date();
+  el.textContent = d.toLocaleDateString([], { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " · " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+async function renderHome() {
+  tickClock(); clearInterval(clockTimer); clockTimer = setInterval(tickClock, 30000);
+  document.getElementById("homeWelcome").textContent = "Welcome back, " + (document.getElementById("sbName").textContent || "User") + "!";
+  document.getElementById("statDms").textContent = convList.querySelectorAll(".convItem:not([data-id='global'])").length;
+  document.getElementById("statReqs").textContent = Math.max(0, pendingRequests.length - currentRequestIndex);
+  try { if (!allUsers.length) await loadAllUsers(); } catch(e) {}
+  document.getElementById("statMembers").textContent = allUsers.length || "–";
+  const list = document.getElementById("homeActivity");
+  try {
+    const snap = await getDocs(query(collection(db, "messages"), orderBy("time", "desc"), limit(5)));
+    list.innerHTML = "";
+    if (snap.empty) { list.innerHTML = '<div class="activityEmpty">No messages yet. Start the conversation in Global Chat.</div>'; return; }
+    snap.forEach(d => {
+      const m = d.data();
+      const preview = m.type === "image" ? "sent a photo" : m.type === "video" ? "sent a video" : (m.text || "");
+      const row = document.createElement("div"); row.className = "activityItem";
+      row.innerHTML = `<img src="${escapeHtml(m.pfp || DEFAULT_PFP)}" alt="" onerror="this.src='${DEFAULT_PFP}'"><div class="t"><b>${escapeHtml(m.name)}</b> ${escapeHtml(preview)}</div><div class="time">${formatTime(m.time)}</div>`;
+      row.addEventListener("click", () => showGlobalChat());
+      list.appendChild(row);
+    });
+  } catch(e) { list.innerHTML = '<div class="activityEmpty">Recent activity is unavailable right now.</div>'; }
+}
+
 async function refreshSidebarUser() {
   try {
     const s = await getDoc(doc(db, "users", auth.currentUser.uid));
@@ -1482,10 +1561,10 @@ async function refreshSidebarUser() {
 
 function loadApp() {
   if (auth.currentUser.email === ADMIN_EMAIL) isAdmin = true;
-  showPage("chat");
+  showPage("home");
   refreshSidebarUser();
   loadSidebar();
-  showGlobalChat();
+  showGlobalChat(true);
   checkPendingRequests();
   loadAllUsers();
   listenForDmNotifications();
