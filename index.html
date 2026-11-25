@@ -87,9 +87,6 @@ input:focus{outline:2px solid var(--accent)}
 .muted{color:var(--muted)}
 .logo{font-size:1.8em;font-weight:700;letter-spacing:1px;text-align:center;margin-bottom:22px}
 .logo span{color:var(--accent);position:relative}
-.logo span::after{content:'';position:absolute;width:6px;height:6px;background:var(--accent);border-radius:50%;bottom:3px;right:-9px;animation:blink 1.5s infinite}
-@keyframes blink{0%,100%{opacity:0}50%{opacity:1}}
-@media(prefers-reduced-motion:reduce){.logo span::after{animation:none;opacity:1}}
 
 /* auth */
 #authScreen{position:fixed;inset:0;overflow:auto;display:flex;padding:20px}
@@ -283,6 +280,28 @@ input:focus{outline:2px solid var(--accent)}
 .activityItem .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .activityItem .time{font-size:.8em;color:var(--muted);flex-shrink:0}
 .activityEmpty{padding:20px;color:var(--muted)}
+
+/* settings tabs */
+.settingsTitle{display:inline-block;font-size:1.6em;font-weight:700;border-bottom:3px solid var(--accent);padding-bottom:4px;margin-bottom:22px}
+.tabs{display:flex;gap:6px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:22px;overflow-x:auto}
+.tabBtn{background:none;color:rgba(255,255,255,.65);border-radius:0;padding:12px 20px;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;white-space:nowrap}
+.tabBtn:hover{background:none;color:#fff}
+.tabBtn.active{color:#fff;border-bottom-color:#fff}
+.tabPane{display:none}.tabPane.active{display:block}
+.twoCol{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:30px;align-items:start}
+.sPanel{background:var(--bg-secondary);border-left:4px solid var(--accent);border-radius:12px;padding:24px;margin-bottom:20px}
+.sPanel h3{display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:1.15em}
+.sPanel label.fl{display:block;margin:12px 0 6px;font-size:.92em}
+.sPanel textarea{width:100%;padding:12px 15px;border:none;border-radius:8px;background:var(--bg-tertiary);color:var(--text-primary);font:inherit;resize:vertical;min-height:90px}
+.sPanel textarea:focus{outline:2px solid var(--accent)}
+.sPanel>button{margin-top:16px}
+.setRow{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0}
+.setRow small{display:block;color:var(--muted);font-size:.78em;margin-top:2px}
+.pfpZone{border:2px dashed transparent;background:none;padding:10px}
+.pfpZone:hover{border-color:transparent;background:none}
+.pfpZone.dragover{border-color:#fff;background:rgba(255,255,255,.05)}
+.pfpZone img{width:100px;height:100px}
+.pfpZone button{margin-top:6px}
 </style>
 </head>
 <body>
@@ -386,35 +405,56 @@ input:focus{outline:2px solid var(--accent)}
       </section>
 
       <section id="settings">
-        <div class="panel">
-          <h2>Settings</h2>
-          <label class="fl">Username</label>
-          <input id="settingsName" placeholder="Your name" type="text">
-          <label class="fl">About me</label>
-          <input id="settingsAbout" placeholder="Tell us about yourself" type="text">
-          <label class="fl">Profile picture</label>
-          <div class="dropzone" id="settingsDropzone">
-      <img id="settingsDropPreview" src="" alt="Preview">
-      <div>Drag &amp; drop a new picture<br>or click to choose a file</div>
-      <input type="file" id="settingsFileInput" accept="image/*">
-      <div class="uploadProgress" id="settingsUploadProgress">Uploading...</div>
-    </div>
-          <button id="btnSaveSettings">Save Changes</button>
+        <h1 class="settingsTitle">Settings</h1>
+        <div class="tabs" role="tablist">
+          <button class="tabBtn active" data-tab="tabProfile" role="tab">Profile</button>
+          <button class="tabBtn" data-tab="tabNotif" role="tab">Notifications</button>
+          <button class="tabBtn" data-tab="tabAccount" role="tab">Account</button>
         </div>
-        <div class="panel">
-          <h3>Notifications</h3>
-          <div id="notifPermStatus" class="default">Checking notification permission...</div>
-          <button id="btnEnableNotifs" style="display:none">Enable Notifications</button>
-          <div id="notifToggles" style="display:none">
-            <div class="notif-toggle-row"><div style="flex:1"><span>Mentions</span><small>When someone @mentions you</small></div><label class="toggle-switch"><input type="checkbox" id="notifMentions"><span class="toggle-slider"></span></label></div>
-            <div class="notif-toggle-row"><div style="flex:1"><span>Private messages</span><small>New messages in DMs</small></div><label class="toggle-switch"><input type="checkbox" id="notifDMs"><span class="toggle-slider"></span></label></div>
-            <div class="notif-toggle-row"><div style="flex:1"><span>Media in DMs</span><small>Images and videos sent to you</small></div><label class="toggle-switch"><input type="checkbox" id="notifMedia"><span class="toggle-slider"></span></label></div>
-            <p id="notifVapidNote"></p>
+
+        <div class="tabPane active" id="tabProfile">
+          <div class="twoCol">
+            <div class="sPanel">
+              <h3><i class="fas fa-user"></i> Profile settings</h3>
+              <label class="fl">Username</label>
+              <input id="settingsName" placeholder="Your name" type="text">
+              <label class="fl">Bio</label>
+              <textarea id="settingsAbout" placeholder="Tell us about yourself…" rows="3"></textarea>
+              <button id="btnSaveSettings"><i class="fas fa-save"></i> Save</button>
+            </div>
+            <div class="sPanel">
+              <h3><i class="fas fa-image"></i> Profile picture</h3>
+              <div class="dropzone pfpZone" id="settingsDropzone">
+                <img id="settingsDropPreview" src="" alt="Preview">
+                <button type="button"><i class="fas fa-camera"></i> Change picture</button>
+                <input type="file" id="settingsFileInput" accept="image/*">
+                <div class="uploadProgress" id="settingsUploadProgress">Uploading...</div>
+              </div>
+              <p class="muted small" style="text-align:center;margin-top:8px">You can also drag &amp; drop an image here.</p>
+            </div>
           </div>
         </div>
-        <div class="panel">
-          <h3>Password</h3>
-          <button id="btnChangePassword" class="ghost">Send Password Reset Email</button>
+
+        <div class="tabPane" id="tabNotif">
+          <div class="sPanel">
+            <h3><i class="fas fa-bell"></i> Notification settings</h3>
+            <div id="notifPermStatus" class="default">Checking notification permission...</div>
+            <button id="btnEnableNotifs" style="display:none">Enable notifications</button>
+            <div id="notifToggles" style="display:none">
+              <div class="setRow"><span>Mentions<small>When someone @mentions you</small></span><label class="toggle-switch"><input type="checkbox" id="notifMentions"><span class="toggle-slider"></span></label></div>
+              <div class="setRow"><span>Private messages<small>New messages in DMs</small></span><label class="toggle-switch"><input type="checkbox" id="notifDMs"><span class="toggle-slider"></span></label></div>
+              <div class="setRow"><span>Media in DMs<small>Images and videos sent to you</small></span><label class="toggle-switch"><input type="checkbox" id="notifMedia"><span class="toggle-slider"></span></label></div>
+              <p id="notifVapidNote"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabPane" id="tabAccount">
+          <div class="sPanel">
+            <h3><i class="fas fa-lock"></i> Password</h3>
+            <p class="muted small">We'll send a reset link to the email you signed up with.</p>
+            <button id="btnChangePassword" class="ghost"><i class="fas fa-envelope"></i> Send password reset email</button>
+          </div>
         </div>
       </section>
 
@@ -1574,6 +1614,10 @@ function loadApp() {
   registerSW().then(() => syncSessionToSW());
 }
 
+document.querySelectorAll(".tabBtn").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll(".tabBtn").forEach(b => b.classList.toggle("active", b === btn));
+  document.querySelectorAll(".tabPane").forEach(p => p.classList.toggle("active", p.id === btn.dataset.tab));
+}));
 document.getElementById("chatSearch").addEventListener("input", e => {
   const q = e.target.value.trim().toLowerCase();
   document.querySelectorAll("#convList .convItem").forEach(el => {
